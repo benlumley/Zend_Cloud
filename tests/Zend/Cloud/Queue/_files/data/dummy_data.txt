@@ -1,1 +1,0 @@
-This is dummy data from from a dummy file used for Zend Cloud use cases.
