@@ -5,6 +5,10 @@ The Simple Cloud API is a common interface to all major cloud application servic
 This project is still under development and will be subject to change until its
 production release. Consider yourselves warned.
 
+VERSION
+-------
+Simple Cloud API 0.2 (Zend Framework Rev. 18653)
+
 INSTALLATION
 ------------
 
