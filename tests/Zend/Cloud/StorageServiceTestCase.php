@@ -293,6 +293,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      * @return void
      */
     public function testListItems() {
+        $dummyName1 = null;
+        $dummyName2 = null;
         try {
 
             $dummyName1 = $this->_dummyNamePrefix . 'ForListItem1';
