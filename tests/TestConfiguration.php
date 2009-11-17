@@ -606,12 +606,3 @@ define('TESTS_ZEND_VALIDATE_ONLINE_ENABLED', false);
  */
 define('TESTS_GENERATE_REPORT', false);
 define('TESTS_GENERATE_REPORT_TARGET', '/path/to/target');
-/**
- * Zend_Http_Client tests
- *
- * To enable the dynamic Zend_Http_Client tests, you will need to symbolically
- * link or copy the files in tests/Zend/Http/Client/_files to a directory
- * under your web server(s) document root and set this constant to point to the
- * URL of this directory.
- */
-define('TESTS_ZEND_HTTP_CLIENT_BASEURI', false);
