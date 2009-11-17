@@ -614,4 +614,4 @@ define('TESTS_GENERATE_REPORT_TARGET', '/path/to/target');
  * under your web server(s) document root and set this constant to point to the
  * URL of this directory.
  */
-define('TESTS_ZEND_HTTP_CLIENT_BASEURI', 'http://localhost/testfiles/');
+define('TESTS_ZEND_HTTP_CLIENT_BASEURI', false);
