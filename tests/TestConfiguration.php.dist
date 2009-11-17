@@ -303,7 +303,7 @@ define('TESTS_ZEND_GDATA_HEALTH_ONLINE_ENABLED', false);
  * under your web server(s) document root and set this constant to point to the
  * URL of this directory.
  */
-define('TESTS_ZEND_HTTP_CLIENT_BASEURI', 'http://localhost/testfiles/');
+define('TESTS_ZEND_HTTP_CLIENT_BASEURI', false);
 
 /**
  * Zend_Http_Client_Proxy tests
@@ -511,8 +511,8 @@ define('TESTS_ZEND_QUEUE_PLATFORMJQ_PASS', false);
  * Zend_Service_Amazon online tests
  */
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', false);
-define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID', '<your access key here>');
-define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY', '<your secret key here>');
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID', '');
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY', '');
 define('TESTS_ZEND_SERVICE_AMAZON_S3_BUCKET', 'zftestamazons3bucket');
 
 /**
@@ -530,8 +530,8 @@ define('TESTS_ZEND_SERVICE_FLICKR_ONLINE_APIKEY', 'Enter API key here');
  * Zend_Service_Simpy tests
  */
 define('TESTS_ZEND_SERVICE_SIMPY_ENABLED', false);
-define('TESTS_ZEND_SERVICE_SIMPY_USERNAME', 'syapizend');
-define('TESTS_ZEND_SERVICE_SIMPY_PASSWORD', 'mgt37ge');
+define('TESTS_ZEND_SERVICE_SIMPY_USERNAME', '');
+define('TESTS_ZEND_SERVICE_SIMPY_PASSWORD', '');
 
 /**
  * Zend_Service_SlideShare tests
