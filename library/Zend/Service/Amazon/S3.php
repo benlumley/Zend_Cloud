@@ -358,24 +358,26 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     }
     
     /**
-     * Get an object
+     * Get an object using streaming
+     * 
+     * Can use either provided filename for storage or create a temp file if none provided.
      *
      * @param  string $object Object path
-     * @param  bool   $paidobject This is "requestor pays" object
      * @param  string $streamfile File to write the stream to
+     * @param  bool   $paidobject This is "requestor pays" object
      * @return Zend_Http_Response_Stream|false
      */
     public function getObjectStream($object, $streamfile = null, $paidobject=false)
     {
         $object = $this->_fixupObjectName($object);
-        self::getHttpClient()->setConfig(array("outstream" => $streamfile?$streamfile:true));
+        self::getHttpClient()->setStream($streamfile?$streamfile:true);
         if ($paidobject) {
             $response = $this->_makeRequest('GET', $object, null, array(self::S3_REQUESTPAY_HEADER => 'requester'));
         }
         else {
             $response = $this->_makeRequest('GET', $object);
         }
-        self::getHttpClient()->setConfig(array("outstream" => null));
+        self::getHttpClient()->setStream(null);
         
         if ($response->getStatus() != 200 || !($response instanceof Zend_Http_Response_Stream)) {
             return false;

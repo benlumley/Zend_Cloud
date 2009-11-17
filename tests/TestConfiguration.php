@@ -303,7 +303,7 @@ define('TESTS_ZEND_GDATA_HEALTH_ONLINE_ENABLED', false);
  * under your web server(s) document root and set this constant to point to the
  * URL of this directory.
  */
-define('TESTS_ZEND_HTTP_CLIENT_BASEURI', false);
+define('TESTS_ZEND_HTTP_CLIENT_BASEURI', 'http://localhost/testfiles/');
 
 /**
  * Zend_Http_Client_Proxy tests

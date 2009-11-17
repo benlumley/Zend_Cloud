@@ -860,6 +860,27 @@ class Zend_Http_Client
     }
 
     /**
+     * Set streaming for received data
+     * 
+     * @param string|boolean $streamfile Stream file, true for temp file, false/null for no streaming
+     * @return Zend_Http_Client
+     */
+    public function setStream($streamfile = true)
+    {
+        $this->setConfig(array("outstream" => $streamfile));
+        return $this;
+    }
+    
+    /**
+     * Get status of streaming for received data
+     * @return boolean|string
+     */
+    public function getStream()
+    {
+        return $this->config["outstream"];
+    }
+    
+    /**
      * Create temporary stream
      * 
      * @return resource

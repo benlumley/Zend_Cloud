@@ -855,7 +855,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
               return;   
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
-        $this->client->setConfig(array("outstream" => true));
+        $this->client->setStream();
 
         $response = $this->client->request();
         
@@ -880,7 +880,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
               return;   
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
-        $this->client->setConfig(array("outstream" => true));
+        $this->client->setStream();
 
         $response = $this->client->request();
         
@@ -901,7 +901,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
         $outfile = tempnam(sys_get_temp_dir(), "outstream");
-        $this->client->setConfig(array("outstream" => $outfile));
+        $this->client->setStream($outfile);
 
         $response = $this->client->request();
         
