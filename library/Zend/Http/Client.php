@@ -116,7 +116,7 @@ class Zend_Http_Client
         'keepalive'       => false,
         'storeresponse'   => true,
         'strict'          => true,
-        'outstream'		  => false,
+        'output_stream'	  => false,
     );
 
     /**
@@ -867,7 +867,7 @@ class Zend_Http_Client
      */
     public function setStream($streamfile = true)
     {
-        $this->setConfig(array("outstream" => $streamfile));
+        $this->setConfig(array("output_stream" => $streamfile));
         return $this;
     }
     
@@ -877,7 +877,7 @@ class Zend_Http_Client
      */
     public function getStream()
     {
-        return $this->config["outstream"];
+        return $this->config["output_stream"];
     }
     
     /**
@@ -887,7 +887,7 @@ class Zend_Http_Client
      */
     protected function _openTempStream()
     {
-        $this->_stream_name = $this->config['outstream'];
+        $this->_stream_name = $this->config['output_stream'];
         if(!is_string($this->_stream_name)) {
             // If name is not given, create temp name
             $this->_stream_name = tempnam(isset($this->config['stream_tmp_dir'])?$this->config['stream_tmp_dir']:sys_get_temp_dir(),
@@ -958,7 +958,7 @@ class Zend_Http_Client
             $this->adapter->connect($uri->getHost(), $uri->getPort(),
                 ($uri->getScheme() == 'https' ? true : false));
 
-            if($this->config['outstream']) {
+            if($this->config['output_stream']) {
                 if($this->adapter instanceof Zend_Http_Client_Adapter_Stream) {
                     $stream = $this->_openTempStream();
                     $this->adapter->setOutputStream($stream);
@@ -979,13 +979,13 @@ class Zend_Http_Client
 	            throw new Zend_Http_Client_Exception('Unable to read response, or response is empty');
 	        }
 	
-	        if($this->config['outstream']) {
+	        if($this->config['output_stream']) {
 	            rewind($stream);
 	            // cleanup the adapter
 	            $this->adapter->setOutputStream(null);
 	            $response = Zend_Http_Response_Stream::fromStream($response, $stream);
 	            $response->setStreamName($this->_stream_name);
-	            if(!is_string($this->config['outstream'])) {
+	            if(!is_string($this->config['output_stream'])) {
 	                // we used temp name, will need to clean up
 	                $response->setCleanup(true);
 	            }
