@@ -390,7 +390,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
      * Upload an object by a PHP string
      *
      * @param  string $object Object name
-     * @param  string $data   Object data
+     * @param  string|resource $data   Object data (can be string or stream)
      * @param  array  $meta   Metadata
      * @return boolean
      */
@@ -401,7 +401,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
 
         if(!is_resource($data)) {
             $headers['Content-MD5'] = base64_encode(md5($data, true));
-        }
+        } 
         $headers['Expect'] = '100-continue';
 
         if (!isset($headers[self::S3_CONTENT_TYPE_HEADER])) {
@@ -411,7 +411,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
         $response = $this->_makeRequest('PUT', $object, null, $headers, $data);
 
         // Check the MD5 Etag returned by S3 against and MD5 of the buffer
-        if ($response->getStatus() == 200) {
+        if ($response->getStatus() == 200 && !is_resource($data)) {
             // It is escaped by double quotes for some reason
             $etag = str_replace('"', '', $response->getHeader('Etag'));
 
