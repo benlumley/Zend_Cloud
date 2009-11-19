@@ -411,11 +411,11 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
         $response = $this->_makeRequest('PUT', $object, null, $headers, $data);
 
         // Check the MD5 Etag returned by S3 against and MD5 of the buffer
-        if ($response->getStatus() == 200 && !is_resource($data)) {
+        if ($response->getStatus() == 200) {
             // It is escaped by double quotes for some reason
             $etag = str_replace('"', '', $response->getHeader('Etag'));
 
-            if ($etag == md5($data)) {
+            if (is_resource($data) || $etag == md5($data)) {
                 return true;
             }
         }
