@@ -54,7 +54,7 @@ class Zend_Service_Amazon_S3_StreamTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->_amazon = new Zend_Service_Amazon_S3(constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID'),
+        $this->_amazon = new Zend_Service_Amazon_S3(constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY'),
                                                     constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY')
                                                     );
         $this->_nosuchbucket = "nonexistingbucketnamewhichnobodyshoulduse";

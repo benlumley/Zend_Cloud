@@ -79,9 +79,6 @@ class Zend_Service_Amazon_SimpleDB_OnlineTest extends PHPUnit_Framework_TestCase
 
     protected $_testAttributeNamePrefix;
 
-    const ACCESS_KEY = "aws_accesskey";
-    const SECRET_KEY = "aws_secretkey";
-
     // Because Amazon uses an eventual consistency model, this test period may
     // help avoid *but not guarantee* false negatives
     protected $_testWaitPeriod = 5;
@@ -93,10 +90,9 @@ class Zend_Service_Amazon_SimpleDB_OnlineTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $config = new Zend_Config_Ini(dirname(__FILE__) . '/../_files/config/aws.ini');
         $this->_amazon = new Zend_Service_Amazon_SimpleDB(
-            $config->get(self::ACCESS_KEY),
-            $config->get(self::SECRET_KEY)
+            constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY'),
+            constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY')
         );
 
         $this->_httpClientAdapterSocket = new Zend_Http_Client_Adapter_Socket();

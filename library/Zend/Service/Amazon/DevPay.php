@@ -6,31 +6,26 @@
 require_once 'Zend/Service/Amazon/Abstract.php';
 
 /**
- * @see Zend_Service_Amazon_SimpleDB_Response
+ * @see Zend_Service_Amazon_DevPay_Response
  */
-require_once 'Zend/Service/Amazon/SimpleDB/Response.php';
+require_once 'Zend/Service/Amazon/DevPay/Response.php';
 
 /**
- * @see Zend_Service_Amazon_SimpleDB_Page
+ * @see Zend_Service_Amazon_DevPay_Page
  */
-require_once 'Zend/Service/Amazon/SimpleDB/Page.php';
+require_once 'Zend/Service/Amazon/DevPay/Page.php';
 
 /**
- * @see Zend_Service_Amazon_SimpleDB_Attribute
+ * @see Zend_Service_Amazon_DevPay_Attribute
  */
-require_once 'Zend/Service/Amazon/SimpleDB/Attribute.php';
+require_once 'Zend/Service/Amazon/DevPay/Attribute.php';
 
 /**
- * @see Zend_Service_Amazon_SimpleDB_Exception
+ * @see Zend_Service_Amazon_DevPay_Exception
  */
-require_once 'Zend/Service/Amazon/SimpleDB/Exception.php';
+require_once 'Zend/Service/Amazon/DevPay/Exception.php';
 
-/**
- * @see Zend_Crypt_Hmac
- */
-require_once 'Zend/Crypt/Hmac.php';
-
-class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
+class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
  {
     /* Notes */
     // TODO SSL is required
@@ -38,7 +33,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     /**
      * The HTTP query server
      */
-    protected $_sdbEndpoint = 'sdb.amazonaws.com';
+    protected $_dpEndpoint = 'ls.amazonaws.com';
 
     /**
      * Period after which HTTP request will timeout in seconds
@@ -71,14 +66,14 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     protected $_accessKey;
 
     /**
-     * Create Amazon SimpleDB client.
+     * Create Amazon DevPay client.
      *
      * @param  string $access_key       Override the default Access Key
      * @param  string $secret_key       Override the default Secret Key
      * @param  string $region           Sets the AWS Region
      * @return void
      */
-    public function __construct($accessKey, $secretKey)
+    public function __construct($accessKey=null, $secretKey=null)
     {
         if(!$accessKey || !$secretKey) {
             require_once 'Zend/Service/Amazon/Exception.php';
@@ -87,14 +82,14 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $this->_accessKey = $accessKey;
         $this->_secretKey = $secretKey;
 
-        $this->setEndpoint("https://" . $this->_sdbEndpoint);
+        $this->setEndpoint("http://" . $this->_sdbEndpoint);
     }
 
 	/**
-     * Set SimpleDB endpoint to use
+     * Set DevPay endpoint to use
      *
      * @param string|Zend_Uri_Http $endpoint
-     * @return Zend_Service_Amazon_SimpleDB
+     * @return Zend_Service_Amazon_DevPay
      */
     public function setEndpoint($endpoint)
     {
@@ -102,15 +97,15 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     		$endpoint = Zend_Uri::factory($endpoint);
     	}
     	if(!$endpoint->valid()) {
-    		require_once 'Zend/Service/Amazon/SimpleDB/Exception.php';
-    		throw new Zend_Service_Amazon_SimpleDB_Exception("Invalid endpoint supplied");
+    		require_once 'Zend/Service/Amazon/DevPay/Exception.php';
+    		throw new Zend_Service_Amazon_DevPay_Exception("Invalid endpoint supplied");
     	}
     	$this->_endpoint = $endpoint;
     	return $this;
     }
 
     /**
-     * Get SimpleDB endpoint
+     * Get DevPay endpoint
      *
      * @return Zend_Uri_Http
      */
@@ -147,7 +142,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             } else if(isset($valueNodes)) {
                 $data = (string)$valueNodes;
             }
-            $attributes[$name] = new Zend_Service_Amazon_SimpleDB_Attribute($itemName, $name, $data);
+            $attributes[$name] = new Zend_Service_Amazon_DevPay_Attribute($itemName, $name, $data);
         }
         return $attributes;
     }
@@ -254,7 +249,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $nextToken = (string)$nextTokenNode;
         $nextToken = $nextToken==''?null:$nextToken;
 
-        return new Zend_Service_Amazon_SimpleDB_Page($data, $nextToken);
+        return new Zend_Service_Amazon_DevPay_Page($data, $nextToken);
     }
 
     /**
@@ -332,21 +327,21 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
                 foreach($attribute->Value as $value) {
                     $values[] = (string)$value;
                 }
-                $attributes[$itemName][$attributeName] = new Zend_Service_Amazon_SimpleDB_Attribute($itemName, $attributeName, $values);
+                $attributes[$itemName][$attributeName] = new Zend_Service_Amazon_DevPay_Attribute($itemName, $attributeName, $values);
             }
         }
 
         $nextToken = (string)$xml->NextToken;
 
-        return new Zend_Service_Amazon_SimpleDB_Page($attributes, $nextToken);
+        return new Zend_Service_Amazon_DevPay_Page($attributes, $nextToken);
     }
 
    /**
-     * Sends a HTTP request to the SimpleDB service using Zend_Http_Client
+     * Sends a HTTP request to the DevPay service using Zend_Http_Client
      *
      * @param array $params         List of parameters to send with the request
-     * @return Zend_Service_Amazon_SimpleDB_Response
-     * @throws Zend_Service_Amazon_SimpleDB_Exception
+     * @return Zend_Service_Amazon_DevPay_Response
+     * @throws Zend_Service_Amazon_DevPay_Exception
      */
     protected function _sendRequest(array $params = array())
     {
@@ -381,9 +376,9 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             $httpResponse = $request->request();
         } catch (Zend_Http_Client_Exception $zhce) {
             $message = 'Error in request to AWS service: ' . $zhce->getMessage();
-            throw new Zend_Service_Amazon_SimpleDB_Exception($message, $zhce->getCode());
+            throw new Zend_Service_Amazon_DevPay_Exception($message, $zhce->getCode());
         }
-        $response = new Zend_Service_Amazon_SimpleDB_Response($httpResponse);
+        $response = new Zend_Service_Amazon_DevPay_Response($httpResponse);
         simplexml_import_dom($response->getDocument())->asXML();
         $request->getLastRequest();
         $this->_checkForErrors($response);
@@ -469,15 +464,15 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     /**
      * Checks for errors responses from Amazon
      *
-     * @param Zend_Service_Amazon_SimpleDB_Response $response the response object to
+     * @param Zend_Service_Amazon_DevPay_Response $response the response object to
      *                                                   check.
      *
      * @return void
      *
-     * @throws Zend_Service_Amazon_SimpleDB_Exception if one or more errors are
+     * @throws Zend_Service_Amazon_DevPay_Exception if one or more errors are
      *         returned from Amazon.
      */
-    private function _checkForErrors(Zend_Service_Amazon_SimpleDB_Response $response)
+    private function _checkForErrors(Zend_Service_Amazon_DevPay_Response $response)
     {
         $xpath = new DOMXPath($response->getDocument());
         $list  = $xpath->query('//Error');
@@ -485,7 +480,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             $node    = $list->item(0);
             $code    = $xpath->evaluate('string(Code/text())', $node);
             $message = $xpath->evaluate('string(Message/text())', $node);
-            throw new Zend_Service_Amazon_SimpleDB_Exception($message, 0, $code);
+            throw new Zend_Service_Amazon_DevPay_Exception($message, 0, $code);
         }
     }
 
