@@ -65,7 +65,7 @@ class Zend_Cloud_Storage_Adapter_WindowsAzure implements Zend_Cloud_StorageServi
 		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($options['storage_host'], $options['storage_accountname'], $options['storage_accountkey']);
 		
 		// Parse other options
-		if (isset($options['storage_proxy_host']))
+		if (!empty($options['storage_proxy_host']))
 		{
 			$proxyHost = $options['storage_proxy_host'];
 			$proxyPort = isset($options["storage_proxy_port"]) ? $options["storage_proxy_port"] : 8080;
