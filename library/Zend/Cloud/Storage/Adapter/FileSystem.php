@@ -55,7 +55,8 @@ class Zend_Cloud_Storage_Adapter_FileSystem implements Zend_Cloud_StorageService
      */
     public function fetchItem($path, $options = array()) {
         $filepath = $this->_getFullPath($path);
-        return file_get_contents(realpath($filepath));
+        $realpath = realpath($filepath);
+        return $realpath?file_get_contents($realpath):false;
     }
     
     /**
@@ -76,7 +77,6 @@ class Zend_Cloud_Storage_Adapter_FileSystem implements Zend_Cloud_StorageService
                               $options = array()) {
         $path = $this->_getFullPath($destinationPath);
         file_put_contents($path, $data);
-        chmod($path, 0777);
     }
     
     /**
