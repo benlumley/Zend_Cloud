@@ -39,12 +39,12 @@ require_once 'Zend/Http/Client/Adapter/Socket.php';
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * 
+ *
  * This class forces the adapter tests to implement tests for all methods on
  * Zend_Cloud_QueueService.
  */
 abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCase
-{   
+{
     /**
      * Reference to queue adapter to test
      *
@@ -55,15 +55,15 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
     protected $_dummyNamePrefix = '/TestItem';
 
     protected $_dummyDataPrefix = 'TestData';
-    
+
     /**
      * Config object
-     * 
+     *
      * @var Zend_Config
      */
-    
+
     protected $_config;
-    
+
     /**
      * Period to wait for propagation in seconds
      * Should be set by adapter
@@ -71,7 +71,7 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
      * @var int
      */
     protected $_waitPeriod = 1;
-   
+
     public function testCreateQueue() {
         $queueURL = null;
         try{
@@ -81,7 +81,7 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $endTime = time();
             $this->assertNotNull($queueURL);
             $this->assertLessThan(30, $endTime - $startTime);
-            
+
             $this->_commonQueue->deleteQueue($queueURL);
         } catch(Exception $e) {
             $this->_commonQueue->deleteQueue($queueURL);
@@ -94,15 +94,15 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
         try{
             $queueURL = $this->_commonQueue->createQueue('testDeleteQueue');
             $this->assertNotNull($queueURL);
-            
+
             $this->_commonQueue->deleteQueue($queueURL);
-            
+
             $this->_wait();
             $this->_wait();
             $this->_wait();
             try {
                 $this->_commonQueue->receiveMessages($queueURL);
-            } catch(Zend_Cloud_Queue_Exception $e) {
+            } catch(Zend_Cloud_QueueService_Exception $e) {
                 $this->assertTrue(true);
                 $this->_commonQueue->deleteQueue($queueURL);
                 return;
@@ -123,15 +123,15 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $queueURL2 = $this->_commonQueue->createQueue('testListQueue2');
             $this->assertNotNull($queueURL2);
             $this->_wait();
-            
+
             $queues = $this->_commonQueue->listQueues();
             $this->assertEquals(2, sizeof($queues));
-            
+
             // PHPUnit does an identical comparison for assertContains(), so we just
             // use assertTrue and in_array()
             $this->assertTrue(in_array($queueURL1, $queues));
             $this->assertTrue(in_array($queueURL2, $queues));
-            
+
             $this->_commonQueue->deleteQueue($queueURL1);
             $this->_commonQueue->deleteQueue($queueURL2);
         } catch(Exception $e) {
@@ -186,14 +186,14 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $queueURL = $this->_commonQueue->createQueue('testReceiveMessages');
             $this->assertNotNull($queueURL);
             $this->_wait();
-            
+
             $message1 = 'testReceiveMessages - Message 1';
             $message2 = 'testReceiveMessages - Message 2';
             $this->_commonQueue->sendMessage($message1, $queueURL);
             $this->_commonQueue->sendMessage($message2, $queueURL);
             $this->_wait();
             $this->_wait();
-            
+
             $receivedMessages1 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages1));
             $this->assertEquals(1, count($receivedMessages1));
@@ -201,11 +201,11 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $this->_commonQueue->deleteMessage($receivedMessage1['message_id'], $queueURL);
             $receivedMessage2 = array_pop($receivedMessages1);
             $this->_commonQueue->deleteMessage($receivedMessage2['message_id'], $queueURL);
-            
+
             $this->_commonQueue->sendMessage($message1, $queueURL);
             $this->_commonQueue->sendMessage($message2, $queueURL);
             $this->_wait();
-            
+
             $receivedMessages2 = $this->_commonQueue->receiveMessages($queueURL, 2);
             $this->assertTrue(is_array($receivedMessages2));
             $this->assertEquals(2, count($receivedMessages2));
@@ -229,14 +229,14 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $message1 = 'testDeleteMessage - Message 1';
             $this->_commonQueue->sendMessage($message1, $queueURL);
             $this->_wait();
-            
+
             $receivedMessages1 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages1));
             $this->assertContains($message1, $receivedMessages1[0]);
             $this->assertEquals(1, count($receivedMessages1));
             $receivedMessage1 = array_pop($receivedMessages1);
             $this->_commonQueue->deleteMessage($receivedMessage1['message_id'], $queueURL);
-            
+
             $receivedMessages2 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages2));
             $this->assertEquals(0, count($receivedMessages2));
@@ -255,7 +255,7 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             $message1 = 'testPeekMessage - Message 1';
             $messageID = $this->_commonQueue->sendMessage($message1, $queueURL);
             $this->_wait();
-            
+
             $peekedMessage = $this->_commonQueue->peekMessage($messageID, $queueURL);
             $this->assertEquals($message1, $peekedMessage);
             $this->_commonQueue->deleteMessage(array_pop($peekedMessages), $queueURL);
@@ -264,14 +264,14 @@ abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCas
             throw $e;
         }
     }
-    
+
     protected function _wait() {
         sleep($this->_waitPeriod);
     }
 }
 
 
-class Zend_Cloud_Queue_Adapter_Skip extends PHPUnit_Framework_TestCase
+class Zend_Cloud_QueueService_Adapter_Skip extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

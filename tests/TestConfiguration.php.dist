@@ -543,29 +543,29 @@ define('TESTS_ZEND_CLOUD_ONLINE_ENABLED', false);
 /**
  * Zend_Cloud_Storage_Adapter_Filesystem
  */
-define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM', 'Zend_Cloud_Storage_Adapter_Filesystem');
+define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM', 'Zend_Cloud_StorageService_Adapter_Filesystem');
 define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM_LOCAL_DIRECTORY', '../_files/data/FileSystemTest');
 
 /**
- * Zend_Cloud_Storage_Adapter_Nirvanix
+ * Zend_Cloud_StorageService_Adapter_Nirvanix
  */
-define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_NIRVANIX', 'Zend_Cloud_Storage_Adapter_Nirvanix');
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_NIRVANIX', 'Zend_Cloud_StorageService_Adapter_Nirvanix');
 define('TESTS_ZEND_CLOUD_ADAPTER_NIRVANIX_REMOTE_DIRECTORY', '/SimpleCloudUnitTests/');
 
 /**
- * Zend_Cloud_Storage_Adapter_WindowsAzure
+ * Zend_Cloud_StorageService_Adapter_WindowsAzure
  */
-define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_WINDOWSAZURE', 'Zend_Cloud_Storage_Adapter_WindowsAzure');
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_WINDOWSAZURE', 'Zend_Cloud_StorageService_Adapter_WindowsAzure');
 
 /**
  * Zend_Cloud_Queue_Adapter_SQS
  */
-define('TESTS_ZEND_CLOUD_QUEUE_ADAPTER_SQS', 'Zend_Cloud_Queue_Adapter_SQS');
+define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_SQS', 'Zend_Cloud_QueueService_Adapter_SQS');
 
 /**
- * Zend_Cloud_Queue_Adapter_ZendQueue
+ * Zend_Cloud_QueueService_Adapter_ZendQueue
  */
-define('TESTS_ZEND_CLOUD_QUEUE_ADAPTER_ZENDQUEUE', 'Zend_Cloud_Queue_Adapter_ZendQueue');
+define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_ZENDQUEUE', 'Zend_Cloud_QueueService_Adapter_ZendQueue');
 
 /**
  * Zend_Service_Delicious tests

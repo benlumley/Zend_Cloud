@@ -39,12 +39,12 @@ require_once 'Zend/Http/Client/Adapter/Socket.php';
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * 
+ *
  * This class forces the adapter tests to implement tests for all methods on
- * Zend_Cloud_Storage_IStorage.
+ * Zend_Cloud_StorageService
  */
 abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestCase
-{   
+{
     /**
      * Reference to storage adapter to test
      *
@@ -55,15 +55,15 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
     protected $_dummyNamePrefix = 'TestItem';
 
     protected $_dummyDataPrefix = 'TestData';
-    
+
     /**
      * Config object
-     * 
+     *
      * @var Zend_Config
      */
-    
+
     protected $_config;
-    
+
     /**
      * Period to wait for propagation in seconds
      * Should be set by adapter
@@ -97,14 +97,14 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
 	/**
      * Test fetch item
      *
      * @return void
      */
     public function testFetchItemStream() {
-        
+
         // TODO Add support for streaming to Zend_Http.
         $this->markTestSkipped('Zend_Http doesn\'t support streaming.');
         $dummyNameText = null;
@@ -149,14 +149,14 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
 	/**
      * Test store item
      *
      * @return void
      */
     public function testStoreItemStream() {
-        
+
         // TODO Add support for streaming to Zend_Http.
         $this->markTestSkipped('Zend_Http doesn\'t support streaming.');
         $dummyNameStream = null;
@@ -177,7 +177,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
     /**
      * Test delete item
      *
@@ -233,7 +233,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
 	/**
      * Test move item
      *
@@ -241,7 +241,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      */
     public function testMoveItem() {
         $this->markTestSkipped('This test should be re-enabled when the semantics of "move" change');
-        
+
         try {
             // Test string data
             $originalData = $this->_dummyDataPrefix . 'MoveItem';
@@ -262,7 +262,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
 	/**
      * Test fetch metadata
      *
@@ -277,7 +277,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             $this->_wait();
             $this->_commonStorage->storeMetadata(array('zend' => 'zend'), $dummyName);
             $this->_wait();
-           
+
             // Hopefully we can assert more about the metadata in the future :/
             $this->assertTrue(is_array($this->_commonStorage->fetchMetadata($dummyName)));
             $this->_commonStorage->deleteItem($dummyName);
@@ -286,7 +286,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
 	/**
      * Test list items
      *
@@ -300,21 +300,21 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             $dummyName1 = $this->_dummyNamePrefix . 'ForListItem1';
             $dummyData1 = $this->_dummyDataPrefix . 'Item1';
             $this->_clobberItem($dummyData1, $dummyName1);
-            
+
             $dummyName2 = $this->_dummyNamePrefix . 'ForListItem2';
             $dummyData2 = $this->_dummyDataPrefix . 'Item2';
             $this->_clobberItem($dummyData2, $dummyName2);
             $this->_wait();
-            
+
             $objects = $this->_commonStorage->listItems('');
-            
+
             $this->assertEquals(2, sizeof($objects));
-            
+
             // PHPUnit does an identical comparison for assertContains(), so we just
             // use assertTrue and in_array()
             $this->assertTrue(in_array($dummyName1, $objects));
             $this->assertTrue(in_array($dummyName2, $objects));
-            
+
             $this->_commonStorage->deleteItem($dummyName1);
             $this->_commonStorage->deleteItem($dummyName2);
         } catch(Exception $e) {
@@ -323,11 +323,11 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
             throw $e;
         }
     }
-    
+
     protected function _wait() {
         sleep($this->_waitPeriod);
     }
-    
+
     protected function _clobberItem($data, $path) {
         if($this->_commonStorage->fetchItem($path)) {
             $this->_commonStorage->deleteItem($path);
@@ -339,7 +339,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
 
 
 
-class Zend_Cloud_Storage_Adapter_Skip extends PHPUnit_Framework_TestCase
+class Zend_Cloud_StorageService_Adapter_Skip extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
