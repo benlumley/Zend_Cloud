@@ -510,7 +510,67 @@ define('TESTS_ZEND_QUEUE_PLATFORMJQ_PASS', false);
 /**
  * AWS online tests
  */
-define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', false);
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', true);
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY', <your access key>);
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY', 'H0ExPZmGlxXggBX6uZuD8OxTgTEYhicVA8eustMC');
+define('TESTS_ZEND_SERVICE_AMAZON_S3_BUCKET', 'testbucket');
+
+/**
+ * Nirvanix tests
+ */
+define('TESTS_ZEND_SERVICE_NIRVANIX_ONLINE_ENABLED', true);
+define('TESTS_ZEND_SERVICE_NIRVANIX_ONLINE_ACCESSKEY', '7d5f6d44-d970-48cf-90db-608810f122d6');
+define('TESTS_ZEND_SERVICE_NIRVANIX_ONLINE_USERNAME', 'haggar');
+define('TESTS_ZEND_SERVICE_NIRVANIX_ONLINE_PASSWORD', 'ibmtest4044');
+
+/**
+ * Microsoft Azure tests
+ */
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_ENABLED', true);
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCESSKEY', <your access key>);
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_SECRETKEY', <your secret key>);
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_HOST', 'blob.core.windows.net');
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_CONTAINER', 'zendtest');
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_HOST', '');
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_PORT', 8080);
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_CREDENTIALS', '');
+
+/**
+ * Zend_Cloud configs
+ */
+define('TESTS_ZEND_CLOUD_ONLINE_ENABLED', true);
+
+/**
+ * Zend_Cloud_StorageService_Adapter_Filesystem
+ */
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_FILESYSTEM', 'Zend_Cloud_StorageService_Adapter_Filesystem');
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_FILESYSTEM_LOCAL_DIRECTORY', '../_files/data/FileSystemTest');
+
+/**
+ * Zend_Cloud_StorageService_Adapter_Nirvanix
+ */
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_NIRVANIX', 'Zend_Cloud_StorageService_Adapter_Nirvanix');
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_NIRVANIX_REMOTE_DIRECTORY', '/SimpleCloudUnitTests/');
+
+/**
+ * Zend_Cloud_StorageService_Adapter_WindowsAzure
+ */
+define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_WINDOWSAZURE', 'Zend_Cloud_StorageService_Adapter_WindowsAzure');
+
+/**
+ * Zend_Cloud_QueueService_Adapter_SQS
+ */
+define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_SQS', 'Zend_Cloud_QueueService_Adapter_SQS');
+
+/**
+ * Zend_Cloud_QueueService_Adapter_ZendQueue
+ */
+define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_ZENDQUEUE', 'Zend_Cloud_QueueService_Adapter_ZendQueue');
+
+/**
+ * AWS online tests
+ */
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', true);
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY', <your access key>);
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY', <your secret key>);
 define('TESTS_ZEND_SERVICE_AMAZON_S3_BUCKET', 'zftestamazons3bucket');
