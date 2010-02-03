@@ -27,16 +27,6 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
  */
 
 /**
- * @see Zend_Config_Ini
- */
-require_once 'Zend/Config/Ini.php';
-
-/**
- * @see Zend_Cloud_StorageService_Factory
- */
-require_once 'Zend/Cloud/Storage/Factory.php';
-
-/**
  * @see Zend_Cloud_StorageServiceTestCase
  */
 require_once 'Zend/Cloud/StorageServiceTestCase.php';
@@ -44,7 +34,7 @@ require_once 'Zend/Cloud/StorageServiceTestCase.php';
 /**
  * @see Zend_Cloud_StorageService_Adapter_FileSystem
  */
-require_once 'Zend/Cloud/Storage/Adapter/FileSystem.php';
+require_once 'Zend/Cloud/StorageService/Adapter/FileSystem.php';
 
 /**
  * @category   Zend
@@ -75,25 +65,18 @@ class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_Storag
      *
      * @return void
      */
-    public function setUp() {
+    public function setUp() 
+    {
+        parent::setUp();
         // No need to wait
         $this->_waitPeriod = 0;
-
-        $config = $this->_getConfig();
-
-        $this->_commonStorage = Zend_Cloud_StorageService_Factory::getAdapter(
-                                    $config
-                                );
-
-        $path = $config->local_directory;
+        $path = $this->_config->local_directory;
 
         // If the test directory exists, remove it and replace it
         if(file_exists($path)) {
             $this->_rmRecursive($path);
-        }
+        } 
         mkdir($path, 0755);
-
-        parent::setUp();
     }
 
     // TODO: Create a custom test for FileSystem that checks fetchMetadata() with file system MD.
@@ -114,10 +97,9 @@ class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_Storag
      *
      * @return void
      */
-    public function tearDown() {
-        $config = $this->_getConfig();
-
-        $path = $config->local_directory;
+    public function tearDown() 
+    {
+        $path = $this->_config->local_directory;
 
         // If the test directory exists, remove it
         if(file_exists($path)) {
@@ -146,13 +128,9 @@ class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_Storag
     }
 
     protected function _getConfig() {
-        $config = new Zend_Config(array('storage_adapter' => const('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM',
-                                        'local_directory' => const('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM_LOCAL_DIRECTORY'))));
-
-        $directoryConfig = new Zend_Config(array(Zend_Cloud_StorageService_Adapter_FileSystem::LOCAL_DIRECTORY =>
-                           dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . $config->local_directory));
-
-        $config->merge($directoryConfig);
+        $config = new Zend_Config(array(
+            Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY => 'Zend_Cloud_StorageService_Adapter_Filesystem',
+            Zend_Cloud_StorageService_Adapter_FileSystem::LOCAL_DIRECTORY => dirname(__FILE__) . '/../_files/data/FileSystemTest'));
 
         return $config;
     }

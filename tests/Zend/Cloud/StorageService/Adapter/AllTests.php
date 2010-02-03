@@ -44,12 +44,12 @@ require_once 'Zend/Cloud/StorageService/Adapter/S3Test.php';
 /**
  * @see Zend_Cloud_StorageService_Adapter_NirvanixTest
  */
-require_once 'Zend/Cloud/Storage/Adapter/NirvanixTest.php';
+require_once 'Zend/Cloud/StorageService/Adapter/NirvanixTest.php';
 
 /**
  * @see Zend_Cloud_StorageService_Adapter_FileSystemTest
  */
-require_once 'Zend/Cloud/Storage/Adapter/FileSystemTest.php';
+require_once 'Zend/Cloud/StorageService/Adapter/FileSystemTest.php';
 
 /**
  * @category   Zend

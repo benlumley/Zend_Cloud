@@ -27,19 +27,15 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
  */
 
 /**
- * @see Zend_Config_Ini
- */
-require_once 'Zend/Config/Ini.php';
-
-/**
- * @see Zend_Cloud_StorageService_Factory
- */
-require_once 'Zend/Cloud/Storage/Factory.php';
-
-/**
  * @see Zend_Cloud_StorageService_StorageServiceTestCase
  */
 require_once 'Zend/Cloud/StorageServiceTestCase.php';
+
+/**
+ * @see Zend_Cloud_StorageService_Adapter_WindowsAzure
+ */
+require_once 'Zend/Cloud/StorageService/Adapter/WindowsAzure.php';
+
 
 /**
  * @category   Zend
@@ -65,17 +61,27 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzureTest extends Zend_Cloud_Stor
         return $this->main();
     }
 
-    /**
-     * Sets up this test case
-     *
-     * @return void
-     */
-    public function setUp() {
-        $config = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/../_files/config/windowsazure.ini'));
+    protected function _getConfig() 
+    {
+        if (!defined('TESTS_ZEND_SERVICE_AZURE_ONLINE_ENABLED') ||
+            !constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_ENABLED') ||
+            !defined('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCOUNTNAME') ||
+            !defined('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCOUNTKEY') ||
+            !defined('TESTS_ZEND_CLOUD_STORAGE_AZURE_CONTAINER')) {
+            $this->markTestSkipped("Windows Azure access not configured, skipping test");        
+        }        
+        
+        $config = new Zend_Config(array(
+            Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY => 'Zend_Cloud_StorageService_Adapter_WindowsAzure',
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::ACCOUNT_NAME => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCOUNTNAME'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::ACCOUNT_KEY => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCOUNTKEY'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::HOST => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_HOST'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::PROXY_HOST => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_HOST'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::PROXY_PORT => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_PORT'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::PROXY_CREDENTIALS => constant('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_CREDENTIALS'),
+            Zend_Cloud_StorageService_Adapter_WindowsAzure::CONTAINER => constant('TESTS_ZEND_CLOUD_STORAGE_AZURE_CONTAINER'),
+        ));
 
-        $this->_commonStorage = Zend_Cloud_StorageService_Factory::getAdapter(
-                                    $config
-                                );
-        parent::setUp();
+        return $config;
     }
 }

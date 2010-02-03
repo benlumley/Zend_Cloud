@@ -24,7 +24,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Cloud_StorageService_AllTests::main');
 }
 
-require_once 'Zend/Cloud/Storage/Adapter/AllTests.php';
+require_once 'Zend/Cloud/StorageService/Adapter/AllTests.php';
 
 /**
  * @see Zend_Cloud_StorageService_FactoryTest
