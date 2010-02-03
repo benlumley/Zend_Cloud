@@ -55,7 +55,9 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function fetchItem($path, $options = array()) {
         $filepath = $this->_getFullPath($path);
-        return file_get_contents(realpath($filepath));
+        $path = realpath($filepath);
+        if(!$path) return false;
+        return file_get_contents($path);
     }
 
     /**
@@ -66,13 +68,13 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      *
      * @TODO Support streams
      *
-     * @param mixed $data
      * @param string $destinationPath
+     * @param mixed $data
      * @param  array $options
      * @return void
      */
-    public function storeItem($data,
-                              $destinationPath,
+    public function storeItem($destinationPath,
+                              $data,
                               $options = array()) {
         $path = $this->_getFullPath($destinationPath);
         file_put_contents($path, $data);
@@ -187,12 +189,13 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * WARNING: This operation overwrites any metadata that is located at
      * $destinationPath.
      *
-     * @param  string $path
+     * @param  string $destinationPath
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($metadata, $destinationPath, $options = array()) {
-        throw new Zend_Cloud_StorageService_Exception('Method not implemented.');
+    public function storeMetadata($destinationPath, $metadata, $options = array()) {
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
 
     /**
@@ -203,7 +206,8 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @return void
      */
     public function deleteMetadata($path) {
-        throw new Zend_Cloud_StorageService_Exception('Method not implemented.');
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
 
     private function _getFullPath($path) {

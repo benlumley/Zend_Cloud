@@ -64,12 +64,13 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
      * Store an item in the storage service.
      * WARNING: This operation overwrites any item that is located at
      * $destinationPath.
-     * @param mixed $data
      * @param string $destinationPath
+     * @param mixed $data
      * @param  array $options
      * @return void
      */
-    public function storeItem($data, $destinationPath, $options = null)
+    public function storeItem($destinationPath,
+                              $data, $options = null)
     {
         $path = $this->_getFullPath($destinationPath);
     	$this->imfs_ns->putContents($path, $data);
@@ -187,7 +188,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($metadata, $destinationPath, $options = null)
+    public function storeMetadata($destinationPath, $metadata, $options = null)
     {
         $destinationPath = $this->_getFullPath($destinationPath);
     	if ($metadata != null)

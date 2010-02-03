@@ -62,12 +62,11 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
 
         if(isset($options[self::HTTP_ADAPTER])) {
             $httpAdapter = $options[self::HTTP_ADAPTER];
+            $this->_s3->getHttpClient()->setAdapter($httpAdapter);
         } else {
-            $adapterName = self::DEFAULT_HTTP_ADAPTER_NAME;
-            $httpAdapter = new $adapterName;
+//            $adapterName = self::DEFAULT_HTTP_ADAPTER_NAME;
+//            $httpAdapter = new $adapterName;
         }
-        $this->_s3->getHttpClient()
-                  ->setAdapter($httpAdapter);
 
         if(isset($options[self::BUCKET_NAME])) {
             $this->_defaultBucketName = $options[self::BUCKET_NAME];
@@ -100,13 +99,13 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      *
      * @TODO Support streams
      *
-     * @param mixed $data
      * @param string $destinationPath
+     * @param string|resource $data
      * @param  array $options
      * @return void
      */
-    public function storeItem($data,
-                              $destinationPath,
+    public function storeItem($destinationPath,
+                              $data,
                               $options = array()) {
 
         $fullPath = $this->_getFullPath($destinationPath, $options);
@@ -206,12 +205,13 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * WARNING: This operation overwrites any metadata that is located at
      * $destinationPath.
      *
-     * @param  string $path
+     * @param  string $destinationPath
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($metadata, $destinationPath, $options = array()) {
-        throw new Zend_Cloud_StorageService_Exception('Method not implemented.');
+    public function storeMetadata($destinationPath, $metadata, $options = array()) {
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
 
     /**
@@ -222,7 +222,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @return void
      */
     public function deleteMetadata($path) {
-        throw new Zend_Cloud_StorageService_Exception('Method not implemented.');
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
 
     protected function _getFullPath($path, $options) {
@@ -231,10 +232,12 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
         } else if(isset($this->_defaultBucketName)) {
             $bucket = $this->_defaultBucketName;
         } else {
+            require_once 'Zend/Cloud/StorageService/Exception.php';
             throw new Zend_Cloud_StorageService_Exception('Bucket name must be specified for S3 adapter.');
         }
 
         if(isset($options[self::BUCKET_AS_DOMAIN])) {
+            require_once 'Zend/Cloud/StorageService/Exception.php';
             throw new Zend_Cloud_StorageService_Exception('The S3 adapter does not support buckets in domain names.');
         }
 

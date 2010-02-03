@@ -20,7 +20,7 @@
 
 require_once 'Zend/Cloud/StorageService.php';
 require_once 'Zend/Loader.php';
-require_once 'Zend/Cloud/Storage/Exception.php';
+require_once 'Zend/Cloud/StorageService/Exception.php';
 
 abstract class Zend_Cloud_StorageService_Factory
 {

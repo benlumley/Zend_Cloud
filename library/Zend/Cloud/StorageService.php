@@ -39,13 +39,13 @@ interface Zend_Cloud_StorageService
      * Store an item in the storage service.
      * WARNING: This operation overwrites any item that is located at 
      * $destinationPath.
-     * @param mixed  $data
      * @param string $destinationPath
+     * @param mixed  $data
      * @param  array $options
      * @return boolean
      */
-    public function storeItem($data,
-                              $destinationPath,
+    public function storeItem($destinationPath,
+                              $data,
                               $options = null);
     
     /**
@@ -118,11 +118,11 @@ interface Zend_Cloud_StorageService
      * WARNING: This operation overwrites any metadata that is located at 
      * $destinationPath.
      *
-     * @param  string $path
+     * @param  string $destinationPath
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($metadata, $destinationPath, $options = null);
+    public function storeMetadata($destinationPath, $metadata, $options = null);
     
     /**
      * Delete a key/value array of metadata at the given path.

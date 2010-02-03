@@ -11,21 +11,20 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cloud_StorageService_Azure
+ * @package    Zend_Cloud
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 require_once 'Zend/Cloud/StorageService.php';
-require_once 'Zend/Cloud/Storage/Exception.php';
 require_once 'Zend/Cloud/OperationNotAvailableException.php';
 require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
-
+require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
  *
  * Windows Azure Blob Service abstraction
- *
+ * 
  * @category   Zend
  * @package    Zend_Cloud
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
@@ -33,57 +32,71 @@ require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
  */
 class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_StorageService
 {
-	/**
+    const ACCOUNT_NAME = 'storage_accountname';
+    const ACCOUNT_KEY = 'storage_accountkey';
+    const HOST = "storage_host";
+    const PROXY_HOST = "storage_proxy_host";
+    const PROXY_PORT = "storage_proxy_port";
+    const PROXY_CREDENTIALS = "storage_proxy_credentials";
+    const CONTAINER = "storage_container";
+    const HTTP_ADAPTER = 'HTTP Adapter';
+    
+    /**
 	 * Storage container to operate on
-	 *
+	 * 
 	 * @var string
 	 */
 	protected $_container;
-
+	
 	/**
 	 * Storage client
-	 *
+	 * 
 	 * @var Zend_Service_Azure_Storage_Blob
 	 */
 	protected $_storageClient = null;
 
 	/**
-	 * Creates a new Zend_Cloud_StorageService_WindowsAzure instance
-	 *
-	 * @param array  $options   Options for the Zend_Cloud_StorageService_WindowsAzure instance
+	 * Creates a new Zend_Cloud_Storage_WindowsAzure instance
+	 * 
+	 * @param array  $options   Options for the Zend_Cloud_Storage_WindowsAzure instance
 	 */
 	public function __construct($options = array())
-	{
+	{		
 		// Build Zend_Service_WindowsAzure_Storage_Blob instance
-		if (!isset($options["storage_host"]))
-			throw new Zend_Cloud_StorageService_Exception('No Windows Azure host name provided.');
-		if (!isset($options['storage_accountname']))
-			throw new Zend_Cloud_StorageService_Exception('No Windows Azure account name provided.');
-		if (!isset($options['storage_accountkey']))
-			throw new Zend_Cloud_StorageService_Exception('No Windows Azure account key provided.');
-
-		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($options['storage_host'], $options['storage_accountname'], $options['storage_accountkey']);
-
+		if (!isset($options[self::HOST]))
+			throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
+		if (!isset($options[self::ACCOUNT_NAME]))
+			throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
+		if (!isset($options[self::ACCOUNT_KEY]))
+			throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
+			
+		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($options[self::HOST],
+		     $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+		
 		// Parse other options
-		if (isset($options['storage_proxy_host']))
+		if (!empty($options[self::PROXY_HOST]))
 		{
-			$proxyHost = $options['storage_proxy_host'];
-			$proxyPort = isset($options["storage_proxy_port"]) ? $options["storage_proxy_port"] : 8080;
-			$proxyCredentials = isset($options["storage_proxy_credentials"]) ? $options["storage_proxy_credentials"] : '';
-
+			$proxyHost = $options[self::PROXY_HOST];
+			$proxyPort = isset($options[self::PROXY_PORT]) ? $options[self::PROXY_PORT] : 8080;
+			$proxyCredentials = isset($options[self::PROXY_CREDENTIALS]) ? $options[self::PROXY_CREDENTIALS] : '';
+			
 			$this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
 		}
-
+		
 		// Set container
-		$this->_container = $options["storage_container"];
+		$this->_container = $options[self::CONTAINER];
 
+		if(isset($options[self::HTTP_ADAPTER])) {
+            $this->_storageClient->setHttpClientChannel($httpAdapter);
+		}
+		
 		// Make sure the container exists
 		if (!$this->_storageClient->containerExists($this->_container))
 		{
 			$this->_storageClient->createContainer($this->_container);
 		}
 	}
-
+	
     /**
      * Get an item from the storage service.
      *
@@ -97,20 +110,20 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     	$returnType = 2; // 1: return a path, 2: return a string, 3: return a resource
     	$returnPath = tempnam('', 'azr');
     	$openMode   = 'r';
-
+    	
     	// Parse options
     	if (is_array($options))
     	{
     		if (isset($options['returntype']))
     			$returnType = $options['returntype'];
-
+    			
     		if (isset($options['returnpath']))
     			$returnPath = $options['returnpath'];
-
+    			
     			if (isset($options['openmode']))
     			$openMode = $options['openmode'];
     	}
-
+    	
     	// Fetch the blob
     	try
     	{
@@ -126,7 +139,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     			return false;
     		throw $e;
     	}
-
+    	
     	// Return value
     	if ($returnType == 1)
     		return $returnPath;
@@ -135,18 +148,18 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     	if ($returnType == 3)
     		return fopen($returnPath, $openMode);
     }
-
+    
     /**
      * Store an item in the storage service.
-     * WARNING: This operation overwrites any item that is located at
+     * WARNING: This operation overwrites any item that is located at 
      * $destinationPath.
-     * @param mixed  $data
      * @param string $destinationPath
+     * @param mixed  $data
      * @param  array $options
      * @return boolean
      */
-    public function storeItem($data,
-                              $destinationPath,
+    public function storeItem($destinationPath,
+                              $data,
                               $options = null)
     {
     	// Create a temporary file that will be uploaded
@@ -162,25 +175,25 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 			while (!feof($fpSource)) {
 				fwrite($fpDestination, fread($fpSource, 8192));
 			}
-
+    		
     		fclose($fpDestination);
-
+    		
     		$removeTemporaryFilePath = true;
     	}
     	else if (file_exists($data))
     	{
     		$temporaryFilePath = $data;
-
+    		
     		$removeTemporaryFilePath = false;
     	}
     	else
     	{
     		$temporaryFilePath = tempnam('', 'azr');
     		file_put_contents($temporaryFilePath, $data);
-
+    		
     		$removeTemporaryFilePath = true;
     	}
-
+		
     	// Upload data
     	$this->_storageClient->putBlob(
     		$this->_container,
@@ -191,7 +204,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     	if ($removeTemporaryFilePath)
     		@unlink($temporaryFilePath);
     }
-
+    
     /**
      * Delete an item in the storage service.
      *
@@ -209,7 +222,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     	}
     	catch (Zend_Service_WindowsAzure_Exception $e) { }
     }
-
+    
     /**
      * Copy an item in the storage service to a given path.
      *
@@ -227,7 +240,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     		$destinationPath
     	);
     }
-
+    
     /**
      * Move an item in the storage service to a given path.
      *
@@ -244,13 +257,13 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     		$this->_container,
     		$destinationPath
     	);
-
+    	
     	$this->_storageClient->deleteBlob(
     		$this->_container,
     		$sourcePath
     	);
     }
-
+    
     /**
      * Rename an item in the storage service to a given name.
      *
@@ -264,10 +277,10 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     {
     	// TODO return $this->moveItem($path, $name, $options)
     }
-
+    
     /**
      * List items in the given directory in the storage service
-     *
+     * 
      * The $path must be a directory
      *
      *
@@ -279,28 +292,28 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     {
         // Options
     	$returnType = 1; // 1: return list of paths, 2: return raw output from underlying provider
-
+    	
     	// Parse options
     	if (is_array($options))
     	{
     		if (isset($options['returntype']))
     			$returnType = $options['returntype'];
     	}
-
+    	
     	// Fetch list
     	$blobList = $this->_storageClient->listBlobs(
     		$this->_container,
     		$path
     	);
-
+    	
     	// Return
     	if ($returnType == 2)
     		return $blobList;
-
+    	
     	$returnValue = array();
     	foreach ($blobList as $blob)
     		$returnValue[] = $blob->Name;
-
+    		
     	return $returnValue;
     }
 
@@ -327,17 +340,17 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     		throw $e;
     	}
     }
-
+    
     /**
      * Store a key/value array of metadata at the given path.
-     * WARNING: This operation overwrites any metadata that is located at
+     * WARNING: This operation overwrites any metadata that is located at 
      * $destinationPath.
      *
-     * @param  string $path
+     * @param  string $destinationPath
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($metadata, $destinationPath, $options = null)
+    public function storeMetadata($destinationPath, $metadata, $options = null)
     {
     	try
     	{
@@ -349,7 +362,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     			throw $e;
     	}
     }
-
+    
     /**
      * Delete a key/value array of metadata at the given path.
      *
@@ -369,10 +382,10 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     			throw $e;
     	}
     }
-
+    
     /**
      * Delete container
-     *
+     * 
      * @return void
      */
     public function deleteContainer()
