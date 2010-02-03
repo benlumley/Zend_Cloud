@@ -29,6 +29,16 @@ require_once 'TestHelper.php';
 require_once 'Zend/Cloud/StorageService.php';
 
 /**
+ * @see Zend_Config
+ */
+require_once 'Zend/Config.php';
+
+/**
+ * @see Zend_Cloud_StorageService_Factory
+ */
+require_once 'Zend/Cloud/StorageService/Factory.php';
+
+/**
  * @see Zend_Http_Client_Adapter_Socket
  */
 require_once 'Zend/Http/Client/Adapter/Socket.php';
@@ -72,7 +82,13 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      */
     protected $_waitPeriod = 1;
 
-	/**
+    public function setUp()
+    {
+        $this->_config = $this->_getConfig();
+        $this->_commonStorage = Zend_Cloud_StorageService_Factory::getAdapter($this->_config);
+    }
+    
+    /**
      * Test fetch item
      *
      * @return void
@@ -106,7 +122,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
     public function testFetchItemStream() {
 
         // TODO Add support for streaming to Zend_Http.
-        $this->markTestSkipped('Zend_Http doesn\'t support streaming.');
+        return $this->markTestIncomplete('Cloud API doesn\'t support streamed fetches yet');
         $dummyNameText = null;
         $dummyNameStream = null;
         try {
@@ -155,17 +171,14 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testStoreItemStream() {
-
-        // TODO Add support for streaming to Zend_Http.
-        $this->markTestSkipped('Zend_Http doesn\'t support streaming.');
-        $dummyNameStream = null;
+    public function testStoreItemStream() 
+    {
+        $dummyNameStream = $this->_dummyNamePrefix . 'ForStoreStream';
         try {
             // Test stream data
-            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Storage/_files/data/dummy_data.txt');
-            $dummyNameStream = $this->_dummyNamePrefix . 'ForStoreStream';
+            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'StorageService/_files/data/dummy_data.txt');
             $stream = fopen($originalFilename, 'r');
-            $this->_commonStorage->storeItem($stream, $dummyNameStream);
+            $this->_commonStorage->storeItem($dummyNameStream, $stream);
             $this->_wait();
             $returnedData = $this->_commonStorage->fetchItem($dummyNameStream);
             $this->assertEquals(file_get_contents($originalFilename), $returnedData);
@@ -184,11 +197,10 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      * @return void
      */
     public function testDeleteItem() {
-        $dummyName = null;
+        $dummyName = $this->_dummyNamePrefix . 'ForDelete';
         try {
             // Test string data
             $originalData = $this->_dummyDataPrefix . 'DeleteItem';
-            $dummyName = $this->_dummyNamePrefix . 'ForDelete';
             $this->_clobberItem($originalData, $dummyName);
             $this->_wait();
             $returnedData = $this->_commonStorage->fetchItem($dummyName);
@@ -208,7 +220,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testCopyItem() {
+    public function testCopyItem() 
+    {
         $this->markTestSkipped('This test should be re-enabled when the semantics of "copy" change');
         try {
             // Test string data
@@ -268,14 +281,15 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testFetchMetadata() {
+    public function testFetchMetadata() 
+    {
         try {
             // Test string data
             $data = $this->_dummyDataPrefix . 'FetchMetadata';
             $dummyName = $this->_dummyNamePrefix . 'ForMetadata';
             $this->_clobberItem($data, $dummyName);
             $this->_wait();
-            $this->_commonStorage->storeMetadata(array('zend' => 'zend'), $dummyName);
+            $this->_commonStorage->storeMetadata($dummyName, array('zend' => 'zend'));
             $this->_wait();
 
             // Hopefully we can assert more about the metadata in the future :/
@@ -292,7 +306,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testListItems() {
+    public function testListItems() 
+    {
         $dummyName1 = null;
         $dummyName2 = null;
         try {
@@ -324,17 +339,33 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
         }
     }
 
-    protected function _wait() {
+    protected function _wait() 
+    {
         sleep($this->_waitPeriod);
     }
 
-    protected function _clobberItem($data, $path) {
+    /**
+     * Put given item at given path
+     * 
+     * Removes old item if it was stored there.
+     * 
+     * @param string $data Data item to place there
+     * @param string $path Path to write
+     */
+    protected function _clobberItem($data, $path) 
+    {
         if($this->_commonStorage->fetchItem($path)) {
             $this->_commonStorage->deleteItem($path);
         }
         $this->_wait();
-        $this->_commonStorage->storeItem($data, $path);
+        $this->_commonStorage->storeItem($path, $data);
     }
+    
+    /**
+     * Get adapter configuration for concrete test
+     * @returns Zend_Config
+     */
+    abstract protected function _getConfig();
 }
 
 
