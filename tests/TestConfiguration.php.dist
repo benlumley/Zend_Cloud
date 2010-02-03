@@ -590,6 +590,7 @@ define('TESTS_ZEND_SERVICE_AZURE_ONLINE_ENABLED', false);
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_ACCESSKEY', <your access key>);
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_SECRETKEY', <your secret key>);
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_HOST', 'blob.core.windows.net');
+define('TESTS_ZEND_SERVICE_AZURE_ONLINE_QUEUE_HOST', 'queue.core.windows.net');
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_CONTAINER', 'zendtest');
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_HOST', '');
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_PORT', 8080);
@@ -599,18 +600,19 @@ define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_CREDENTIALS', '');
  * Zend_Cloud configs
  */
 define('TESTS_ZEND_CLOUD_ONLINE_ENABLED', false);
+define('TESTS_ZEND_CLOUD_STORAGE_S3_BUCKET', 'scapitestbucket');
+define("TESTS_ZEND_CLOUD_STORAGE_AZURE_CONTAINER", 'scapitestcontainer');
+define("TESTS_ZEND_CLOUD_STORAGE_NIRVANIX_DIRECTORY", '/SimpleCloudUnitTests/');
 
 /**
  * Zend_Cloud_Storage_Adapter_Filesystem
  */
 define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM', 'Zend_Cloud_StorageService_Adapter_Filesystem');
-define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM_LOCAL_DIRECTORY', '../_files/data/FileSystemTest');
 
 /**
  * Zend_Cloud_StorageService_Adapter_Nirvanix
  */
 define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_NIRVANIX', 'Zend_Cloud_StorageService_Adapter_Nirvanix');
-define('TESTS_ZEND_CLOUD_ADAPTER_NIRVANIX_REMOTE_DIRECTORY', '/SimpleCloudUnitTests/');
 
 /**
  * Zend_Cloud_StorageService_Adapter_WindowsAzure

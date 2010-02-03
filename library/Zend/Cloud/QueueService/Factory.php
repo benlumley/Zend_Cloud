@@ -20,7 +20,7 @@
 
 require_once 'Zend/Cloud/QueueService.php';
 require_once 'Zend/Loader.php';
-require_once 'Zend/Cloud/Queue/Exception.php';
+require_once 'Zend/Cloud/QueueService/Exception.php';
 
 abstract class Zend_Cloud_QueueService_Factory
 {

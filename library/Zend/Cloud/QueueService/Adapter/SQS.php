@@ -42,7 +42,6 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
     /**
      * Defaults
      */
-    const DEFAULT_HTTP_ADAPTER_NAME = 'Zend_Http_Client_Adapter_Socket';
     const CREATE_TIMEOUT = 30;
 
     /**
@@ -58,11 +57,8 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
 
         if(isset($options[self::HTTP_ADAPTER])) {
             $httpAdapter = $options[self::HTTP_ADAPTER];
-        } else {
-            $adapterName = self::DEFAULT_HTTP_ADAPTER_NAME;
-            $httpAdapter = new $adapterName;
-        }
-        $this->_sqs->getHttpClient()->setAdapter($httpAdapter);
+            $this->_sqs->getHttpClient()->setAdapter($httpAdapter);
+        } 
     }
 
  	/**

@@ -27,19 +27,14 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
  */
 
 /**
- * @see Zend_Config_Ini
- */
-require_once 'Zend/Config/Ini.php';
-
-/**
- * @see Zend_Cloud_QueueService_Factory
- */
-require_once 'Zend/Cloud/Queue/Factory.php';
-
-/**
  * @see Zend_Cloud_QueueServiceTestCase
  */
 require_once 'Zend/Cloud/QueueServiceTestCase.php';
+
+/**
+ * @see Zend_Cloud_QueueeService_Adapter_SQS
+ */
+require_once 'Zend/Cloud/QueueService/Adapter/SQS.php';
 
 /**
  * @category   Zend
@@ -78,16 +73,11 @@ class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueServiceTes
      *
      * @return void
      */
-    public function setUp() {
-        $config = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/../_files/config/sqs.ini'));
-
-        $this->_commonQueue = Zend_Cloud_QueueService_Factory::getAdapter(
-                                    $config
-                                );
-
+    public function setUp() 
+    {
+        parent::setUp();
         // Isolate the tests from slow deletes
         $this->_wait();
-        parent::setUp();
     }
 
     public function testStoreQueueMetadata() {
@@ -96,5 +86,29 @@ class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueServiceTes
 
     public function testPeekMessage() {
         $this->markTestSkipped('The SQS client library does not currently support peeking messages');
+    }
+    
+    protected function _getConfig() 
+    {
+        if (!defined('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED') ||
+            !constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED') ||
+            !defined('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID') ||
+            !defined('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY')) {
+            $this->markTestSkipped("Amazon SQS access not configured, skipping test");        
+        }        
+        
+        $config = new Zend_Config(array(
+            Zend_Cloud_QueueService_Factory::QUEUE_ADAPTER_KEY => 'Zend_Cloud_QueueService_Adapter_SQS',
+            Zend_Cloud_QueueService_Adapter_SQS::AWS_ACCESS_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID'),
+            Zend_Cloud_QueueService_Adapter_SQS::AWS_SECRET_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY'),
+            ));
+
+        return $config;
+    }
+    
+
+    protected function _getMessageText($message) 
+    {
+        return $message['body'];
     }
 }
