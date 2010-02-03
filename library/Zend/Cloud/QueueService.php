@@ -79,22 +79,22 @@ interface Zend_Cloud_QueueService
      * WARNING: This operation overwrites any metadata that is located at 
      * $destinationPath. Some adapters may not support this method.
      * 
-     * @param  array  $metadata
      * @param  string $queueId
+     * @param  array  $metadata
      * @param  array  $options
      * @return void
      */
-    public function storeQueueMetadata($metadata, $queueId, $options = null);
+    public function storeQueueMetadata($queueId, $metadata,  $options = null);
     
     /**
      * Send a message to the specified queue.
      * 
-     * @param  string $message
      * @param  string $queueId
+     * @param  string $message
      * @param  array  $options
      * @return string Message ID
      */
-    public function sendMessage($message, $queueId, $options = null);
+    public function sendMessage($queueId, $message,  $options = null);
     
     /**
      * Recieve at most $max messages from the specified queue and return the
@@ -104,20 +104,25 @@ interface Zend_Cloud_QueueService
      * @param  int    $max
      * @param  array  $options
      * @return array
+     * TODO: should we define message type? Will it affect portability?
      */
     public function receiveMessages($queueId, $max = 1, $options = null);
     
     /**
      * Delete the specified message from the specified queue.
      * 
-     * @param  string $messageId
      * @param  string $queueId
+     * @param  $message Message to delete 
      * @param  array  $options
      * @return void
+     * 
      */
-    public function deleteMessage($messageId, $queueId, $options = null);
+    public function deleteMessage($queueId, $message,  $options = null);
+    
+    public function getAdapter();
     
     /**
+     * TODO: Right now we don't know what API to choose for peekMessage
      * Peek at the specified message from the specified queue.
      * WARNING: This operation may block other receivers from recieving the
      * message until the message is released from the peeker for services
@@ -125,10 +130,10 @@ interface Zend_Cloud_QueueService
      * performance and/or introduce concurrency issues in your applications.
      * Check your cloud vendor's documentation for more details.
      *
-     * @param  string $messageId
      * @param  string $queueId
+     * @param  string $messageId
      * @param  array  $options
      * @return string Message body
      */
-    public function peekMessage($messageId, $queueId, $options = null);
+    // public function peekMessage($queueId, $messageId, $options = null);
 }
