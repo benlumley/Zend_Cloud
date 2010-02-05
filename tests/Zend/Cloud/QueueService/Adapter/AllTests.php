@@ -44,7 +44,7 @@ require_once 'Zend/Cloud/QueueService/Adapter/WindowsAzureTest.php';
 /**
  * @see Zend_Cloud_QueueService_Adapter_ZendQueueTest
  */
-// require_once 'Zend/Cloud/QueueService/Adapter/ZendQueueTest.php';
+require_once 'Zend/Cloud/QueueService/Adapter/ZendQueueTest.php';
 
 /**
  * @category   Zend
@@ -76,7 +76,7 @@ class Zend_Cloud_QueueService_Adapter_AllTests
 
         $suite->addTestSuite('Zend_Cloud_QueueService_Adapter_SQSTest');
         $suite->addTestSuite('Zend_Cloud_QueueService_Adapter_WindowsAzureTest');
-//        $suite->addTestSuite('Zend_Cloud_QueueService_Adapter_ZendQueueTest');
+        $suite->addTestSuite('Zend_Cloud_QueueService_Adapter_ZendQueueTest');
 
         return $suite;
     }

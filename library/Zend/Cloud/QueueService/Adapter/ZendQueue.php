@@ -42,6 +42,8 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     protected $_queue = null;
     
+    protected $_queues = array();
+    
     public function __construct ($options = array())
     {
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
@@ -66,7 +68,8 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     public function createQueue ($name, $options = null)
     {
         try {
-            return $this->_queue->createQueue($name, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
+            $this->_queues[$name] = $this->_queue->createQueue($name, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
+            return $name;
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e);
         }
@@ -81,12 +84,13 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function deleteQueue ($queueId, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            return false;
+        }
         try {
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                return $queueId->deleteQueue();
-            } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: queue object should be passed');
+            if($this->_queues[$queueId]->deleteQueue()) {
+                unset($this->_queues[$queueId]);
+                return true;
             }
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e);
@@ -102,7 +106,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     public function listQueues ($options = null)
     {
         try {
-            return $this->_queue->listQueues();
+            return $this->_queue->getQueues();
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e);
         }
@@ -117,13 +121,11 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function fetchQueueMetadata ($queueId, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            return false;
+        }
         try {
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                return $queueId->getOptions();
-            } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: queue object should be passed');
-            }
+            return $this->_queues[$queueId]->getOptions();
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: '.$e->getMessage(), $e);
         }
@@ -141,13 +143,11 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function storeQueueMetadata ($queueId, $metadata, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
+        }
         try {
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                return $queueId->setOptions($metadata);
-            } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on setting queue metadata: queue object should be passed');
-            }
+            return $this->_queues[$queueId]->setOptions($metadata);
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on setting queue metadata: '.$e->getMessage(), $e);
         }
@@ -163,13 +163,11 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function sendMessage ($queueId, $message, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
+        }
         try {
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                return $queueId->send($message);
-            } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on sending messag: queue object should be passed');
-            }
+            return $this->_queues[$queueId]->send($message);
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e);
         }
@@ -186,21 +184,19 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function receiveMessages ($queueId, $max = 1, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
+        }
         try {
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                $res = $queueId->receive($max, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
-                if($res instanceof Iterator) {
-                    $messages = array();
-                    foreach($res as $message) {
-                        $messages[] = $message;
-                    }
-                    return $messages; 
-                } else {
-                    return $res;
+            $res = $this->_queues[$queueId]->receive($max, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
+            if($res instanceof Iterator) {
+                $messages = array();
+                foreach($res as $message) {
+                    $messages[] = $message;
                 }
+                return $messages; 
             } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: queue object should be passed');
+                return $res;
             }
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e);
@@ -217,17 +213,15 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function deleteMessage ($queueId, $message, $options = null)
     {
+        if(!isset($this->_queues[$queueId])) {
+            throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
+        }
         try {
             if(!($message instanceof Zend_Queue_Message)) {
                 throw new Zend_Cloud_QueueService_Exception('Cannot delete the message: Zend_Queue_Message object required');
             }
             
-            // TODO: maybe we should track IDs and accept string ID too?
-            if($queueId instanceof Zend_Queue) {
-                return $queueId->deleteMessage($message);
-            } else {
-                throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: queue object should be passed');
-            }
+            return $this->_queues[$queueId]->deleteMessage($message);
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e);
         }
