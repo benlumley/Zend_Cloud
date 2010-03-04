@@ -72,46 +72,39 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
      */
     protected $_waitPeriod = 1;
 
-    public function testCreateCollection() {
-
-    }
+    public function testDocumentService()
+    {
+        $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService); 
+    } 
+    
+    
+    public function testCreateCollection() {}
 
     public function testDeleteCollection() {}
 
     public function testListCollections() {}
 
-    public function testListDocuments() {}
-
     public function testInsertDocument() {}
 
     public function testUpdateDocument() {}
 
+    public function testReplaceDocument() {}
+    
     public function testDeleteDocument(){}
 
     public function testQuery() {}
 
-//    public function testPeekMessage() {
-//    $queueURL = null;
-//        try{
-//            $queueURL = $this->_commonQueue->createQueue('testPeekMessage');
-//            $this->assertNotNull($queueURL);
-//            $this->_wait();
-//            $message1 = 'testPeekMessage - Message 1';
-//            $messageID = $this->_commonQueue->sendMessage($message1, $queueURL);
-//            $this->_wait();
-//
-//            $peekedMessage = $this->_commonQueue->peekMessage($messageID, $queueURL);
-//            $this->assertEquals($message1, $peekedMessage);
-//            $this->_commonQueue->deleteMessage(array_pop($peekedMessages), $queueURL);
-//        } catch(Exception $e) {
-//            $this->_commonQueue->deleteQueue($queueURL);
-//            throw $e;
-//        }
-//    }
-
     protected function _wait() {
         sleep($this->_waitPeriod);
     }
+    
+    public function setUp() 
+    {
+        $this->_config = $this->_getConfig();
+        $this->_commonDocument = Zend_Cloud_DocumentService_Factory::getAdapter($this->_config);
+    } 
+    
+    abstract protected function _getConfig();
 }
 
 

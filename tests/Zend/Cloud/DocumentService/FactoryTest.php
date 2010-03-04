@@ -63,51 +63,24 @@ class Zend_Cloud_DocumentService_FactoryTest extends Zend_Cloud_FactoryTest
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     *
-     * @return void
-     */
-    public function setUp()
+    public function testGetDocumentAdapterKey()
     {
-    }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-    }
-
-    public function testGetQueueAdapterKey()
-    {
-        $this->assertTrue(is_string(Zend_Cloud_DocumentService_Factory::ADAPTER));
+        $this->assertTrue(is_string(Zend_Cloud_DocumentService_Factory::DOCUMENT_ADAPTER_KEY));
     }
 
     public function testGetAdapterWithConfig() {
         // SimpleDB adapter
         $simpleDBAdapter = Zend_Cloud_DocumentService_Factory::getAdapter(
-                                    Zend_Cloud_DocumentService_Adapter_SimpleDBTest::getConfig()
-                                );
-
-        $this->assertEquals('Zend_Cloud_StorageService_Adapter_SimpleDB', get_class($simpleDBAdapter));
-    }
-
-    public function testGetAdapterWithArray() {
-
-        // No need to overdo it; we'll test the array config with just one adapter.
-        $simpleDBConfig = array(Zend_Cloud_DocumentService_Factory::ADAPTER =>
-        					     'Zend_Cloud_DocumentService_Adapter_SimpleDB');
-
-        $simpleDBAdapter = Zend_Cloud_DocumentService_Factory::getAdapter(
-                                    $simpleDBConfig
+                                    new Zend_Config(Zend_Cloud_DocumentService_Adapter_SimpleDBTest::getConfigArray())
                                 );
 
         $this->assertEquals('Zend_Cloud_DocumentService_Adapter_SimpleDB', get_class($simpleDBAdapter));
+        // Azure adapter
+        $azureAdapter = Zend_Cloud_DocumentService_Factory::getAdapter(
+                                    new Zend_Config(Zend_Cloud_DocumentService_Adapter_WindowsAzureTest::getConfigArray())
+                                );
+
+        $this->assertEquals('Zend_Cloud_DocumentService_Adapter_WindowsAzure', get_class($azureAdapter));
     }
 }
 
