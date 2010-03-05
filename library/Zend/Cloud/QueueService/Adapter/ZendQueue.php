@@ -18,7 +18,6 @@
 require_once 'Zend/Queue.php';
 require_once 'Zend/Cloud/QueueService.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
-require_once 'Zend/Cloud/OperationNotAvailableException.php';
 /**
  * WindowsAzure adapter for simple queue service.
  *
@@ -48,7 +47,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     {
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
         if (! isset($options[self::ADAPTER])) {
-            throw new Zend_Cloud_Storage_Exception('No Zend_Queue adapter provided');
+            throw new Zend_Cloud_QueueService_Exception('No Zend_Queue adapter provided');
         } else {
             $adapter = $options[self::ADAPTER];
             unset($options[self::ADAPTER]);
@@ -71,7 +70,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
             $this->_queues[$name] = $this->_queue->createQueue($name, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
             return $name;
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -93,7 +92,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
                 return true;
             }
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -108,7 +107,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
         try {
             return $this->_queue->getQueues();
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -127,7 +126,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
         try {
             return $this->_queues[$queueId]->getOptions();
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -149,7 +148,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
         try {
             return $this->_queues[$queueId]->setOptions($metadata);
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on setting queue metadata: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on setting queue metadata: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -169,7 +168,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
         try {
             return $this->_queues[$queueId]->send($message);
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -199,7 +198,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
                 return $res;
             }
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -223,7 +222,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
             
             return $this->_queues[$queueId]->deleteMessage($message);
         } catch (Zend_Queue_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -242,6 +241,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     public function peekMessage ($queueId, $messageId, $options = null)
     {
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('WindowsAzure doesn\'t currently support message peeking');
     }
     

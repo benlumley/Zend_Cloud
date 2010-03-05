@@ -63,12 +63,15 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 	public function __construct($options = array())
 	{		
 		// Build Zend_Service_WindowsAzure_Storage_Blob instance
-		if (!isset($options[self::HOST]))
+		if (!isset($options[self::HOST])) {
 			throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
-		if (!isset($options[self::ACCOUNT_NAME]))
+		}
+		if (!isset($options[self::ACCOUNT_NAME])) {
 			throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
-		if (!isset($options[self::ACCOUNT_KEY]))
+		}
+		if (!isset($options[self::ACCOUNT_KEY])) {
 			throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
+		}
 			
 		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($options[self::HOST],
 		     $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
@@ -326,17 +329,15 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
      */
     public function fetchMetadata($path, $options = null)
     {
-    	try
-    	{
+    	try {
 	    	return $this->_storageClient->getBlobMetaData(
 	    		$this->_container,
 	    		$path
 	    	);
-    	}
-    	catch (Zend_Service_WindowsAzure_Exception $e)
-    	{
-    		if (strpos($e->getMessage(), "could not be accessed") !== false)
+    	} catch (Zend_Service_WindowsAzure_Exception $e) {
+    		if (strpos($e->getMessage(), "could not be accessed") !== false) {
     			return false;
+    		}
     		throw $e;
     	}
     }
@@ -352,14 +353,12 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
      */
     public function storeMetadata($destinationPath, $metadata, $options = null)
     {
-    	try
-    	{
+    	try	{
     		$this->_storageClient->setBlobMetadata($this->_container, $destinationPath, $metadata);
-    	}
-    	catch (Zend_Service_WindowsAzure_Exception $e)
-    	{
-    		if (strpos($e->getMessage(), "could not be accessed") === false)
+    	} catch (Zend_Service_WindowsAzure_Exception $e) {
+    		if (strpos($e->getMessage(), "could not be accessed") === false) {
     			throw $e;
+    		}
     	}
     }
     

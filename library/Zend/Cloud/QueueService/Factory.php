@@ -18,27 +18,25 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/QueueService.php';
-require_once 'Zend/Loader.php';
-require_once 'Zend/Cloud/QueueService/Exception.php';
+require_once 'Zend/Cloud/FactoryAbstract.php';
 
-abstract class Zend_Cloud_QueueService_Factory
+class Zend_Cloud_QueueService_Factory extends Zend_Cloud_FactoryAbstract
 {
     const QUEUE_ADAPTER_KEY = 'queue_adapter';
 
-    public static function getAdapter($options = array()) {
-        if($options instanceof Zend_Config) {
-            $options = $options->toArray();
-        }
-
-        if(array_key_exists(self::QUEUE_ADAPTER_KEY, $options)) {
-            $classname = $options[self::QUEUE_ADAPTER_KEY];
-            unset($options[self::QUEUE_ADAPTER_KEY]);
-            Zend_Loader::loadClass($classname);
-            return new $classname($options);
-        } else {
+    private function __construct()
+    {
+        // private ctor - should not be used
+    }
+    
+    public static function getAdapter($options = array()) 
+    {
+        $adapter = parent::_getAdapter(self::QUEUE_ADAPTER_KEY, $options);
+        if(!$adapter) {
+            require_once 'Zend/Cloud/QueueService/Exception.php';
             throw new Zend_Cloud_QueueService_Exception('Class must be specified using the \'' .
-            self::QUEUE_ADAPTER_KEY . '\' key.');
+            self::QUEUE_ADAPTER_KEY . '\' key');
         }
+        return $adapter;
     }
 }

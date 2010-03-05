@@ -31,7 +31,8 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
 	protected $_remoteDirectory;
 	private $maxPageSize = 500;
 
-	function __construct($options = array()) {
+	function __construct($options = array()) 
+	{
 		$auth = array('username' => $options[self::USERNAME],
 		              'password' => $options[self::PASSWORD],
 		              'appKey'   => $options[self::APP_KEY]);
@@ -69,8 +70,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
      * @param  array $options
      * @return void
      */
-    public function storeItem($destinationPath,
-                              $data, $options = null)
+    public function storeItem($destinationPath, $data, $options = null)
     {
         $path = $this->_getFullPath($destinationPath);
     	$this->imfs_ns->putContents($path, $data);

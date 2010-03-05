@@ -18,25 +18,29 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/FactoryAbstract.php';
-
-class Zend_Cloud_StorageService_Factory extends Zend_Cloud_FactoryAbstract
+class Zend_Cloud_FactoryAbstract
 {
-    const STORAGE_ADAPTER_KEY = 'storage_adapter';
-    
     private function __construct()
     {
         // private ctor - should not be used
     }
     
-    public static function getAdapter($options = array()) 
+    protected static function _getAdapter($adapterOption, $options) 
     {
-        $adapter = parent::_getAdapter(self::STORAGE_ADAPTER_KEY, $options);
-        if(!$adapter) {
-            require_once 'Zend/Cloud/StorageService/Exception.php';
-            throw new Zend_Cloud_StorageService_Exception('Class must be specified using the \'' .
-            self::STORAGE_ADAPTER_KEY . '\' key');
+        if($options instanceof Zend_Config) {
+            $options = $options->toArray();
         }
-        return $adapter;
+
+        if(array_key_exists($adapterOption, $options)) {
+            $classname = $options[$adapterOption];
+            unset($options[$adapterOption]);
+            if(!class_exists($classname)) {
+                require_once 'Zend/Loader.php';
+                Zend_Loader::loadClass($classname);
+                return new $classname($options);
+            }
+        } else {
+            return null;
+        }
     }
 }

@@ -19,7 +19,6 @@
 require_once 'Zend/Service/Amazon/Sqs.php';
 require_once 'Zend/Cloud/QueueService.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
-require_once 'Zend/Cloud/OperationNotAvailableException.php';
 
 /**
  * SQS adapter for simple queue service.
@@ -75,7 +74,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
         try {
             return $this->_sqs->create($name, $options[self::CREATE_TIMEOUT]);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -90,7 +89,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
         try {
             return $this->_sqs->delete($queueId);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e);
+            throw Zend_Cloud_QueueService_Exception::adapterException('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -105,7 +104,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
 
             return $this->_sqs->getQueues();
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -126,7 +125,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
                 return array('All' => $this->_sqs->getAttribute($queueId, 'All'));
             }
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on fetching queue metadata: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -140,9 +139,11 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
      * @param  array  $options
      * @return void
      */
-    public function storeQueueMetadata($queueId, $metadata, $options = null) {
+    public function storeQueueMetadata($queueId, $metadata, $options = null) 
+    {
         // TODO Add support for SetQueueAttributes to client library
-        throw new Zend_Cloud_OperationNotAvailableException();
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        throw new Zend_Cloud_OperationNotAvailableException('Amazon SQS doesn\'t currently support storing metadata');
     }
 
     /**
@@ -153,11 +154,12 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
      * @param  array  $options
      * @return string Message ID
      */
-    public function sendMessage($queueId, $message, $options = null) {
+    public function sendMessage($queueId, $message, $options = null) 
+    {
         try {
             return $this->_sqs->send($queueId, $message);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -170,11 +172,12 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
      * @param  array  $options
      * @return array
      */
-    public function receiveMessages($queueId, $max = 1, $options = null) {
+    public function receiveMessages($queueId, $max = 1, $options = null) 
+    {
         try {
             return $this->_sqs->receive($queueId, $max, $options[self::VISIBILITY_TIMEOUT]);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -186,11 +189,12 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
      * @param  array  $options
      * @return void
      */
-    public function deleteMessage($queueId, $messageId, $options = null) {
+    public function deleteMessage($queueId, $messageId, $options = null) 
+    {
         try {
             return $this->_sqs->deleteMessage($queueId, $messageId);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -207,7 +211,9 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
      * @param  array  $options
      * @return string Message body
      */
-    public function peekMessage($queueId, $messageId, $options = null) {
+    public function peekMessage($queueId, $messageId, $options = null) 
+    {
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException(
         	'Amazon SQS doesn\'t currently support message peeking'
         );
