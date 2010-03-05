@@ -61,16 +61,6 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     protected $_signatureMethod = 'HmacSHA256';
 
     /**
-     * @var string Amazon Secret Key
-     */
-    protected $_secretKey;
-
-    /**
-     * @var string Amazon Access Key
-     */
-    protected $_accessKey;
-
-    /**
      * Create Amazon SimpleDB client.
      *
      * @param  string $access_key       Override the default Access Key
@@ -80,13 +70,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
     public function __construct($accessKey, $secretKey)
     {
-        if(!$accessKey || !$secretKey) {
-            require_once 'Zend/Service/Amazon/Exception.php';
-            throw new Zend_Service_Amazon_Exception("AWS keys were not supplied");
-        }
-        $this->_accessKey = $accessKey;
-        $this->_secretKey = $secretKey;
-
+        parent::__construct($accessKey, $secretKey);
         $this->setEndpoint("https://" . $this->_sdbEndpoint);
     }
 
@@ -114,11 +98,13 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      *
      * @return Zend_Uri_Http
      */
-    public function getEndpoint() {
+    public function getEndpoint() 
+    {
     	return $this->_endpoint;
     }
 
-    public function getAttributes($domainName, $itemName, $attributeName = null) {
+    public function getAttributes($domainName, $itemName, $attributeName = null) 
+    {
         $params = array();
 	    $params['Action'] = 'GetAttributes';
 	    $params['DomainName'] = $domainName;
@@ -155,7 +141,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     public function putAttributes($domainName,
                                   $itemName,
                                   $attributes,
-                                  $replace = array()) {
+                                  $replace = array()
+   ) {
         $params = array();
 	    $params['Action'] = 'PutAttributes';
 	    $params['DomainName'] = $domainName;
@@ -180,7 +167,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $response = $this->_sendRequest($params);
     }
 
-    public function batchPutAttributes($items, $domainName, $replace = array()) {
+    public function batchPutAttributes($items, $domainName, $replace = array()) 
+    {
 
         $params = array();
         $params['Action'] = 'BatchPutAttributes';
@@ -208,7 +196,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $response = $this->_sendRequest($params);
     }
 
-    public function deleteAttributes($domainName, $itemName, $attributes) {
+    public function deleteAttributes($domainName, $itemName, $attributes) 
+    {
         $params = array();
 	    $params['Action'] = 'DeleteAttributes';
 	    $params['DomainName'] = $domainName;
@@ -234,7 +223,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      * @param $nextToken          int
      * @return array              0 or more domain names
      */
-    public function listDomains($maxNumberOfDomains = 100, $nextToken = null) {
+    public function listDomains($maxNumberOfDomains = 100, $nextToken = null) 
+    {
         $params = array();
 	    $params['Action'] = 'ListDomains';
 	    $params['MaxNumberOfDomains'] = $maxNumberOfDomains;
@@ -261,7 +251,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      * @param $domainName string Name of the domain for which metadata will be requested
      * @return array Key/value array of metadatum names and values.
      */
-    public function domainMetadata($domainName) {
+    public function domainMetadata($domainName) 
+    {
         $params = array();
 	    $params['Action'] = 'DomainMetadata';
 	    $params['DomainName'] = $domainName;
@@ -284,7 +275,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      * @param $domainName	string	Valid domain name of the domain to create
      * @return 				boolean True if successful, false if not
      */
-	public function createDomain($domainName) {
+	public function createDomain($domainName) 
+	{
         $params = array();
 	    $params['Action'] = 'CreateDomain';
 	    $params['DomainName'] = $domainName;
@@ -296,7 +288,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      * @param 	$domainName string  Valid domain name of the domain to delete
      * @return 				boolean True if successful, false if not
      */
-	public function deleteDomain($domainName) {
+	public function deleteDomain($domainName) 
+	{
 	    $params = array();
 	    $params['Action'] = 'DeleteDomain';
 	    $params['DomainName'] = $domainName;
@@ -309,7 +302,8 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      * @param $nextToken
      * @return unknown_type
      */
-	public function select($selectExpression, $nextToken = null) {
+	public function select($selectExpression, $nextToken = null) 
+	{
         $params = array();
 	    $params['Action'] = 'Select';
 	    $params['SelectExpression'] = $selectExpression;
@@ -340,7 +334,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
 
         return new Zend_Service_Amazon_SimpleDB_Page($attributes, $nextToken);
     }
-
+    
    /**
      * Sends a HTTP request to the SimpleDB service using Zend_Http_Client
      *
@@ -350,14 +344,11 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
     protected function _sendRequest(array $params = array())
     {
-        $url = 'https://' . $this->_getRegion() . $this->_sdbEndpoint . '/';
-
         // UTF-8 encode all parameters and replace '+' characters
         foreach($params as $name => $value) {
             unset($params[$name]);
 //            $value = str_replace(' ', '%20', utf8_encode($value));
             $params[utf8_encode($name)] = $value;
-
         }
 
         $params = $this->_addRequiredParameters($params);
@@ -373,19 +364,20 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             ));
 
 
-            $request->setUri($url);
+            $request->setUri($this->getEndpoint());
             $request->setMethod(Zend_Http_Client::POST);
-            $request->setEncType('application/x-www-form-urlencoded');
-            $request->setParameterPost($params);
-
+            //$request->setEncType(Zend_Http_Client::ENC_URLENCODED);
+            //$request->setParameterPost($params);
+            foreach($params as $key => $value) {
+                $params_out[] = rawurlencode($key)."=".rawurlencode($value);
+            }
+            $request->setRawData(join('&', $params_out), Zend_Http_Client::ENC_URLENCODED);
             $httpResponse = $request->request();
         } catch (Zend_Http_Client_Exception $zhce) {
             $message = 'Error in request to AWS service: ' . $zhce->getMessage();
             throw new Zend_Service_Amazon_SimpleDB_Exception($message, $zhce->getCode());
         }
         $response = new Zend_Service_Amazon_SimpleDB_Response($httpResponse);
-        simplexml_import_dom($response->getDocument())->asXML();
-        $request->getLastRequest();
         $this->_checkForErrors($response);
         return $response;
     }
@@ -444,7 +436,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     protected function _signParameters(array $paramaters)
     {
         $data = "POST\n";
-        $data .= $this->_getRegion() . $this->_sdbEndpoint . "\n";
+        $data .= $this->getEndpoint()->getHost() . "\n";
         $data .= "/\n";
 
         uksort($paramaters, 'strcmp');
@@ -487,25 +479,5 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             $message = $xpath->evaluate('string(Message/text())', $node);
             throw new Zend_Service_Amazon_SimpleDB_Exception($message, 0, $code);
         }
-    }
-
-    /**
-     * Method to fetch the Access Key
-     *
-     * @return string
-     */
-    protected function _getAccessKey()
-    {
-        return $this->_accessKey;
-    }
-
-    /**
-     * Method to fetch the Secret AWS Key
-     *
-     * @return string
-     */
-    protected function _getSecretKey()
-    {
-        return $this->_secretKey;
     }
 }
