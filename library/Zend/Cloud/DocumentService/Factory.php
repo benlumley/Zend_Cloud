@@ -18,13 +18,25 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/DocumentService.php';
-require_once 'Zend/Loader.php';
-require_once 'Zend/Cloud/DocumentService/Exception.php';
+require_once 'Zend/Cloud/FactoryAbstract.php';
 
-/**
- * @see Zend_Cloud_Factory
- */
-require_once 'Zend/Cloud/Factory.php';
+class Zend_Cloud_DocumentService_Factory extends Zend_Cloud_FactoryAbstract
+{
+    const DOCUMENT_ADAPTER_KEY = 'document_adapter';
 
-abstract class Zend_Cloud_DocumentService_Factory extends Zend_Cloud_Factory {}
+    private function __construct()
+    {
+        // private ctor - should not be used
+    }
+    
+    public static function getAdapter($options = array()) 
+    {
+        $adapter = parent::_getAdapter(self::DOCUMENT_ADAPTER_KEY, $options);
+        if(!$adapter) {
+            require_once 'Zend/Cloud/DocumentService/Exception.php';
+            throw new Zend_Cloud_DocumentService_Exception('Class must be specified using the \'' .
+            self::DOCUMENT_ADAPTER_KEY . '\' key');
+        }
+        return $adapter;
+    }
+}

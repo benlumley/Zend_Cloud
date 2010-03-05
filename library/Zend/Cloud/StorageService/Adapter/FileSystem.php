@@ -33,7 +33,10 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * Options array keys for the file system adapter.
      */
     const LOCAL_DIRECTORY = 'local_directory';
-
+    /**
+     * The directory for the data
+     * @var string
+     */
     protected $_directory = null;
 
     public function __construct($options = array()) 
@@ -220,8 +223,23 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
         throw new Zend_Cloud_OperationNotAvailableException('Deleting metadata not implemented');
     }
 
+    /**
+     * Return the full path for the file.
+     * 
+     * @param string $path
+     * @return string
+     */
     private function _getFullPath($path) 
     {
         return $this->_directory . DIRECTORY_SEPARATOR . $path;
+    }
+
+    /**
+     * Get the concrete adapter.
+     * @return strings
+     */
+    public function getAdapter()
+    {
+         return $this->_directory;       
     }
 }

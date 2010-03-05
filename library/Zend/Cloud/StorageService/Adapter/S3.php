@@ -50,6 +50,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
 
     /**
      * S3 service instance.
+     * @var Zend_Service_Amazon_S3
      */
     protected $_s3;
     protected $_defaultBucketName = null;
@@ -139,7 +140,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      */
     public function copyItem($sourcePath, $destinationPath, $options = array()) {
         // TODO We *really* need to add support for object copying in the S3 adapter
-        $item = $this->fetchItem($_getFullPath(sourcePath), $options);
+        $item = $this->fetch($_getFullPath(sourcePath), $options);
         $this->storeItem($item, $destinationPath, $options);
     }
 
@@ -156,9 +157,10 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return void
      */
-    public function moveItem($sourcePath, $destinationPath, $options = array()) {
+    public function moveItem($sourcePath, $destinationPath, $options = array()) 
+    {
         // TODO We *really* need to add support for object copying in the S3 adapter
-        $item = $this->fetchItem($sourcePath, $options);
+        $item = $this->fetch($sourcePath, $options);
         $this->storeItem($item, $destinationPath, $options);
         $this->deleteItem($sourcePath, $options);
     }
@@ -184,7 +186,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return array A list of item names
      */
-    public function listItems($path, $options = null) {
+    public function listItems($path, $options = null) 
+    {
         // TODO Support 'prefix' parameter for Zend_Service_Amazon_S3::getObjectsByBucket()
         return $this->_s3->getObjectsByBucket($this->_defaultBucketName);
     }
@@ -196,7 +199,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return array
      */
-    public function fetchMetadata($path, $options = array()) {
+    public function fetchMetadata($path, $options = array()) 
+    {
         return $this->_s3->getInfo($this->_getFullPath($path, $options));
     }
 
@@ -209,7 +213,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($destinationPath, $metadata, $options = array()) {
+    public function storeMetadata($destinationPath, $metadata, $options = array()) 
+    {
         require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
@@ -221,12 +226,14 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return void
      */
-    public function deleteMetadata($path) {
+    public function deleteMetadata($path) 
+    {
         require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Method not implemented.');
     }
 
-    protected function _getFullPath($path, $options) {
+    protected function _getFullPath($path, $options) 
+    {
         if(isset($options[self::BUCKET_NAME])) {
             $bucket = $options[self::BUCKET_NAME];
         } else if(isset($this->_defaultBucketName)) {
@@ -242,5 +249,14 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
         }
 
         return trim($bucket) . '/' . trim($path);
+    }
+
+    /**
+     * Get the concrete adapter.
+     * @return Zend_Service_Amazon_S3
+     */
+    public function getAdapter()
+    {
+         return $this->_s3;       
     }
 }

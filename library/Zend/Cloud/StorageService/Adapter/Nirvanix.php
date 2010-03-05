@@ -26,6 +26,11 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
     const APP_KEY  = 'auth_accesskey';
     const REMOTE_DIRECTORY = 'remote_directory';
 
+    /**
+     * The Nirvanix adapter
+     * @var Zend_Service_Nirvanix
+     */
+    protected $_nirvanix;
 	protected $imfs_ns;
 	protected $metadata_ns;
 	protected $_remoteDirectory;
@@ -36,7 +41,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
 		$auth = array('username' => $options[self::USERNAME],
 		              'password' => $options[self::PASSWORD],
 		              'appKey'   => $options[self::APP_KEY]);
-		$nirvanix = new Zend_Service_Nirvanix($auth);
+		$this->_nirvanix = new Zend_Service_Nirvanix($auth);
 		$this->_remoteDirectory = $options[self::REMOTE_DIRECTORY];
 		$this->imfs_ns = $nirvanix->getService('IMFS');
 		$this->metadata_ns = $nirvanix->getService('Metadata');
@@ -311,5 +316,13 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
     private function _getFullPath($path) {
         return $this->_remoteDirectory . $path;
     }
+
+    /**
+     * Get the concrete adapter.
+     * @return Zend_Service_Nirvanix
+     */
+    public function getAdapter()
+    {
+         return $this->_nirvanix;       
+    }
 }
-?>

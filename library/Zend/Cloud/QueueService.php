@@ -119,8 +119,11 @@ interface Zend_Cloud_QueueService
      */
     public function deleteMessage($queueId, $message,  $options = null);
     
+    /**
+     * Get the concrete adapter.
+     */
     public function getAdapter();
-    
+        
     /**
      * TODO: Right now we don't know what API to choose for peekMessage
      * Peek at the specified message from the specified queue.

@@ -30,19 +30,13 @@
  */
 class Zend_Cloud_DocumentService_Document
 {
+    const KEY_FIELD = "__zend_key";
     /**
      * ID of this document.
      *
-     * @var string
+     * @var mixed
      */
 	protected $_id;
-
-    /**
-     * Collection name that this document is associated with.
-     *
-     * @var string
-     */
-	protected $_collection;
 
 	/**
 	 * Name/value array of field names to values.
@@ -57,9 +51,8 @@ class Zend_Cloud_DocumentService_Document
 	 * @param string $collection
 	 * @param array  $fields
 	 */
-	public function __construct($id, $collection, $fields) {
+	public function __construct($id, $fields) {
 	    $this->_id = $id;
-        $this->_collection = $collection;
         $this->_fields = $fields;
 	}
 
@@ -70,15 +63,6 @@ class Zend_Cloud_DocumentService_Document
 	 */
 	public function getID() {
 	    return $this->_id;
-	}
-
-	/**
-	 * Get collection name.
-	 *
-	 * @return string
-	 */
-	public function getCollection() {
-	    return $this->_collection;
 	}
 
 	/**
@@ -96,7 +80,45 @@ class Zend_Cloud_DocumentService_Document
 	 * @param  string $name
 	 * @return string
 	 */
-    public function getField($name) {
+    public function getField($name)
+    {
 	    return $this->_fields[$name];
+	}
+	
+	/**
+	 * Get field by name.
+	 *
+	 * @param  string $name
+	 * @return string
+	 */
+    public function setField($name) 
+    {
+	    return $this->_fields[$name];
+	}
+	
+	public function __get($name)
+	{
+	    return $this->_fields[$name];
+	}
+
+	public function __set($name, $value)
+	{
+	    $this->_fields[$name] = $value;
+	}
+	
+	public function __call($name, $args)
+	{
+        if(substr($name, 0, 3) == 'get') {
+            $option = substr($name, 3);
+            // get value
+            return $this->getField($option);
+        } elseif(substr($name, 0, 3) == 'set') {
+            $option = substr($name, 3);
+            // set value
+            return $this->setField($option, $args[0]);
+        } else {
+            require_once 'Zend/Cloud/OperationNotAvailableException.php';
+            throw new Zend_Cloud_OperationNotAvailableException("Unknown operation $name");
+        }	    
 	}
 }

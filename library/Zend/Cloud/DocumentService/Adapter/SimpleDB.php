@@ -36,29 +36,25 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     const HTTP_ADAPTER = 'HTTP Adapter';
     const MAX_NUMBER_OF_DOMAINS = 'Max Number of Domains';
     const NEXT_TOKEN = 'Next Token';
-
-    /**
-     * Defaults
-     */
-    const DEFAULT_HTTP_ADAPTER_NAME = 'Zend_Http_Client_Adapter_Socket';
-
+    const AWS_ACCESS_KEY = 'aws_accesskey';
+    const AWS_SECRET_KEY = 'aws_secretkey';
+    
     /**
      * SQS service instance.
+     * @var Zend_Service_Amazon_SimpleDB
      */
     protected $_simpleDb;
 
-    public function __construct($options = array()) {
+    public function __construct($options = array()) 
+    {
 
-        $this->_simpleDb = new Zend_Service_Amazon_SimpleDB($accessKey, $secretKey);
+        $this->_simpleDb = new Zend_Service_Amazon_SimpleDB($options[self::AWS_ACCESS_KEY],
+                                                  $options[self::AWS_SECRET_KEY]);
 
         if(isset($options[self::HTTP_ADAPTER])) {
             $httpAdapter = $options[self::HTTP_ADAPTER];
-        } else {
-            $adapterName = self::DEFAULT_HTTP_ADAPTER_NAME;
-            $httpAdapter = new $adapterName;
-        }
-        $this->_sqs->getHttpClient()
-                  ->setAdapter($httpAdapter);
+            $this->_sqs->getHttpClient()->setAdapter($httpAdapter);
+        } 
     }
 
     /**
@@ -134,7 +130,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array                 	    $options
      * @return boolean
      */
-    public function insertDocument($document, $options = null) {
+    public function insertDocument($collectionName, $document, $options = null)
+    {
         try {
             $this->_simpleDb->putAttributes($document->getCollection(),
                                             $document->getID(),
@@ -145,6 +142,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         }
     }
 
+    public function replaceDocument($collectionName, $document, $options = null)
+    {
+    }
+    
     /**
      * Update document. The new document replaces the existing document.
      *
@@ -152,12 +153,13 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array                 		$options
      * @return boolean
      */
-    public function updateDocument($document, $options = null) {
+    public function updateDocument($collectionName, $documentID, $fieldset, $options = null)
+    {
         try {
-            $this->_simpleDb->putAttributes($document->getCollection(),
-                                            $document->getID(),
-                                            $document->getFields(),
-                                            $replace = true
+            $this->_simpleDb->putAttributes($collectionName,
+                                            $documentID,
+                                            $fieldset,
+                                            true
                                             );
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document update',
@@ -172,7 +174,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array  $options
      * @return void
      */
-    public function deleteDocument($document, $options = null) {
+    public function deleteDocument($collectionName, $documentID, $options = null)
+    {
         try {
             $this->_simpleDb->deleteDomain($document->getCollection());
         } catch(Zend_Service_Amazon_Exception $e) {
@@ -181,6 +184,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         }
     }
 
+    public function fetchDocument($collectionName, $documentID, $options = null)
+    {
+        
+    }
     /**
      * Query for documents stored in the document service. If a string is passed in
      * $query, the query string will be passed directly to the service.
@@ -189,7 +196,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array $options
      * @return array
      */
-    public function query($query, $options = null) {
+    public function query($collectionName, $query, $options = null)
+    {
         try {
             // TODO package this in Pages
             $result = $this->_simpleDb->select($query);
@@ -199,5 +207,14 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         }
 
         return $domains;
+    }
+
+    /**
+     * Get the concrete service adapter
+     * @return Zend_Service_Amazon_SimpleDB
+     */
+    public function getAdapter()
+    {
+        return $this->_simpleDb;
     }
 }

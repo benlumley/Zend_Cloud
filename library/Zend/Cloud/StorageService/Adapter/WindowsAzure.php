@@ -391,4 +391,13 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     {
     	$this->_storageClient->deleteContainer($this->_container);
     }
+
+    /**
+     * Get the concrete adapter.
+     * @return Zend_Service_Azure_Storage_Blob
+     */
+    public function getAdapter()
+    {
+         return $this->_storageClient;       
+    }
 }

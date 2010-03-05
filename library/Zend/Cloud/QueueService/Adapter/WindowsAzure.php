@@ -56,13 +56,16 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     public function __construct ($options = array())
     {
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
-        if (! isset($options[self::HOST]))
+        if (! isset($options[self::HOST])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
-        if (! isset($options[self::ACCOUNT_NAME]))
+        }
+        if (! isset($options[self::ACCOUNT_NAME])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
-        if (! isset($options[self::ACCOUNT_KEY]))
+        }
+        if (! isset($options[self::ACCOUNT_KEY])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
-            // TODO: support $usePathStyleUri and $retryPolicy
+        }
+        // TODO: support $usePathStyleUri and $retryPolicy
         $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
             $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
         // Parse other options
