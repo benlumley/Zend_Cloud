@@ -32,16 +32,15 @@ require_once 'Zend/Exception.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_Exception extends Zend_Exception
-{
-    protected $_clientException;
-
-    public function __construct($message, $clientException = null) {
+{ 
+    public function __construct($message, $code = 0, $clientException = null) 
+    {
         $this->_clientException = $clientException;
-        parent::__construct($message);
+        parent::__construct($message, $code, $clientException);
     }
 
     public function getClientException() {
-        return $this->_clientException;
+        return $this->_getPrevious();
     }
 }
 
