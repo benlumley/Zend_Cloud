@@ -30,15 +30,14 @@ class Zend_Cloud_FactoryAbstract
         if($options instanceof Zend_Config) {
             $options = $options->toArray();
         }
-
         if(array_key_exists($adapterOption, $options)) {
             $classname = $options[$adapterOption];
             unset($options[$adapterOption]);
             if(!class_exists($classname)) {
                 require_once 'Zend/Loader.php';
                 Zend_Loader::loadClass($classname);
-                return new $classname($options);
             }
+            return new $classname($options);
         } else {
             return null;
         }

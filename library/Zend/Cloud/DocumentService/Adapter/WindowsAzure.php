@@ -52,7 +52,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      */
     protected $_storageClient;
 
-    public function __construct($options = array()) {
+    public function __construct($options = array()) 
+    {
 
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
         if (! isset($options[self::HOST])) {
@@ -87,7 +88,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      * @param  array  $options
      * @return boolean
      */
-    public function createCollection($name, $options = null) {
+    public function createCollection($name, $options = null) 
+    {
         try {
             $this->_storageClient->createTable($name);
         } catch(Zend_Service_WindowsAzure_Exception $e) {
@@ -102,7 +104,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      * @param  array  $options
      * @return boolean
      */
-    public function deleteCollection($name, $options = null) {
+    public function deleteCollection($name, $options = null) 
+    {
         try {
             $this->_storageClient->deleteTable($name);
         } catch(Zend_Service_WindowsAzure_Exception $e) {
@@ -116,7 +119,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      * @param  array  $options
      * @return array
      */
-    public function listCollections($options = null) {
+    public function listCollections($options = null) 
+    {
         try {
             $tables = $this->_storageClient->listTables();
         } catch(Zend_Service_WindowsAzure_Exception $e) {
@@ -235,6 +239,9 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
 	    }
 	        
 	    if($fieldset instanceof Zend_Cloud_DocumentService_Document) {
+            if($documentID == null) {
+                $documentID = $fieldset->getID();
+            }
 	        $fieldset = $fieldset->getFields();
 	    }
         
@@ -303,6 +310,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     public function query($collectionName, $query, $options = null)
     {
         try {
+            // TODO: handle pagination
             $entities = $this->_storageClient->retrieveEntities($collection, $query);
             $result = array();
             foreach($entites as $entity) {

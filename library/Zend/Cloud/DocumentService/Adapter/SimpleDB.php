@@ -18,7 +18,6 @@
 
 require_once 'Zend/Service/Amazon/SimpleDB.php';
 require_once 'Zend/Cloud/DocumentService/Exception.php';
-require_once 'Zend/Cloud/OperationNotAvailableException.php';
 
 /**
  * SimpleDB adapter for document service.
@@ -44,6 +43,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @var Zend_Service_Amazon_SimpleDB
      */
     protected $_simpleDb;
+    
+    const REPLACE_OPTION = "replace";
 
     public function __construct($options = array()) 
     {
@@ -64,12 +65,12 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array  $options
      * @return boolean
      */
-    public function createCollection($name, $options = null) {
+    public function createCollection($name, $options = null) 
+    {
         try {
             $this->_simpleDb->createDomain($name);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on domain creation',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on domain creation: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -80,12 +81,12 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array  $options
      * @return boolean
      */
-    public function deleteCollection($name, $options = null) {
+    public function deleteCollection($name, $options = null) 
+    {
         try {
             $this->_simpleDb->deleteDomain($name);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -95,13 +96,13 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array  $options
      * @return array
      */
-    public function listCollections($options = null) {
+    public function listCollections($options = null) 
+    {
         // TODO package this in Pages
         try {
             $domains = $this->_simpleDb->listDomains($name)->getData();
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
 
         return $domains;
@@ -113,13 +114,13 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * @param  array $options
      * @return array
      */
-    public function listDocuments($collectionName, $options = null) {
+    public function listDocuments($collectionName, $options = null) 
+    {
         // TODO package this in Pages
         try {
             $attributes = $this->_simpleDb->getAttributes($collectionName)->getData();
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on listing documents',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on listing documents: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -133,17 +134,25 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     public function insertDocument($collectionName, $document, $options = null)
     {
         try {
-            $this->_simpleDb->putAttributes($document->getCollection(),
+            $this->_simpleDb->putAttributes($collectionName,
                                             $document->getID(),
                                             $document->getFields());
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on document insertion',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on document insertion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
     public function replaceDocument($collectionName, $document, $options = null)
     {
+        try {
+            $this->_simpleDb->putAttributes($collectionName,
+                                            $document->getID(),
+                                            $document->getFields(), 
+                                            $replace = true
+                                            );
+        } catch(Zend_Service_Amazon_Exception $e) {
+            throw new Zend_Cloud_DocumentService_Exception('Error on document insertion: '.$e->getMessage(), $e->getCode(), $e);
+        }
     }
     
     /**
@@ -155,15 +164,26 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      */
     public function updateDocument($collectionName, $documentID, $fieldset, $options = null)
     {
+        if($fieldset instanceof Zend_Cloud_DocumentService_Document) {
+            if($documentID == null) {
+                $documentID = $fieldset->getID();
+            }
+            $fieldset = $fieldset->getFields();
+        }
+        
+        $replace = false;
+        if(isset($options[self::REPLACE_OPTION])) {
+            $replace = $options[self::REPLACE_OPTION];
+        }
+        
         try {
             $this->_simpleDb->putAttributes($collectionName,
                                             $documentID,
                                             $fieldset,
-                                            true
+                                            $replace
                                             );
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on document update',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on document update: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -177,16 +197,20 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     public function deleteDocument($collectionName, $documentID, $options = null)
     {
         try {
-            $this->_simpleDb->deleteDomain($document->getCollection());
+            $this->_simpleDb->deleteAttributes($collectionName, $documentID);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on domain deletion',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on document deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
     public function fetchDocument($collectionName, $documentID, $options = null)
     {
-        
+        try {
+            $attributes = $this->_simpleDb->getAttributes($collectionName, $documentID);
+            return new Zend_Cloud_DocumentService_Document($documentID, $attributes);
+        } catch(Zend_Service_Amazon_Exception $e) {
+            throw new Zend_Cloud_DocumentService_Exception('Error on fetching document: '.$e->getMessage(), $e->getCode(), $e);
+        }
     }
     /**
      * Query for documents stored in the document service. If a string is passed in
@@ -202,8 +226,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             // TODO package this in Pages
             $result = $this->_simpleDb->select($query);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on document query',
-                                                    $previous = $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on document query: '.$e->getMessage(), $e->getCode(), $e);
         }
 
         return $domains;
