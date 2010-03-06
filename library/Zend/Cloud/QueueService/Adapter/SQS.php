@@ -51,8 +51,12 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
 
     public function __construct($options = array()) 
     {
-        $this->_sqs = new Zend_Service_Amazon_Sqs($options[self::AWS_ACCESS_KEY],
+        try {
+            $this->_sqs = new Zend_Service_Amazon_Sqs($options[self::AWS_ACCESS_KEY],
                                                   $options[self::AWS_SECRET_KEY]);
+        } catch(Zend_Service_Amazon_Exception $e) {
+            throw new Zend_Cloud_QueueService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
+        }
 
         if(isset($options[self::HTTP_ADAPTER])) {
             $httpAdapter = $options[self::HTTP_ADAPTER];

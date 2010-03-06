@@ -52,7 +52,11 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
             $adapter = $options[self::ADAPTER];
             unset($options[self::ADAPTER]);
         }
-        $this->_queue = new Zend_Queue($adapter, $options);
+        try {
+            $this->_queue = new Zend_Queue($adapter, $options);
+        } catch (Zend_Queue_Exception $e) {
+            throw new Zend_Cloud_QueueService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
+        }
     }
     
     /**
