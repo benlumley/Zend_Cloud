@@ -144,8 +144,7 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         
         $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc->getID());
         $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
-        var_dump($doc);
-        var_dump($fetchdoc);
+
         $this->assertEquals($doc->name, $fetchdoc->name, "Name field wrong");
         $this->assertEquals($doc->keyword, $fetchdoc->keyword, "Keyword field wrong");
         
