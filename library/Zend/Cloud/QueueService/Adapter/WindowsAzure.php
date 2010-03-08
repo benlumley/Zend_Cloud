@@ -65,19 +65,24 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
         if (! isset($options[self::ACCOUNT_KEY])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
         }
-        // TODO: support $usePathStyleUri and $retryPolicy
-        $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
-            $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
-        // Parse other options
-        if (! empty($options[self::PROXY_HOST])) {
-            $proxyHost = $options[self::PROXY_HOST];
-            $proxyPort = isset($options[self::PROXY_PORT]) ? $options[self::PROXY_PORT] : 8080;
-            $proxyCredentials = isset($options[self::PROXY_CREDENTIALS]) ? $options[self::PROXY_CREDENTIALS] : '';
-            $this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
+        try {
+	        // TODO: support $usePathStyleUri and $retryPolicy
+	        $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
+	            $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+	        // Parse other options
+	        if (! empty($options[self::PROXY_HOST])) {
+	            $proxyHost = $options[self::PROXY_HOST];
+	            $proxyPort = isset($options[self::PROXY_PORT]) ? $options[self::PROXY_PORT] : 8080;
+	            $proxyCredentials = isset($options[self::PROXY_CREDENTIALS]) ? $options[self::PROXY_CREDENTIALS] : '';
+	            $this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
+	        }
+	        if (isset($options[self::HTTP_ADAPTER])) {
+	            $this->_storageClient->setHttpClientChannel($httpAdapter);
+	        }
+	    } catch(Zend_Service_WindowsAzure_Exception $e) {
+            throw new Zend_Cloud_QueueService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
         }
-        if (isset($options[self::HTTP_ADAPTER])) {
-            $this->_storageClient->setHttpClientChannel($httpAdapter);
-        }
+	        
     }
     
     /**
