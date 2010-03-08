@@ -51,7 +51,8 @@ class Zend_Cloud_DocumentService_Document
 	 * @param string $collection
 	 * @param array  $fields
 	 */
-	public function __construct($id, $fields) {
+	public function __construct($id, $fields)
+	{
 	    $this->_id = $id;
         $this->_fields = $fields;
 	}
@@ -61,7 +62,8 @@ class Zend_Cloud_DocumentService_Document
 	 *
 	 * @return string
 	 */
-	public function getID() {
+	public function getID() 
+	{
 	    return $this->_id;
 	}
 
@@ -70,7 +72,8 @@ class Zend_Cloud_DocumentService_Document
 	 *
 	 * @return array
 	 */
-	public function getFields() {
+	public function getFields() 
+	{
 	    return $this->_fields;
 	}
 
@@ -86,14 +89,16 @@ class Zend_Cloud_DocumentService_Document
 	}
 	
 	/**
-	 * Get field by name.
+	 * Set field by name.
 	 *
 	 * @param  string $name
+	 * @param  mixed $value
 	 * @return string
 	 */
-    public function setField($name) 
+    public function setField($name, $value) 
     {
-	    return $this->_fields[$name];
+	    $this->_fields[$name] = $value;
+	    return $this;
 	}
 	
 	public function __get($name)

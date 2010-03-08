@@ -96,8 +96,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         try {
             $this->_storageClient->createTable($name);
         } catch(Zend_Service_WindowsAzure_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on collection creation: '.$e->getMessage(), $e->getCode(), $e);
+            if(strpos($e->getMessage(), "table specified already exists") === false) {
+                throw new Zend_Cloud_DocumentService_Exception('Error on collection creation: '.$e->getMessage(), $e->getCode(), $e);
+            }
         }
+        return true;
     }
 
     /**
@@ -112,8 +115,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         try {
             $this->_storageClient->deleteTable($name);
         } catch(Zend_Service_WindowsAzure_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion: '.$e->getMessage(), $e->getCode(), $e);
+            if(strpos($e->getMessage(), "does not exist") === false) {
+                throw new Zend_Cloud_DocumentService_Exception('Error on collection deletion: '.$e->getMessage(), $e->getCode(), $e);
+            }
         }
+        return true;
     }
 
 	/**
@@ -126,6 +132,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     {
         try {
             $tables = $this->_storageClient->listTables();
+            $restables = array();
+            foreach($tables as $table) {
+                $restables[] = $table->name;
+            }
+            return $restables;
         } catch(Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on collection list: '.$e->getMessage(), $e->getCode(), $e);
         }
