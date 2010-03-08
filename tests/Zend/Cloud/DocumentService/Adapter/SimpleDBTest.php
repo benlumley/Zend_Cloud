@@ -111,19 +111,19 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
 	        	"keyword" => array("Book")
 	        	),
             array(
+	        	parent::ID_FIELD => "B000T9886K",
+	        	"name" =>	"In Between",
+	        	"author" =>	"Paul Van Dyk", 
+	        	"year"	=> 2007,
+	        	"keyword" => array("CD", "Music")
+	        	),
+	        array(
 	        	parent::ID_FIELD => "1579124585",
 	        	"name" =>	"The Right Stuff",
 	        	"author" =>	"Tom Wolfe", 
 	        	"year"	=> 1979,
 	        	"pages" =>	304,
 	        	"keyword" => array("Book", "Hardcover", "American")
-	        	),
-            array(
-	        	parent::ID_FIELD => "B000T9886K",
-	        	"name" =>	"In Between",
-	        	"author" =>	"Paul Van Dyk", 
-	        	"year"	=> 2007,
-	        	"keyword" => array("CD", "Trace")
 	        	),
         );
     }

@@ -151,6 +151,57 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->_commonDocument->deleteCollection($name);
     }
 
+    public function testDeleteDocument()
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testDel");
+        $this->_commonDocument->createCollection($name);
+        
+        $doc1 = $this->_makeDocument($data[0]);
+        $this->_commonDocument->insertDocument($name, $doc1);
+        $this->_wait();
+        
+        $doc2 = $this->_makeDocument($data[1]);
+        $this->_commonDocument->insertDocument($name, $doc2);
+        $this->_wait();
+        
+        $this->_commonDocument->deleteDocument($name, $doc1->getID());
+        $this->_wait();
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc1->getID());
+        $this->assertFalse($fetchdoc, "Delete failed");
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc2->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertEquals($doc2->name, $fetchdoc->name, "Name field wrong");
+        
+        $this->_commonDocument->deleteCollection($name);
+    }
+
+    public function testReplaceDocument() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testRD");
+        $this->_commonDocument->createCollection($name);
+        
+        $doc1 = $this->_makeDocument($data[0]);
+        $this->_commonDocument->insertDocument($name, $doc1);
+        $doc2 = $this->_makeDocument($data[1]);
+        $this->_commonDocument->insertDocument($name, $doc2);
+        $this->_wait();
+        
+        $doc3 = $this->_makeDocument($data[2]);
+        $newdoc = new Zend_Cloud_DocumentService_Document($doc1->getID(), $doc3->getFields());
+        $this->_commonDocument->replaceDocument($name, $newdoc);
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc1->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertEquals($doc3->name, $fetchdoc->name, "Name field did not update");
+        $this->assertEquals($doc3->keywords, $fetchdoc->keywords, "Keywords did not update");
+        
+        $this->_commonDocument->deleteCollection($name);
+    }
+    
     public function testUpdateDocument() 
     {
         $data = $this->_getDocumentData();
@@ -170,10 +221,6 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         
         $this->_commonDocument->deleteCollection($name);
     }
-
-    public function testReplaceDocument() {}
-    
-    public function testDeleteDocument(){}
 
     public function testQuery() {}
 

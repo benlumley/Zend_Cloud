@@ -115,19 +115,19 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_Doc
 	        	"keyword" => "Book"
 	        	),
             array(
+	        	parent::ID_FIELD => array("Amazon", "B000T9886K"),
+	        	"name" =>	"In Between",
+	        	"author" =>	"Paul Van Dyk", 
+	        	"year"	=> 2007,
+	        	"keyword" => "CD"
+	        	),
+	       array(
 	        	parent::ID_FIELD => array("Amazon", "1579124585"),
 	        	"name" =>	"The Right Stuff",
 	        	"author" =>	"Tom Wolfe", 
 	        	"year"	=> 1979,
 	        	"pages" =>	304,
 	        	"keyword" => "Book"
-	        	),
-            array(
-	        	parent::ID_FIELD => array("Amazon", "B000T9886K"),
-	        	"name" =>	"In Between",
-	        	"author" =>	"Paul Van Dyk", 
-	        	"year"	=> 2007,
-	        	"keyword" => "CD"
 	        	),
         );
     }
