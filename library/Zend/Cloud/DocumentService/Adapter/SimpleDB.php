@@ -203,10 +203,21 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         }
     }
 
+    /**
+     * Fetch single document by ID
+     * 
+     * @param string $collectionName Collection name
+     * @param mixed $documentID Document ID, adapter-dependent
+     * @param array $options
+     * @return Zend_Cloud_DocumentService_Document
+     */
     public function fetchDocument($collectionName, $documentID, $options = null)
     {
         try {
             $attributes = $this->_simpleDb->getAttributes($collectionName, $documentID);
+            if($attributes == false || count($attributes) == 0) {
+                return false;
+            }
             return new Zend_Cloud_DocumentService_Document($documentID, $this->_resolveAttributes($attributes));
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on fetching document: '.$e->getMessage(), $e->getCode(), $e);

@@ -291,7 +291,9 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         	}
             $this->_storageClient->deleteEntity($collectionName, $entity, isset($options[self::VERIFY_ETAG]));
         } catch(Zend_Service_WindowsAzure_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on document deletion: '.$e->getMessage(), $e->getCode(), $e);
+            if(strpos($e->getMessage(), "does not exist") === false) {
+                throw new Zend_Cloud_DocumentService_Exception('Error on document deletion: '.$e->getMessage(), $e->getCode(), $e);
+            }
         }
     }
 
@@ -307,9 +309,12 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     {
         try {
             $entity = $this->_storageClient->retrieveEntityById($collectionName, $documentID[0], $documentID[1]);
-            return new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), $entity->getAzureValues());
+            return new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), $this->_resolveAttributes($entity));
         } catch(Zend_Service_WindowsAzure_Exception $e) {
-            throw new Zend_Cloud_DocumentService_Exception('Error on document deletion: '.$e->getMessage(), $e->getCode(), $e);
+            if(strpos($e->getMessage(), "does not exist") !== false) {
+                return false;
+            }
+            throw new Zend_Cloud_DocumentService_Exception('Error on document fetch: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -346,4 +351,14 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     {
         return $this->_storageClient;
     }
+    
+    protected function _resolveAttributes(Zend_Service_WindowsAzure_Storage_TableEntity $entity)
+    {
+        $result = array();
+        foreach($entity->getAzureValues() as $attr) {
+            $result[$attr->Name] = $attr->Value;
+        }
+        return $result;
+    }
+    
 }

@@ -108,6 +108,8 @@ interface Zend_Cloud_DocumentService
     /**
      * Fetch single document by ID
      * 
+     * Will return false if the document does not exist
+     * 
      * @param string $collectionName Collection name
      * @param mixed $documentID Document ID, adapter-dependent
      * @param array $options
