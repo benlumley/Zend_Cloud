@@ -33,7 +33,8 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     protected $_name;
     protected $_values;
 
-    function __construct($itemName, $name, $values) {
+    function __construct($itemName, $name, $values) 
+    {
         $this->_itemName = $itemName;
         $this->_name = $name;
         if(!is_array($values)) {
