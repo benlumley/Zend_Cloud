@@ -200,7 +200,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $response = $this->_sendRequest($params);
     }
 
-    public function deleteAttributes($domainName, $itemName, $attributes) 
+    public function deleteAttributes($domainName, $itemName, $attributes = array()) 
     {
         $params = array();
 	    $params['Action'] = 'DeleteAttributes';
