@@ -67,4 +67,13 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     {
         return $this->_name;
     }
+    
+    public function addValue($value)
+    {
+        if(is_array($value)) {
+             $this->_values += $value;   
+        } else {
+            $this->_values[] = $value;
+        }
+    }
 }

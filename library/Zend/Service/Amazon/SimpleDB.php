@@ -133,7 +133,12 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
             } else if(isset($valueNodes)) {
                 $data = (string)$valueNodes;
             }
-            $attributes[$name] = new Zend_Service_Amazon_SimpleDB_Attribute($itemName, $name, $data);
+            if(isset($attributes[$name])) {
+                $attributes[$name]->addValue($data);    
+            } else {
+                $attributes[$name] = new Zend_Service_Amazon_SimpleDB_Attribute($itemName, $name, $data);
+            }
+            
         }
         return $attributes;
     }
@@ -151,16 +156,15 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
 	    $index = 0;
 	    foreach($attributes as $attribute) {
 	        $attributeName = $attribute->getName();
-	        $params['Attribute.' . $index . '.Name'] = $attributeName;
             foreach($attribute->getValues() as $value) {
+	            $params['Attribute.' . $index . '.Name'] = $attributeName;
                 $params['Attribute.' . $index . '.Value'] = $value;
+                $index++;
+	            // Check if it should be replaced
+                if(array_key_exists($attributeName, $replace) && $replace[$name]) {
+                    $params['Attribute.' . $index . '.Replace'] = 'true';
+                }
             }
-
-	        // Check if it should be replaced
-            if(array_key_exists($attributeName, $replace) && $replace[$name]) {
-                $params['Attribute.' . $index . '.Replace'] = 'true';
-            }
-	        $index++;
 	    }
 
 	    // Exception should get thrown if there's an error
@@ -205,11 +209,11 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
 
 	    $attributeIndex = 0;
 	    foreach($attributes as $attribute) {
-	        $params['Attribute.' . $attributeIndex . '.Name'] = $attribute->getName();
 	        foreach($attribute->getValues() as $value) {
+	            $params['Attribute.' . $attributeIndex . '.Name'] = $attribute->getName();
 	            $params['Attribute.' . $attributeIndex . '.Value'] = $value;
+                $attributeIndex++;
 	        }
-	        $attributeIndex++;
 	    }
 
         $response = $this->_sendRequest($params);
