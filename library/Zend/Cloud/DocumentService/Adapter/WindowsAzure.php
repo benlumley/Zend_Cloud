@@ -322,9 +322,10 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      * Query for documents stored in the document service. If a string is passed in
      * $query, the query string will be passed directly to the service.
      *
-     * @param  mixed $query
+     * @param  string $collectionName Collection name
+     * @param  string $query
      * @param  array $options
-     * @return array
+     * @return array Array of Zend_Cloud_DocumentService_FieldSet
      */
     public function query($collectionName, $query, $options = null)
     {
@@ -332,7 +333,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
             // TODO: handle pagination
             $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
             $result = array();
-            foreach($entites as $entity) {
+            foreach($entities as $entity) {
                 $result[] = new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), 
                     $this->_resolveAttributes($entity));
             }

@@ -254,9 +254,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      * Query for documents stored in the document service. If a string is passed in
      * $query, the query string will be passed directly to the service.
      *
-     * @param  mixed $query
+     * @param  string $collectionName Collection name
+     * @param  string $query
      * @param  array $options
-     * @return array
+     * @return array Array of Zend_Cloud_DocumentService_FieldSet
      */
     public function query($collectionName, $query, $options = null)
     {
