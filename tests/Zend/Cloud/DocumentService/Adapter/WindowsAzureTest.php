@@ -131,4 +131,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_Doc
 	        	),
         );
     }
+    
+    protected function _queryString($domain, $s1, $s2)
+    {
+        $k1 = $s1[1];
+        $k2 = $s2[1];
+        return "RowKey eq '$k1' or RowKey eq '$k2'";
+    }
 }

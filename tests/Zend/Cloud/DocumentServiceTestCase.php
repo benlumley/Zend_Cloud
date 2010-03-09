@@ -87,34 +87,36 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
     
     public function testCreateCollection() 
     {
-        $this->_commonDocument->deleteCollection($this->_collectionName("test1"));
+        $name = $this->_collectionName("testCreate");
+        $this->_commonDocument->deleteCollection($name);
         $this->_wait();
         
-        $this->_commonDocument->createCollection($this->_collectionName("test1"));
+        $this->_commonDocument->createCollection($name);
         $this->_wait();
         
         $collections = $this->_commonDocument->listCollections();
-        $this->assertContains($this->_collectionName("test1"), $collections, "New collection not in the list");
+        $this->assertContains($name, $collections, "New collection not in the list");
         $this->_wait();
         
-        $this->_commonDocument->deleteCollection($this->_collectionName("test1"));
+        $this->_commonDocument->deleteCollection($name);
     }
 
     public function testDeleteCollection() 
     {
-        $this->_commonDocument->createCollection($this->_collectionName("test2"));
+        $name = $this->_collectionName("testDC");
+        $this->_commonDocument->createCollection($name);
         $this->_wait();
         
         $collections = $this->_commonDocument->listCollections();
-        $this->assertContains($this->_collectionName("test2"), $collections, "New collection not in the list");
+        $this->assertContains($name, $collections, "New collection not in the list");
         $this->_wait();
 
-        $this->_commonDocument->deleteCollection($this->_collectionName("test2"));
+        $this->_commonDocument->deleteCollection($name);
         $this->_wait();
         $this->_wait();
 
         $collections = $this->_commonDocument->listCollections();
-        $this->assertNotContains($this->_collectionName("test2"), $collections, "New collection not in the list");
+        $this->assertNotContains($name, $collections, "New collection not in the list");
     }
 
     public function testListCollections() 
@@ -197,15 +199,15 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc1->getID());
         $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
         $this->assertEquals($doc3->name, $fetchdoc->name, "Name field did not update");
-        $this->assertEquals($doc3->keywords, $fetchdoc->keywords, "Keywords did not update");
+        $this->assertEquals($doc3->keyword, $fetchdoc->keyword, "Keywords did not update");
         
         $this->_commonDocument->deleteCollection($name);
     }
     
-    public function testUpdateDocument() 
+    public function testUpdateDocumentIDFields() 
     {
         $data = $this->_getDocumentData();
-        $name = $this->_collectionName("testUD");
+        $name = $this->_collectionName("testUD1");
         $this->_commonDocument->createCollection($name);
         
         $doc = $this->_makeDocument($data[0]);
@@ -219,9 +221,73 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
         $this->assertEquals($doc1->name, $fetchdoc->name, "Name field did not update");
         
+         $this->_commonDocument->deleteCollection($name);
+    }
+
+    public function testUpdateDocumentIDDoc() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testUD2");
+        $this->_commonDocument->createCollection($name);
+        // id is specified, fields from another doc
+        $doc1 = $this->_makeDocument($data[1]);
+        $this->_commonDocument->insertDocument($name, $doc1);
+        $doc2 = $this->_makeDocument($data[2]);
+        $this->_commonDocument->updateDocument($name, $doc1->getID(), $doc2);
+        $this->_wait();
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc1->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertEquals($doc2->name, $fetchdoc->name, "Name field did not update");
+        $this->assertEquals($doc2->keyword, $fetchdoc->keyword, "Keywords did not update");   
+
+         $this->_commonDocument->deleteCollection($name);
+    }
+    
+    public function testUpdateDocumentDoc() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testUD3");
+        $this->_commonDocument->createCollection($name);
+        // id is not specified
+        $doc2 = $this->_makeDocument($data[2]);
+        $doc3 = new Zend_Cloud_DocumentService_Document($doc2->getID(), $this->_makeDocument($data[3])->getFields());
+        $this->_commonDocument->insertDocument($name, $doc2);
+        $this->_wait();
+        $this->_commonDocument->updateDocument($name, null, $doc3);
+        $this->_wait();
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc2->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertEquals($doc3->name, $fetchdoc->name, "Name field did not update");
+        $this->assertEquals($doc3->keyword, $fetchdoc->keyword, "Keywords did not update");        
+        
         $this->_commonDocument->deleteCollection($name);
     }
 
+    public function testQueryString() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testQuery");
+        $this->_commonDocument->createCollection($name);
+        
+        for($i=0; $i<count($data); $i++) {
+            $doc[$i] = $this->_makeDocument($data[$i]);
+            $this->_commonDocument->insertDocument($name, $doc[$i]);
+        }
+        $this->_wait();
+        $query = $this->_queryString($name, $doc[1]->getID(), $doc[2]->getID());
+        $fetchdocs = $this->_commonDocument->query($name, $query);
+
+        $this->assertTrue(count($fetchdocs) >= 2, "Query failed to fetch 2 fields");
+        foreach($fetchdocs as $fdoc) {
+            $this->assertContains($fdoc["name"], array($doc[1]->name, $doc[2]->name), "Wrong name in results");
+            $this->assertContains($fdoc["author"], array($doc[1]->author, $doc[2]->author), "Wrong name in results");
+        }
+
+        $this->_commonDocument->deleteCollection($name);
+    }
+    
     public function testQuery() {}
 
     protected function _wait() {
@@ -249,6 +315,7 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
     
     abstract protected function _getConfig();
     abstract protected function _getDocumentData();
+    abstract protected function _queryString($domain, $s1, $s2);
 }
 
 

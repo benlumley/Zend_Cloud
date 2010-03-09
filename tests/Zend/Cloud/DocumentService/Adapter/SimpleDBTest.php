@@ -32,7 +32,7 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
 require_once 'Zend/Cloud/DocumentServiceTestCase.php';
 
 /**
- * @see Zend_Cloud_DocumenteService_Adapter_SDB
+ * @see Zend_Cloud_DocumenteService_Adapter_SimpleDB
  */
 require_once 'Zend/Cloud/DocumentService/Adapter/SimpleDB.php';
 
@@ -66,6 +66,56 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Cloud_DocumentService_Adapter_SimpleDBTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
         return $this->main();
+    }
+    
+    public function testUpdateDocumentMergeAll() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testMerge");
+        $this->_commonDocument->createCollection($name);
+
+        $doc = $this->_makeDocument($data[0]);
+        $this->_commonDocument->insertDocument($name, $doc);
+        $doc1 = $this->_makeDocument($data[1]);
+        $this->_wait();
+        $this->_commonDocument->updateDocument($name, $doc->getID(), $doc1, 
+            array(Zend_Cloud_DocumentService_Adapter_SimpleDB::MERGE_OPTION => true));
+        $this->_wait();
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertContains($doc->name, $fetchdoc->name, "Name field did not update");
+        $this->assertContains($doc1->name, $fetchdoc->name, "Name field did not update");
+        $this->assertContains($doc->year, $fetchdoc->year, "Year field did not update");
+        $this->assertContains($doc1->year, $fetchdoc->year, "Year field did not update");
+        
+        $this->_commonDocument->deleteCollection($name);
+    }
+    
+    public function testUpdateDocumentMergeSome() 
+    {
+        $data = $this->_getDocumentData();
+        $name = $this->_collectionName("testMerge");
+        $this->_commonDocument->createCollection($name);
+
+        $doc = $this->_makeDocument($data[0]);
+        $this->_commonDocument->insertDocument($name, $doc);
+        $doc1 = $this->_makeDocument($data[1]);
+        $this->_wait();
+        $this->_commonDocument->updateDocument($name, $doc->getID(), $doc1, 
+            array(Zend_Cloud_DocumentService_Adapter_SimpleDB::MERGE_OPTION => 
+                array("year" => true, "pages" => true)));
+        $this->_wait();
+        
+        $fetchdoc = $this->_commonDocument->fetchDocument($name, $doc->getID());
+        $this->assertTrue($fetchdoc instanceof Zend_Cloud_DocumentService_Document, "New document not found");
+        $this->assertEquals($doc1->name, $fetchdoc->name, "Name field did not update");
+        $this->assertContains($doc1->pages, $fetchdoc->pages, "Page field did not update");
+        $this->assertContains($doc->pages, $fetchdoc->pages, "Page field did not update");
+        $this->assertContains($doc1->year, $fetchdoc->year, "Year field did not update");
+        $this->assertContains($doc->year, $fetchdoc->year, "Year field did not update");
+        
+        $this->_commonDocument->deleteCollection($name);
     }
     
     static function getConfigArray()
@@ -123,8 +173,14 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
 	        	"author" =>	"Tom Wolfe", 
 	        	"year"	=> 1979,
 	        	"pages" =>	304,
-	        	"keyword" => array("Book", "Hardcover", "American")
+	        	"keyword" => array("American", "Book", "Hardcover")
 	        	),
         );
     }
+    
+    protected function _queryString($domain, $s1, $s2)
+    {
+        return "select * from $domain where itemName() = '$s1' OR itemName() = '$s2'";
+    }
+    
 }
