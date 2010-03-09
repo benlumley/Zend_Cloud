@@ -264,7 +264,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             // TODO package this in Pages
             $result = $this->_simpleDb->select($query);
             $docs = array();
-            foreach($result as $item) {
+            foreach($result->getData() as $item) {
                 $docs[] = $this->_resolveAttributes($item);
             }
         } catch(Zend_Service_Amazon_Exception $e) {

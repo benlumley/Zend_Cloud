@@ -28,7 +28,7 @@
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Document
+class Zend_Cloud_DocumentService_Document implements ArrayAccess
 {
     const KEY_FIELD = "__zend_key";
     /**
@@ -111,7 +111,27 @@ class Zend_Cloud_DocumentService_Document
 	    $this->_fields[$name] = $value;
 	}
 	
-	public function __call($name, $args)
+    public function offsetExists($name)
+    {
+        return isset($this->_fields[$name]);
+    }
+    
+    public function offsetGet($name)
+    {
+        return $this->getField($name);
+    }
+    
+    public function offsetSet($name, $value)
+    {
+        $this->setField($name, $value);
+    }
+    
+    public function offsetUnset($name)
+    {
+        unset($this->_fields[$name]);
+    }
+    
+    public function __call($name, $args)
 	{
         if(substr($name, 0, 3) == 'get') {
             $option = substr($name, 3);

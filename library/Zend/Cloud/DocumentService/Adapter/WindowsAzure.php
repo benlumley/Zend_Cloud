@@ -330,11 +330,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     {
         try {
             // TODO: handle pagination
-            $entities = $this->_storageClient->retrieveEntities($collection, $query);
+            $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
             $result = array();
             foreach($entites as $entity) {
                 $result[] = new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), 
-                    $entity->getAzureValues());
+                    $this->_resolveAttributes($entity));
             }
         } catch(Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document query: '.$e->getMessage(), $e->getCode(), $e);
