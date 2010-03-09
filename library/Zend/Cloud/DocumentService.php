@@ -87,9 +87,9 @@ interface Zend_Cloud_DocumentService
      * The fields of the existing documents will be updated. 
      * Fields not specified in the set will be left as-is. 
      *
-     * @param  Zend_Cloud_DocumentService_Document $document
+     * @param  string $collectionName
      * @param  mixed $documentID Document ID, adapter-dependent
-     * @param  array $fieldset Set of fields to update
+     * @param  array|Zend_Cloud_DocumentService_Document $fieldset Set of fields to update
      * @param  array           		$options
      * @return boolean
      */

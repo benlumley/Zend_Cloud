@@ -248,17 +248,17 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      */
     public function updateDocument($collectionName, $documentID, $fieldset, $options = null)
     {
-	    if(!is_array($documentID)) {
-	        throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
-	    }
-	        
 	    if($fieldset instanceof Zend_Cloud_DocumentService_Document) {
             if($documentID == null) {
                 $documentID = $fieldset->getID();
             }
 	        $fieldset = $fieldset->getFields();
 	    }
-        
+	    
+	    if(!is_array($documentID)) {
+	        throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
+	    }
+	    
         try {
             $entity = new Zend_Service_WindowsAzure_Storage_DynamicTableEntity($documentID[0], $documentID[1]);
         	$entity->setAzureValues($fieldset, true);

@@ -44,8 +44,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      */
     protected $_simpleDb;
     
-    const REPLACE_OPTION = "replace";
-
+    const MERGE_OPTION = "merge";
+    
     public function __construct($options = array()) 
     {
 
@@ -136,7 +136,9 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         try {
             $this->_simpleDb->putAttributes($collectionName,
                                             $document->getID(),
-                                            $this->_makeAttributes($document->getID(), $document->getFields()));
+                                            $this->_makeAttributes($document->getID(),
+                                                    $document->getFields())
+                                           );
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document insertion: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -145,10 +147,15 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     public function replaceDocument($collectionName, $document, $options = null)
     {
         try {
+            $replace = array();
+            foreach($document->getFields() as $key => $value) {
+                $replace[$key] = true;
+            }
             $this->_simpleDb->putAttributes($collectionName,
                                             $document->getID(),
-                                            $document->getFields(), 
-                                            $replace = true
+                                            $this->_makeAttributes($document->getID(),
+                                                    $document->getFields()),
+                                            $replace
                                             );
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document insertion: '.$e->getMessage(), $e->getCode(), $e);
@@ -158,22 +165,40 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     /**
      * Update document. The new document replaces the existing document.
      *
-     * @param  Zend_Cloud_DocumentService_Document $document
-     * @param  array                 		$options
+     * Option 'merge' specifies to add all attributes (if true) or
+     * specific attributes ("attr" => true) instead of replacing them.
+     * By default, attributes are replaced.   
+     * 
+     * @param  string $collectionName
+     * @param  mixed $documentID Document ID, adapter-dependent
+     * @param  array|Zend_Cloud_DocumentService_Document $fieldset Set of fields to update
+     * @param  array           		$options
      * @return boolean
      */
     public function updateDocument($collectionName, $documentID, $fieldset, $options = null)
     {
         if($fieldset instanceof Zend_Cloud_DocumentService_Document) {
-            if($documentID == null) {
+            if(empty($documentID)) {
                 $documentID = $fieldset->getID();
             }
             $fieldset = $fieldset->getFields();
         }
         
-        $replace = false;
-        if(isset($options[self::REPLACE_OPTION])) {
-            $replace = $options[self::REPLACE_OPTION];
+        $replace = array();
+        if(empty($options[self::MERGE_OPTION])) {
+            // no merge option - we replace all
+            foreach($fieldset as $key => $value) {
+                    $replace[$key] = true;
+            }
+        } else {
+            if(is_array($options[self::MERGE_OPTION])) {
+	            foreach($fieldset as $key => $value) {
+	                if(empty($options[self::MERGE_OPTION][$key])) {
+	                    // if there's merge key, we add it, otherwise we replace it
+	                    $replace[$key] = true;
+	                }
+	            }
+            } // otherwise $replace is empty - all is merged
         }
         
         try {
@@ -185,6 +210,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document update: '.$e->getMessage(), $e->getCode(), $e);
         }
+        return true;
     }
 
     /**
@@ -192,7 +218,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      *
      * @param  mixed  $document Document ID or Document object.
      * @param  array  $options
-     * @return void
+     * @return boolean
      */
     public function deleteDocument($collectionName, $documentID, $options = null)
     {
@@ -201,6 +227,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
+        return true;
     }
 
     /**
@@ -256,6 +283,13 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         return $this->_simpleDb;
     }
     
+    /**
+     * Convert array of key-value pairs to array of Amazon attributes
+     * 
+     * @param string $name
+     * @param array $attributes
+     * @return array
+     */
     protected function _makeAttributes($name, $attributes)
     {
         $result = array();
@@ -265,6 +299,12 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         return $result;
     }
     
+    /**
+     * Convert array of Amazon attributes to array of key-value pairs 
+     * 
+     * @param array $attributes
+     * @return array
+     */
     protected function _resolveAttributes($attributes)
     {
         $result = array();
