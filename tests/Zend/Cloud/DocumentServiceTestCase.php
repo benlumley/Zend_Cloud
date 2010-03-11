@@ -301,7 +301,7 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         
         // query by ID
         $query = $this->_commonDocument->select();
-        $this->assertTrue($query instanceof Zend_Cloud_DocumentService_Query_Interface);
+        $this->assertTrue($query instanceof Zend_Cloud_DocumentService_Query);
         $query->from($name)->whereID($doc[1]->getID());
         $fetchdocs = $this->_commonDocument->query($name, $query);
         $this->assertEquals(1, count($fetchdocs));
@@ -379,11 +379,6 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->_commonDocument = Zend_Cloud_DocumentService_Factory::getAdapter($this->_config);
         parent::setUp();
     } 
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
     
     abstract protected function _getConfig();
     abstract protected function _getDocumentData();
