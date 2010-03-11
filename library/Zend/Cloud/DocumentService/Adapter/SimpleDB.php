@@ -276,6 +276,18 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     }
 
     /**
+     * Create query statement
+     * 
+     * @param string $fields
+     * @return Zend_Cloud_DocumentService_Query
+     */
+    public function select($fields = null)
+    {
+        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+            throw new Zend_Cloud_OperationNotAvailableException('No support for structured queries for SimpleDB yet');
+    }
+    
+    /**
      * Get the concrete service adapter
      * @return Zend_Service_Amazon_SimpleDB
      */

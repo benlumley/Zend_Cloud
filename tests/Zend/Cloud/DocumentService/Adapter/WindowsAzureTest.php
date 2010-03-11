@@ -94,7 +94,16 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_Doc
 
         return $config;
     }
-
+    
+    public function testQueryStructOrder() 
+    {
+        try {
+            parent::testQueryStructOrder();
+        } catch(Zend_Cloud_OperationNotAvailableException $e) {
+            $this->markTestSkipped('Azure query sorting not implemented yet');
+        }
+    }
+    
     protected function _getDocumentData()
     {
         return array( 

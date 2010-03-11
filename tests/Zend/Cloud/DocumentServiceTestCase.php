@@ -82,7 +82,7 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
     
     protected function _collectionName($name)
     {
-        return $this->_dummyCollectionNamePrefix.$name;
+        return $this->_dummyCollectionNamePrefix.$name.mt_rand();
     }
     
     public function testCreateCollection() 
@@ -265,17 +265,23 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->_commonDocument->deleteCollection($name);
     }
 
-    public function testQueryString() 
+    protected function _loadData($name)
     {
         $data = $this->_getDocumentData();
-        $name = $this->_collectionName("testQuery");
         $this->_commonDocument->createCollection($name);
-        
         for($i=0; $i<count($data); $i++) {
             $doc[$i] = $this->_makeDocument($data[$i]);
             $this->_commonDocument->insertDocument($name, $doc[$i]);
         }
         $this->_wait();
+        return $doc;
+    }
+    
+    public function testQueryString() 
+    {
+        $name = $this->_collectionName("testQuery");
+        $doc = $this->_loadData($name);
+
         $query = $this->_queryString($name, $doc[1]->getID(), $doc[2]->getID());
         $fetchdocs = $this->_commonDocument->query($name, $query);
 
@@ -288,8 +294,74 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->_commonDocument->deleteCollection($name);
     }
     
-    public function testQuery() {}
+    public function testQueryStruct() 
+    {
+        $name = $this->_collectionName("testStructQuery1");
+        $doc = $this->_loadData($name);
+        
+        // query by ID
+        $query = $this->_commonDocument->select();
+        $this->assertTrue($query instanceof Zend_Cloud_DocumentService_Query_Interface);
+        $query->from($name)->whereID($doc[1]->getID());
+        $fetchdocs = $this->_commonDocument->query($name, $query);
+        $this->assertEquals(1, count($fetchdocs));
+        $fdoc = $fetchdocs[0];
+        $this->assertEquals($doc[1]->name, $fdoc["name"], "Wrong name in results");
+        $this->assertEquals($doc[1]->author, $fdoc["author"], "Wrong name in results");
 
+        $this->_commonDocument->deleteCollection($name);
+    }
+        
+    public function testQueryStructWhere() 
+    {
+        $name = $this->_collectionName("testStructQuery2");
+        $doc = $this->_loadData($name);
+        
+        // query by field condition
+        $query = $this->_commonDocument->select()
+            ->from($name)->where("year > ?", array(1945));
+        $fetchdocs = $this->_commonDocument->query($name, $query);
+        $this->assertEquals(3, count($fetchdocs));
+        foreach($fetchdocs as $fdoc) {
+            $this->assertTrue($fdoc["year"] > 1945);
+        }
+
+        $this->_commonDocument->deleteCollection($name);
+    }
+    
+    public function testQueryStructLimit() 
+    {  
+        $name = $this->_collectionName("testStructQuery3");
+        $doc = $this->_loadData($name);
+        
+        // query with limit
+        $query = $this->_commonDocument->select()
+            ->from($name)->where("year > ?", array(1945))->limit(1);
+        $fetchdocs = $this->_commonDocument->query($name, $query);
+        $this->assertEquals(1, count($fetchdocs));
+        foreach($fetchdocs as $fdoc) {
+            $this->assertTrue($fdoc["year"] > 1945);
+            $this->assertContains($fdoc["name"], array($doc[0]->name, $doc[2]->name, $doc[3]->name), "Wrong name in results");
+        }
+        
+        $this->_commonDocument->deleteCollection($name);
+    }
+
+    public function testQueryStructOrder() 
+    {  
+        $name = $this->_collectionName("testStructQuery4");
+        $doc = $this->_loadData($name);
+        
+        // query with sort
+        $query = $this->_commonDocument->select()
+            ->from($name)->where("year > ?", array(1945))->order("author");
+        $fetchdocs = $this->_commonDocument->query($name, $query);
+        $this->assertEquals(3, count($fetchdocs));
+        $this->assertEquals($fetchdocs[0]["name"], $doc[1]->name);
+
+        $this->_commonDocument->deleteCollection($name);
+    }
+    
     protected function _wait() {
         sleep($this->_waitPeriod);
     }

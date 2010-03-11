@@ -118,6 +118,23 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
         $this->_commonDocument->deleteCollection($name);
     }
     
+    public function testQueryStruct() 
+    {
+        $this->markTestSkipped('SimpleDB structured query not implemented yet');
+    }
+    public function testQueryStructWhere() 
+    {
+        $this->markTestSkipped('SimpleDB structured query not implemented yet');
+    }
+    public function testQueryStructLimit() 
+    {
+        $this->markTestSkipped('SimpleDB structured query not implemented yet');
+    }
+    public function testQueryStructOrder() 
+    {
+        $this->markTestSkipped('SimpleDB structured query not implemented yet');
+    }
+    
     static function getConfigArray()
     {
         return array(

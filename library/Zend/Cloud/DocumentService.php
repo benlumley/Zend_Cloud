@@ -124,9 +124,17 @@ interface Zend_Cloud_DocumentService
      * @param  string $collectionName Collection name
      * @param  string $query
      * @param  array $options
-     * @return array Array of Zend_Cloud_DocumentService_FieldSet
+     * @return array Array of field sets
      */
     public function query($collectionName, $query, $options = null);
+    
+    /**
+     * Create query statement
+     * 
+     * @param string $fields
+     * @return Zend_Cloud_DocumentService_Query
+     */
+    public function select($fields = null);
     
     /**
      * Get the concrete service adapter

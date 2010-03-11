@@ -330,8 +330,12 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     public function query($collectionName, $query, $options = null)
     {
         try {
+            if($query instanceof Zend_Cloud_DocumentService_Query_WindowsAzure) {
+                $entities = $this->_storageClient->retrieveEntities($query->getAzureSelect());
+            } else {
+                $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
+            }
             // TODO: handle pagination
-            $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
             $result = array();
             foreach($entities as $entity) {
                 $result[] = new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), 
@@ -342,6 +346,18 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         }
 
         return $result;
+    }
+    
+    /**
+     * Create query statement
+     * 
+     * @param string $fields
+     * @return Zend_Cloud_DocumentService_Query
+     */
+    public function select($fields = null)
+    {
+        require_once 'Zend/Cloud/DocumentService/Query/WindowsAzure.php';
+        return new Zend_Cloud_DocumentService_Query_WindowsAzure();        
     }
     
     /**
