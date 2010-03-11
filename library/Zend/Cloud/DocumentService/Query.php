@@ -39,44 +39,50 @@
  */
 class Zend_Cloud_DocumentService_Query
 {
-    protected $_select;
-    protected $_from;
-    protected $_filter;
-    protected $_limit;
-    protected $_sort;
-
     /**
-     * Creates row query with the specified clauses.
+     * Known query types
      */
-    public function _construct($select = null,
-                               $from,
-                               $filter = null,
-                               $limit  = null,
-                               $sort   = null) {
-        $this->_select = $select;
-        $this->_from =   $from;
-        $this->_filter = $filter;
-        $this->_limit  = $limit;
-        $this->_sort = $sort;
-    }
+    const QUERY_SELECT = 'select';
+    const QUERY_FROM = 'from';
+    const QUERY_WHERE = 'where';
+    const QUERY_WHEREID = 'whereid';
+    const QUERY_LIMIT = 'limit';
+    const QUERY_ORDER = 'order';
+    /**
+     * Clause list
+     * 
+     * @var array
+     */
+    protected $_clauses;
 
-    public function getSelect() {
-        return $this->_select;
+    public function __call($name, $args) 
+    {
+        $this->_clauses[] = array(strtolower($name), $args);
+        return $this;
     }
-
-    public function getFrom() {
-        return $this->_select;
+    
+    public function from($name)
+    {
+        if(!is_string($name)) {
+            require_once 'Zend/Cloud/DocumentService/Exception.php';           
+            throw new Zend_Cloud_DocumentService_Exception("FROM argument must be a string");
+        }
+        $this->_clauses[] = array("from", $name);
+        return $this;
     }
-
-    public function getFilter() {
-        return $this->_filter;
+    
+    public function where($cond, $args, $op = 'and')
+    {
+        if(!is_string($cond)) {
+            require_once 'Zend/Cloud/DocumentService/Exception.php';           
+            throw new Zend_Cloud_DocumentService_Exception("WHERE argument must be a string");
+        }
+        $this->_clauses[] = array("where", array($cond, $args, $op));
+        return $this;
     }
-
-    public function getLimit() {
-        return $this->_limit;
-    }
-
-    public function getSort() {
-        return $this->_sort;
+    
+    public function getClauses()
+    {
+         return $this->_clauses;   
     }
 }

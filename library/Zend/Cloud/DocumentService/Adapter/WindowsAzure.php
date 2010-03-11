@@ -145,6 +145,20 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     }
 
     /**
+     * Check that $key is valid Azure document key
+     * 
+     * @param array $key
+     * @return string
+     */
+    protected function _validateKey($key)
+    {
+       if(!is_array($key) || count($key) != 2) {
+	        throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
+	    }
+        return true;
+    }
+    
+    /**
      * Create suitable document from array of fields
      * 
      * @param array $document
@@ -187,9 +201,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         $key = $document->getID();
         
         try {
-	        if(!is_array($key)) {
-	            throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
-	        }
+            $this->_validateKey($key);
         
             $entity = new Zend_Service_WindowsAzure_Storage_DynamicTableEntity($key[0], $key[1]);
         	$entity->setAzureValues($document->getFields(), true);
@@ -220,10 +232,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         }
         
         $key = $document->getID();
-        
-        if(!is_array($key)) {
-            throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
-        }
+        $this->_validateKey($key);
         try {
             $entity = new Zend_Service_WindowsAzure_Storage_DynamicTableEntity($key[0], $key[1]);
         	$entity->setAzureValues($document->getFields(), true);
@@ -255,10 +264,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
 	        $fieldset = $fieldset->getFields();
 	    }
 	    
-	    if(!is_array($documentID)) {
-	        throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
-	    }
-	    
+	    $this->_validateKey($documentID);
         try {
             $entity = new Zend_Service_WindowsAzure_Storage_DynamicTableEntity($documentID[0], $documentID[1]);
         	$entity->setAzureValues($fieldset, true);
@@ -281,9 +287,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      */
     public function deleteDocument($collectionName, $documentID, $options = null)
     {
-	    if(!is_array($documentID)) {
-	        throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
-	    }
+        $this->_validateKey($documentID);
         try {
         	$entity = new Zend_Service_WindowsAzure_Storage_DynamicTableEntity($documentID[0], $documentID[1]);
         	if(isset($options[self::VERIFY_ETAG])) {
@@ -307,6 +311,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
      */
     public function fetchDocument($collectionName, $documentID, $options = null)
     {
+        $this->_validateKey($documentID);
         try {
             $entity = $this->_storageClient->retrieveEntityById($collectionName, $documentID[0], $documentID[1]);
             return new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), $this->_resolveAttributes($entity));
@@ -316,6 +321,43 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
             }
             throw new Zend_Cloud_DocumentService_Exception('Error on document fetch: '.$e->getMessage(), $e->getCode(), $e);
         }
+    }
+    
+    /**
+     * Assemble concrete query from generic query clauses
+     * 
+     * @param Zend_Cloud_DocumentService_Query $query
+     * @return Zend_Service_WindowsAzure_Storage_TableEntityQuery
+     */
+    protected function _assembleQuery(Zend_Cloud_DocumentService_Query $query)
+    {
+        $clauses = $query->getClauses();
+        $azureSelect = new Zend_Service_WindowsAzure_Storage_TableEntityQuery();
+        foreach($clauses as $clause) {
+            list($name, $args) = $clause;
+            switch($name) {
+                case Zend_Cloud_DocumentService_Query::QUERY_FROM:
+                    $azureSelect->from($args);
+                    break;
+                case Zend_Cloud_DocumentService_Query::QUERY_WHERE:
+                    call_user_func_array(array($azureSelect, "where"), $args);
+                    break;    
+                case Zend_Cloud_DocumentService_Query::QUERY_WHEREID:
+                    $this->_validateKey($args[0]);
+                    $azureSelect->wherePartitionKey($args[0][0])->whereRowKey($args[0][1]);
+                    break;    
+                case Zend_Cloud_DocumentService_Query::QUERY_LIMIT:
+                    $azureSelect->top($args[0]);
+                    break;
+                case Zend_Cloud_DocumentService_Query::QUERY_SELECT:
+                    break;
+                default:
+                    // TODO: should we ignore unknown clauses or throw and exception?
+                    require_once 'Zend/Cloud/OperationNotAvailableException.php';
+                    throw new Zend_Cloud_OperationNotAvailableException("Query clause $name is not supported by Azure yet");
+            }
+        }
+        return $azureSelect;
     }
     
     /**
@@ -330,8 +372,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     public function query($collectionName, $query, $options = null)
     {
         try {
-            if($query instanceof Zend_Cloud_DocumentService_Query_WindowsAzure) {
-                $entities = $this->_storageClient->retrieveEntities($query->getAzureSelect());
+            if($query instanceof Zend_Cloud_DocumentService_Query) {
+                $entities = $this->_storageClient->retrieveEntities($this->_assembleQuery($query));
             } else {
                 $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
             }
@@ -350,14 +392,15 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     
     /**
      * Create query statement
-     * 
-     * @param string $fields
+     *
      * @return Zend_Cloud_DocumentService_Query
      */
     public function select($fields = null)
     {
-        require_once 'Zend/Cloud/DocumentService/Query/WindowsAzure.php';
-        return new Zend_Cloud_DocumentService_Query_WindowsAzure();        
+        require_once 'Zend/Cloud/DocumentService/Query.php';
+        $query = new Zend_Cloud_DocumentService_Query();
+        $query->select($fields);
+        return $query;        
     }
     
     /**
