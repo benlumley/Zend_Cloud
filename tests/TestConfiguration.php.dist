@@ -511,7 +511,7 @@ define('TESTS_ZEND_QUEUE_PLATFORMJQ_PASS', false);
  * AWS online tests
  */
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', true);
-define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY', <your access key>);
+define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEY', '');
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY', '');
 define('TESTS_ZEND_SERVICE_AMAZON_S3_BUCKET', 'testbucket');
 
@@ -536,12 +536,6 @@ define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_CONTAINER', 'zendtest');
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_HOST', '');
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_PORT', 8080);
 define('TESTS_ZEND_SERVICE_AZURE_ONLINE_STORAGE_PROXY_CREDENTIALS', '');
-
-
-/**
- * Zend_Cloud configs
- */
-define('TESTS_ZEND_CLOUD_ONLINE_ENABLED', true);
 
 /**
  * Zend_Cloud_StorageService_Adapter_Filesystem
@@ -577,31 +571,6 @@ define('TESTS_ZEND_CLOUD_ONLINE_ENABLED', false);
 define('TESTS_ZEND_CLOUD_STORAGE_S3_BUCKET', 'scapitestbucket');
 define("TESTS_ZEND_CLOUD_STORAGE_AZURE_CONTAINER", 'scapitestcontainer');
 define("TESTS_ZEND_CLOUD_STORAGE_NIRVANIX_DIRECTORY", '/SimpleCloudUnitTests/');
-
-/**
- * Zend_Cloud_Storage_Adapter_Filesystem
- */
-define('TESTS_ZEND_CLOUD_STORAGE_ADAPTER_FILESYSTEM', 'Zend_Cloud_StorageService_Adapter_Filesystem');
-
-/**
- * Zend_Cloud_StorageService_Adapter_Nirvanix
- */
-define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_NIRVANIX', 'Zend_Cloud_StorageService_Adapter_Nirvanix');
-
-/**
- * Zend_Cloud_StorageService_Adapter_WindowsAzure
- */
-define('TESTS_ZEND_CLOUD_STORAGESERVICE_ADAPTER_WINDOWSAZURE', 'Zend_Cloud_StorageService_Adapter_WindowsAzure');
-
-/**
- * Zend_Cloud_Queue_Adapter_SQS
- */
-define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_SQS', 'Zend_Cloud_QueueService_Adapter_SQS');
-
-/**
- * Zend_Cloud_QueueService_Adapter_ZendQueue
- */
-define('TESTS_ZEND_CLOUD_QUEUESERVICE_ADAPTER_ZENDQUEUE', 'Zend_Cloud_QueueService_Adapter_ZendQueue');
 
 /**
  * Zend_Service_Delicious tests
