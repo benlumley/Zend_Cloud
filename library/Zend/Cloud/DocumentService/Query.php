@@ -45,7 +45,7 @@ class Zend_Cloud_DocumentService_Query
     const QUERY_SELECT = 'select';
     const QUERY_FROM = 'from';
     const QUERY_WHERE = 'where';
-    const QUERY_WHEREID = 'whereid';
+    const QUERY_WHEREID = 'whereid'; // request element by ID
     const QUERY_LIMIT = 'limit';
     const QUERY_ORDER = 'order';
     /**
@@ -55,12 +55,30 @@ class Zend_Cloud_DocumentService_Query
      */
     protected $_clauses;
 
+    /**
+     * Generic clause
+     * 
+     * You can use any clause by doing $auery->foo('bar')
+     * but concrete adapters should be able to recognise it
+     * 
+     * The call will be iterpreted as clause 'foo' with argument 'bar' 
+     * 
+     * @param string $name Clause/method name
+     * @param unknown_type $args
+     * @return Zend_Cloud_DocumentService_Query
+     */
     public function __call($name, $args) 
     {
         $this->_clauses[] = array(strtolower($name), $args);
         return $this;
     }
     
+    /**
+     * FROM clause
+     * 
+     * @param string $name Field names  
+     * @return Zend_Cloud_DocumentService_Query
+     */
     public function from($name)
     {
         if(!is_string($name)) {
@@ -71,6 +89,14 @@ class Zend_Cloud_DocumentService_Query
         return $this;
     }
     
+    /**
+     * WHERE query
+     * 
+     * @param string $cond Condition
+     * @param array $args Arguments to substitute instead of ?'s in condition
+     * @param string $op relation to other clauses - and/or
+     * @return Zend_Cloud_DocumentService_Query
+     */
     public function where($cond, $args, $op = 'and')
     {
         if(!is_string($cond)) {
@@ -81,6 +107,11 @@ class Zend_Cloud_DocumentService_Query
         return $this;
     }
     
+    /**
+     * Return query clauses as an array
+     * 
+     * @return array Clauses in the query
+     */
     public function getClauses()
     {
          return $this->_clauses;   
