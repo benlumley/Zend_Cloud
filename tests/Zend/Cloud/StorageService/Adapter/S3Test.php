@@ -27,9 +27,9 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
  */
 
 /**
- * @see Zend_Cloud_StorageServiceTestCase
+ * @see Zend_Cloud_StorageService_TestCase
  */
-require_once 'Zend/Cloud/StorageServiceTestCase.php';
+require_once 'Zend/Cloud/StorageService/TestCase.php';
 /**
  * @see Zend_Cloud_StorageService_Adapter_S3
  */
@@ -42,7 +42,7 @@ require_once 'Zend/Cloud/StorageService/Adapter/S3.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageServiceTestCase
+class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService_TestCase
 {
 	/**
      * Runs the test methods of this class.
@@ -74,15 +74,18 @@ class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService
     }
 
     // TODO: Create a custom test for S3 that checks fetchMetadata() with an object that has custom metadata.
-    public function testFetchMetadata() {
+    public function testFetchMetadata() 
+    {
         $this->markTestIncomplete('S3 doesn\'t support storing metadata after an item is created.');
     }
 
-    public function testStoreMetadata() {
+    public function testStoreMetadata() 
+    {
         $this->markTestSkipped('S3 doesn\'t support storing metadata after an item is created.');
     }
 
-    public function testDeleteMetadata() {
+    public function testDeleteMetadata() 
+    {
         $this->markTestSkipped('S3 doesn\'t support storing metadata after an item is created.');
     }
 

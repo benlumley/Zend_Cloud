@@ -29,7 +29,7 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
 /**
  * @see Zend_Cloud_QueueServiceTestCase
  */
-require_once 'Zend/Cloud/QueueServiceTestCase.php';
+require_once 'Zend/Cloud/QueueService/TestCase.php';
 
 /**
  * @see Zend_Cloud_QueueeService_Adapter_SQS
@@ -43,7 +43,7 @@ require_once 'Zend/Cloud/QueueService/Adapter/SQS.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueServiceTestCase
+class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueService_TestCase
 {
     /**
      * Period to wait for propagation in seconds

@@ -66,7 +66,7 @@ class Zend_Cloud_QueueService_FactoryTest extends PHPUnit_Framework_TestCase
     public function testGetAdapterWithConfig() {
 
         // Nirvanix adapter
-        // TODO: offline test doesn't work
+        // TODO: offline test
 //        $nirvanixConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/nirvanix.ini'));
 //
 //        $nirvanixAdapter = Zend_Cloud_QueueService_Factory::getAdapter(

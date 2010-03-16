@@ -58,37 +58,16 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     public function testGetStorageAdapterKey()
     {
         $this->assertTrue(is_string(Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY));
     }
 
-    public function testGetAdapterWithConfig() {
+    public function testGetAdapterWithConfig()
+    {
 
         // Nirvanix adapter
-        // TODO: offline test doesn't work
+        // TODO: offline test doesn't work now
 //        $nirvanixConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/nirvanix.ini'));
 //
 //        $nirvanixAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
@@ -99,24 +78,15 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
 
         // S3 adapter
         $s3Config = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/s3.ini'));
-
-        $s3Adapter = Zend_Cloud_StorageService_Factory::getAdapter(
-                                    $s3Config
-                                );
-
+        $s3Adapter = Zend_Cloud_StorageService_Factory::getAdapter($s3Config);
         $this->assertEquals('Zend_Cloud_StorageService_Adapter_S3', get_class($s3Adapter));
-
         // file system adapter
         $fileSystemConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/filesystem.ini'));
-
-        $fileSystemAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
-                                    $fileSystemConfig
-                                );
-
+        $fileSystemAdapter = Zend_Cloud_StorageService_Factory::getAdapter($fileSystemConfig);
         $this->assertEquals('Zend_Cloud_StorageService_Adapter_FileSystem', get_class($fileSystemAdapter));
 
         // Azure adapter
-        // TODO: offline test
+        // TODO: offline test doesn't work now
 //        $azureConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/windowsazure.ini'));
 //
 //        $azureAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
@@ -126,17 +96,15 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
 //        $this->assertEquals('Zend_Cloud_StorageService_Adapter_Azure', get_class($azureAdapter));
     }
 
-    public function testGetAdapterWithArray() {
-
+    public function testGetAdapterWithArray() 
+    {
         // No need to overdo it; we'll test the array config with just one adapter.
         $fileSystemConfig = array(Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY =>
         					     'Zend_Cloud_StorageService_Adapter_FileSystem',
                             Zend_Cloud_StorageService_Adapter_FileSystem::LOCAL_DIRECTORY => dirname(__FILE__) ."/_files/data");
-
         $fileSystemAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
                                     $fileSystemConfig
                                 );
-
         $this->assertEquals('Zend_Cloud_StorageService_Adapter_FileSystem', get_class($fileSystemAdapter));
     }
 }

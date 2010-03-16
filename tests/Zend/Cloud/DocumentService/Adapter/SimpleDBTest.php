@@ -29,7 +29,7 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
 /**
  * @see Zend_Cloud_DocumentServiceTestCase
  */
-require_once 'Zend/Cloud/DocumentServiceTestCase.php';
+require_once 'Zend/Cloud/DocumentService/TestCase.php';
 
 /**
  * @see Zend_Cloud_DocumenteService_Adapter_SimpleDB
@@ -43,7 +43,7 @@ require_once 'Zend/Cloud/DocumentService/Adapter/SimpleDB.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_DocumentServiceTestCase
+class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_DocumentService_TestCase
 {
     /**
      * Period to wait for propagation in seconds
@@ -116,23 +116,6 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
         $this->assertContains($doc->year, $fetchdoc->year, "Year field did not update");
         
         $this->_commonDocument->deleteCollection($name);
-    }
-    
-    public function testQueryStruct() 
-    {
-        $this->markTestSkipped('SimpleDB structured query not implemented yet');
-    }
-    public function testQueryStructWhere() 
-    {
-        $this->markTestSkipped('SimpleDB structured query not implemented yet');
-    }
-    public function testQueryStructLimit() 
-    {
-        $this->markTestSkipped('SimpleDB structured query not implemented yet');
-    }
-    public function testQueryStructOrder() 
-    {
-        $this->markTestSkipped('SimpleDB structured query not implemented yet');
     }
     
     static function getConfigArray()

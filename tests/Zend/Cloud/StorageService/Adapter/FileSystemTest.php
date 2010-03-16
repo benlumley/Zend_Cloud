@@ -27,9 +27,9 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
  */
 
 /**
- * @see Zend_Cloud_StorageServiceTestCase
+ * @see Zend_Cloud_StorageService_TestCase
  */
-require_once 'Zend/Cloud/StorageServiceTestCase.php';
+require_once 'Zend/Cloud/StorageService/TestCase.php';
 
 /**
  * @see Zend_Cloud_StorageService_Adapter_FileSystem
@@ -43,7 +43,7 @@ require_once 'Zend/Cloud/StorageService/Adapter/FileSystem.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_StorageServiceTestCase
+class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_StorageService_TestCase
 {
 	/**
      * Runs the test methods of this class.

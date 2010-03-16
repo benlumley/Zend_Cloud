@@ -29,7 +29,7 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
 /**
  * @see Zend_Cloud_DocumentServiceTestCase
  */
-require_once 'Zend/Cloud/DocumentServiceTestCase.php';
+require_once 'Zend/Cloud/DocumentService/TestCase.php';
 
 /**
  * @see Zend_Cloud_DocumenteService_Adapter_WindowsAzure
@@ -43,7 +43,7 @@ require_once 'Zend/Cloud/DocumentService/Adapter/WindowsAzure.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_DocumentServiceTestCase
+class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_DocumentService_TestCase
 {
     /**
      * Period to wait for propagation in seconds
@@ -100,6 +100,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_Doc
         try {
             parent::testQueryStructOrder();
         } catch(Zend_Cloud_OperationNotAvailableException $e) {
+            $this->_commonDocument->deleteCollection($this->_collectionName("testStructQuery4"));
             $this->markTestSkipped('Azure query sorting not implemented yet');
         }
     }
