@@ -32,7 +32,7 @@
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Cloud_QueueService
+interface Zend_Cloud_QueueService_QueueService
 {
  	/**
      * Create a queue. Returns the ID of the created queue (typically the URL).
@@ -103,7 +103,7 @@ interface Zend_Cloud_QueueService
      * @param  string $queueId
      * @param  int    $max
      * @param  array  $options
-     * @return array
+     * @return array  Array of messages
      * TODO: should we define message type? Will it affect portability?
      */
     public function receiveMessages($queueId, $max = 1, $options = null);

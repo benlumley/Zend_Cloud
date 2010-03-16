@@ -16,8 +16,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService.php';
-require_once 'Zend/Cloud/OperationNotAvailableException.php';
+require_once 'Zend/Cloud/StorageService/StorageService.php';
 require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
 require_once 'Zend/Cloud/StorageService/Exception.php';
 
@@ -30,7 +29,7 @@ require_once 'Zend/Cloud/StorageService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_StorageService
+class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_StorageService_StorageService
 {
     const ACCOUNT_NAME = 'storage_accountname';
     const ACCOUNT_KEY = 'storage_accountkey';

@@ -16,7 +16,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService.php';
+require_once 'Zend/Cloud/StorageService/StorageService.php';
+require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
  * FileSystem adapter for unstructured cloud storage.
@@ -26,7 +27,7 @@ require_once 'Zend/Cloud/StorageService.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_StorageService
+class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_StorageService_StorageService
 {
 
     /*
@@ -51,7 +52,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
     /**
      * Get an item from the storage service.
      *
-     * @TODO Support streams
+     * TODO: Support streaming
      *
      * @param  string $path
      * @param  array $options

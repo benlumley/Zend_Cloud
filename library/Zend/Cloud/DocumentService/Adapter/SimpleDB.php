@@ -17,6 +17,7 @@
  */
 
 require_once 'Zend/Service/Amazon/SimpleDB.php';
+require_once 'Zend/Cloud/DocumentService/DocumentService.php';
 require_once 'Zend/Cloud/DocumentService/Exception.php';
 
 /**
@@ -27,7 +28,7 @@ require_once 'Zend/Cloud/DocumentService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_DocumentService
+class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_DocumentService_DocumentService
 {
     /*
      * Options array keys for the SimpleDB adapter.
@@ -250,6 +251,88 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             throw new Zend_Cloud_DocumentService_Exception('Error on fetching document: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
+    
+    protected function _parseWhere($where, $args)
+    {
+        // TODO: temporary stub, to be replaced with concrete SimpleDb query implementation
+        $i = 0;
+        while(($q = strpos($where, '?')) !== false) {
+           $where = substr_replace($where, '\'' . str_replace('\'', '\'\'', $args[$i++]) . '\'', $q, 1);
+        }
+        return $where;        
+    }
+    
+    /**
+     * Assemble concrete query from generic query clauses
+     * 
+     * @param string $collectionName
+     * @param Zend_Cloud_DocumentService_Query $query
+     * @return string
+     */
+    protected function _assembleQuery($collectionName, Zend_Cloud_DocumentService_Query $query)
+    {
+        // TODO: temporary stub, to be replaced with concrete SimpleDb query implementation
+        $clauses = $query->getClauses();
+        foreach($clauses as $clause) {
+            list($name, $args) = $clause;
+            switch($name) {
+                case Zend_Cloud_DocumentService_Query::QUERY_FROM:
+                    $from = $args;
+                    break;
+                case Zend_Cloud_DocumentService_Query::QUERY_WHERE:
+                    $newwhere = $this->_parseWhere($args[0], $args[1]);
+                    if(!empty($where)) {
+                        $op = (!empty($args[2]))?$args[2]:"AND";
+                        $where = "($where) $op ($newwhere)"; 
+                    } else {
+                        $where = $newwhere;
+                    }
+                    break;    
+                case Zend_Cloud_DocumentService_Query::QUERY_WHEREID:
+                    $newwhere = $this->_parseWhere('ItemName() = ?', array($args[0]));
+                    if(!empty($where)) {
+                        $where = "($where) AND ($newwhere)"; 
+                    } else {
+                        $where = $newwhere;
+                    }
+                    break;    
+                case Zend_Cloud_DocumentService_Query::QUERY_LIMIT:
+                    $limit = $args[0];
+                    break;
+                case Zend_Cloud_DocumentService_Query::QUERY_SELECT:
+                    $select = $args[0];
+                    break;
+               case Zend_Cloud_DocumentService_Query::QUERY_ORDER:
+                    $order = $args[0];
+                    if(isset($args[1])) {
+                        $order .= " ".$args[1];
+                    }
+                    break;
+                default:
+                    // TODO: should we ignore unknown clauses or throw and exception?
+                    require_once 'Zend/Cloud/OperationNotAvailableException.php';
+                    throw new Zend_Cloud_OperationNotAvailableException("Query clause $name is not supported by Azure yet");
+            }
+        }
+        if(empty($select)) {
+            $select = "*";
+        }
+        if(empty($from)) {
+            $from = $collectionName;
+        }
+        $query = "select $select from $from";
+        if(!empty($where)) {
+            $query .= " where $where";
+        }
+        if(!empty($order)) {
+            $query .= " order by $order";            
+        }
+        if(!empty($limit)) {
+            $query .= " limit $limit";            
+        }
+        return $query;
+    }
+    
     /**
      * Query for documents stored in the document service. If a string is passed in
      * $query, the query string will be passed directly to the service.
@@ -262,9 +345,12 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     public function query($collectionName, $query, $options = null)
     {
         try {
-            // TODO package this in Pages
+            if($query instanceof Zend_Cloud_DocumentService_Query) {
+                $query = $this->_assembleQuery($collectionName, $query);
+            }
             $result = $this->_simpleDb->select($query);
             $docs = array();
+            // TODO package this in Pages
             foreach($result->getData() as $item) {
                 $docs[] = $this->_resolveAttributes($item);
             }
@@ -283,8 +369,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
      */
     public function select($fields = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
-            throw new Zend_Cloud_OperationNotAvailableException('No support for structured queries for SimpleDB yet');
+        require_once 'Zend/Cloud/DocumentService/Query.php';
+        $query = new Zend_Cloud_DocumentService_Query();
+        $query->select($fields);
+        return $query;        
     }
     
     /**

@@ -16,9 +16,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
 require_once 'Zend/Cloud/DocumentService/Exception.php';
-require_once 'Zend/Cloud/OperationNotAvailableException.php';
+require_once 'Zend/Cloud/DocumentService/DocumentService.php';
+require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
 
 /**
  * SimpleDB adapter for document service.
@@ -28,7 +28,7 @@ require_once 'Zend/Cloud/OperationNotAvailableException.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_DocumentService
+class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_DocumentService_DocumentService
 {
     /*
      * Options array keys for the Azure adapter.
@@ -377,7 +377,6 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
             } else {
                 $entities = $this->_storageClient->retrieveEntities($collectionName, $query);
             }
-            // TODO: handle pagination
             $result = array();
             foreach($entities as $entity) {
                 $result[] = new Zend_Cloud_DocumentService_Document(array($entity->getPartitionKey(), $entity->getRowKey()), 

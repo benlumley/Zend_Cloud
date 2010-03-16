@@ -16,10 +16,11 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService.php';
+require_once 'Zend/Cloud/StorageService/StorageService.php';
+require_once 'Zend/Cloud/StorageService/Exception.php';
 require_once 'Zend/Service/Nirvanix.php';
 
-class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageService
+class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageService_StorageService
 {
     const USERNAME = 'auth_username';
     const PASSWORD = 'auth_password';

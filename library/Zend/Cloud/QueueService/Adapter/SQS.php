@@ -17,7 +17,7 @@
  */
 
 require_once 'Zend/Service/Amazon/Sqs.php';
-require_once 'Zend/Cloud/QueueService.php';
+require_once 'Zend/Cloud/QueueService/QueueService.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
 
 /**
@@ -28,7 +28,7 @@ require_once 'Zend/Cloud/QueueService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService
+class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService_QueueService
 {
     /*
      * Options array keys for the SQS adapter.

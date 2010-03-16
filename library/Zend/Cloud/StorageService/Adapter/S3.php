@@ -17,7 +17,8 @@
  */
 
 require_once 'Zend/Service/Amazon/S3.php';
-require_once 'Zend/Cloud/StorageService.php';
+require_once 'Zend/Cloud/StorageService/StorageService.php';
+require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
  * S3 adapter for unstructured cloud storage.
@@ -27,7 +28,7 @@ require_once 'Zend/Cloud/StorageService.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
+class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_StorageService
 {
 
     /*
@@ -36,17 +37,13 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
     const BUCKET_NAME = 'bucket_name';
     const BUCKET_AS_DOMAIN = 'bucket_as_domain?';
     const HTTP_ADAPTER = 'HTTP Adapter';
+    const FETCH_STREAM = 'fetch_stream';
 
     /**
      * AWS constants
      */
     const ACCESS_KEY = 'aws_accesskey';
     const SECRET_KEY = 'aws_secretkey';
-
-    /**
-     * Defaults
-     */
-    const DEFAULT_HTTP_ADAPTER_NAME = 'Zend_Http_Client_Adapter_Socket';
 
     /**
      * S3 service instance.
@@ -56,7 +53,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
     protected $_defaultBucketName = null;
     protected $_defaultBucketAsDomain = false;
 
-    public function __construct($options = array()) {
+    public function __construct($options = array()) 
+    {
 
         try {
             $this->_s3 = new Zend_Service_Amazon_S3($options[self::ACCESS_KEY],
@@ -88,9 +86,14 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return string
      */
-    public function fetchItem($path, $options = array()) {
+    public function fetchItem($path, $options = array()) 
+    {
         $fullPath = $this->_getFullPath($path, $options);
-        return $this->_s3->getObject($fullPath);
+        if(!empty($options[self::FETCH_STREAM])) {
+            return $this->_s3->getStreamObject($fullPath, $options[self::FETCH_STREAM]);
+        } else {
+            return $this->_s3->getObject($fullPath);
+        }
     }
 
     /**
@@ -147,7 +150,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService
      * @param  array $options
      * @return void
      */
-    public function copyItem($sourcePath, $destinationPath, $options = array()) {
+    public function copyItem($sourcePath, $destinationPath, $options = array()) 
+    {
         try {
             // TODO We *really* need to add support for object copying in the S3 adapter
             $item = $this->fetch($_getFullPath(sourcePath), $options);
