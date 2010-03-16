@@ -21,9 +21,9 @@
  */
 require_once 'TestHelper.php';
 /**
- * @see Zend_Cloud_QueueService
+ * @see Zend_Cloud_QueueService_QueueService
  */
-require_once 'Zend/Cloud/QueueService.php';
+require_once 'Zend/Cloud/QueueService/QueueService.php';
 /**
  * @see Zend_Config_Ini
  */
@@ -44,7 +44,7 @@ require_once 'Zend/Cloud/QueueService/Factory.php';
  * This class forces the adapter tests to implement tests for all methods on
  * Zend_Cloud_QueueService.
  */
-abstract class Zend_Cloud_QueueServiceTestCase extends PHPUnit_Framework_TestCase
+abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * Reference to queue adapter to test

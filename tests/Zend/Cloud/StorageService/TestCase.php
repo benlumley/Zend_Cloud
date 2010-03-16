@@ -24,9 +24,9 @@
 require_once 'TestHelper.php';
 
 /**
- * @see Zend_Cloud_StorageService
+ * @see Zend_Cloud_StorageService_StorageService
  */
-require_once 'Zend/Cloud/StorageService.php';
+require_once 'Zend/Cloud/StorageService/StorageService.php';
 
 /**
  * @see Zend_Config
@@ -39,11 +39,6 @@ require_once 'Zend/Config.php';
 require_once 'Zend/Cloud/StorageService/Factory.php';
 
 /**
- * @see Zend_Http_Client_Adapter_Socket
- */
-require_once 'Zend/Http/Client/Adapter/Socket.php';
-
-/**
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage UnitTests
@@ -53,7 +48,7 @@ require_once 'Zend/Http/Client/Adapter/Socket.php';
  * This class forces the adapter tests to implement tests for all methods on
  * Zend_Cloud_StorageService
  */
-abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestCase
+abstract class Zend_Cloud_StorageService_TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * Reference to storage adapter to test
@@ -93,7 +88,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testFetchItemString() {
+    public function testFetchItemString() 
+    {
         $dummyNameText = null;
         $dummyNameStream = null;
         try {
@@ -119,14 +115,14 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testFetchItemStream() {
-
-        // TODO Add support for streaming to Zend_Http.
+    public function testFetchItemStream() 
+    {
+        // TODO: Add support for streaming fetch
         return $this->markTestIncomplete('Cloud API doesn\'t support streamed fetches yet');
         $dummyNameText = null;
         $dummyNameStream = null;
         try {
-            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Storage/_files/data/dummy_data.txt');
+            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '_files/data/dummy_data.txt');
             $dummyNameStream = $this->_dummyNamePrefix . 'ForFetchStream';
             $stream = fopen($originalFilename, 'r');
             $this->_clobberItem($stream, $dummyNameStream);
@@ -147,7 +143,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testStoreItemText() {
+    public function testStoreItemText() 
+    {
         $dummyNameText = null;
         try {
             // Test string data
@@ -176,7 +173,7 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
         $dummyNameStream = $this->_dummyNamePrefix . 'ForStoreStream';
         try {
             // Test stream data
-            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'StorageService/_files/data/dummy_data.txt');
+            $originalFilename = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '_files/data/dummy_data.txt');
             $stream = fopen($originalFilename, 'r');
             $this->_commonStorage->storeItem($dummyNameStream, $stream);
             $this->_wait();
@@ -196,7 +193,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testDeleteItem() {
+    public function testDeleteItem() 
+    {
         $dummyName = $this->_dummyNamePrefix . 'ForDelete';
         try {
             // Test string data
@@ -252,7 +250,8 @@ abstract class Zend_Cloud_StorageServiceTestCase extends PHPUnit_Framework_TestC
      *
      * @return void
      */
-    public function testMoveItem() {
+    public function testMoveItem() 
+    {
         $this->markTestSkipped('This test should be re-enabled when the semantics of "move" change');
 
         try {

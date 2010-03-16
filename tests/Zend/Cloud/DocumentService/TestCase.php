@@ -26,7 +26,7 @@ require_once 'TestHelper.php';
 /**
  * @see Zend_Cloud_DocumentService
  */
-require_once 'Zend/Cloud/DocumentService.php';
+require_once 'Zend/Cloud/DocumentService/DocumentService.php';
 
 /**
  * @see Zend_Cloud_DocumenteService_Document
@@ -44,7 +44,7 @@ require_once 'Zend/Cloud/DocumentService/Document.php';
  * This class forces the adapter tests to implement tests for all methods on
  * Zend_Cloud_DocumentService.
  */
-abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_TestCase
+abstract class Zend_Cloud_DocumentService_TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * Reference to Document adapter to test
@@ -77,12 +77,12 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
 
     public function testDocumentService()
     {
-        $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService); 
+        $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService_DocumentService); 
     } 
     
     protected function _collectionName($name)
     {
-        return $this->_dummyCollectionNamePrefix.$name.mt_rand();
+        return $this->_dummyCollectionNamePrefix.$name; //.mt_rand();
     }
     
     public function testCreateCollection() 
@@ -307,7 +307,7 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         $this->assertEquals(1, count($fetchdocs));
         $fdoc = $fetchdocs[0];
         $this->assertEquals($doc[1]->name, $fdoc["name"], "Wrong name in results");
-        $this->assertEquals($doc[1]->author, $fdoc["author"], "Wrong name in results");
+        $this->assertEquals($doc[1]->author, $fdoc["author"], "Wrong author in results");
 
         $this->_commonDocument->deleteCollection($name);
     }
@@ -354,10 +354,10 @@ abstract class Zend_Cloud_DocumentServiceTestCase extends PHPUnit_Framework_Test
         
         // query with sort
         $query = $this->_commonDocument->select()
-            ->from($name)->where("year > ?", array(1945))->order("author");
+            ->from($name)->where("year > ?", array(1945))->order("year", "desc");
         $fetchdocs = $this->_commonDocument->query($name, $query);
         $this->assertEquals(3, count($fetchdocs));
-        $this->assertEquals($fetchdocs[0]["name"], $doc[1]->name);
+        $this->assertEquals($fetchdocs[0]["name"], $doc[2]->name);
 
         $this->_commonDocument->deleteCollection($name);
     }
