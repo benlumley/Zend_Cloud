@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reviewed: no -->
+<sect1 id="zend.cloud.queueservice">
+    <title>Introduction</title>
+
+    <para>
+    	The QeueService implements access to message queues - messaging pattern in which
+    	different processes in the cloud can exchange messages in high-performance and reliable way. 
+    </para>
+
+	<para>
+	The interface <classname>Zend_Cloud_QueueService_QueueService</classname> defines
+	the methods which each concrete queue service provider implements. So far, the following 
+	providers are supported: 
+	</para>
+	
+	<itemizedlist>
+        <listitem>
+            <para><classname>Zend_Cloud_QueueService_Adapter_Sqs</classname> - 
+            implements <ulink url="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=2317&amp;categoryID=31">Amazon 
+            SQS</ulink> access. 
+			</para>
+		</listitem>
+        <listitem>
+            <para><classname>Zend_Cloud_QueueService_Adapter_WindowsAzure</classname> - 
+            implements <ulink url="http://msdn.microsoft.com/en-us/library/dd179363.aspx">Windows Azure
+            Queue service</ulink> access. 
+			</para>
+		</listitem>
+        <listitem>
+            <para><classname>Zend_Cloud_QueueService_Adapter_ZendQueue</classname> - 
+            implements access to Zend_Queue services.
+			</para>
+		</listitem>
+	</itemizedlist>
+	
+	<para>In order to create the service object, 
+	use the static method method <methodname>Zend_Cloud_QueueService_Factory::getAdapter()</methodname>, 
+	which accepts either array or <classname>Zend_Config</classname> object. 
+	The key named <property>queue_adapter</property> should specify the concrete adapter class, 
+	and the rest of parameters are adapter-specific configurations, usually access details: 
+	</para>
+	
+    <example id="zend.cloud.queueservice.factory.example">
+      <title>Using QueueService Factory</title>
+      <programlisting language="php"><![CDATA[
+$queues = Zend_Cloud_QueueService_Factory::getAdapter(array(
+	Zend_Cloud_QueueService_Factory::QUEUE_ADAPTER_KEY => 'Zend_Cloud_QueueService_Adapter_Sqs',
+	Zend_Cloud_QueueService_Adapter_Sqs::AWS_ACCESS_KEY => $amazonKey,
+	Zend_Cloud_QueueService_Adapter_Sqs::AWS_SECRET_KEY => $amazonSecret
+));
+]]></programlisting>
+	</example>
+	
+	<para>
+	Service-specific options for constructing the objects are: @TODO@
+	</para>
+	
+
+    <sect2 id="zend.cloud.queueservice.concepts">
+        <title>Basic concepts</title>
+        <para>The queue service usually consists of a number of <emphasis>queues</emphasis>, each of them can
+        store <emphasis>messages</emphasis>. Messages can be sent to queue by one process and received
+        and removed from the queue by another process. 
+        </para>
+	</sect2>
+	
+    <sect2 id="zend.cloud.queueservice.exceptions">
+        <title>Exceptions</title>
+        <para>
+        If some error happens inside the storage service, <classname>Zend_Cloud_QueueService_Exception</classname>
+        is thrown. If the exception was caused by underlying service driver, you can use <methodname>getClientException()</methodname>
+        method to retrieve the original exception. 
+        </para>
+        <para>Since different cloud providers implement different sets of services, it might happen that 
+        some concrete driver does not implement some method or functionality. In this case, the 
+        <classname>Zend_Cloud_OperationNotAvailableException</classname> exception is thrown.
+        </para>
+	</sect2>
+	
+    <sect2 id="zend.cloud.queueservice.create-queue">
+        <title>Create a queue</title>
+        <para>The <methodname>createQueue()</methodname> method creates a message queue with given name. 
+        It returns the queue identifier, which is service-dependent.
+        </para>
+    	<example id="zend.cloud.queueservice.create-queue.example">
+      		<title>Creating a queue</title>
+		    <programlisting language="php"><![CDATA[
+$queueId = $queues->createQueue('my-queue');		    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.delete-queue">
+        <title>Delete a queue</title>
+        <para>The <methodname>deleteQueue()</methodname> removes the queue from the system. Use identifier 
+        received on creation as a parameter.
+        </para>
+    	<example id="zend.cloud.queueservice.delete-queue.example">
+      		<title>Deleting a queue</title>
+		    <programlisting language="php"><![CDATA[
+$queueId = $queues->createQueue('my-queue');
+// ... do stuff ...
+$queues->deleteQueue($queueId);		
+]]></programlisting>
+		</example>
+		<para>Note that in some services deleting a queue takes significant time and during that time
+		you will not be able to create a queue with the same name. 
+		</para>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.list">
+        <title>List queues</title>
+        <para>To retrieve the list of all queues known in the system, use <methodname>listQueues()</methodname>:
+        </para>
+    	<example id="zend.cloud.queueservice.list.example">
+      		<title>Creating a queue</title>
+		    <programlisting language="php"><![CDATA[
+$names = $queues->listQueues();
+foreach($names as $name) {
+	echo "Found queue $name\n";
+}	    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.store-metadata">
+        <title>Set queue metadata</title>
+        <para>Some services allow to associate a set of key-value pairs with the queue, as queue metadata.
+        To set queue metadata, use <methodname>storeQueueMetadata()</methodname> method:
+        </para>
+    	<example id="zend.cloud.queueservice.store-metadata.example">
+      		<title>Setting queue metadata</title>
+		    <programlisting language="php"><![CDATA[
+$queues->storeQueueMetadata($queueId, array("purpose" => "Operations", "administrator" => "joe@example.com"));    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.fetch-metadata">
+        <title>Fetch queue metadata</title>
+        <para>To retrieve queue metadata, use <methodname>fetchQueueMetadata()</methodname> method:
+        </para>
+    	<example id="zend.cloud.queueservice.fetch-metadata.example">
+      		<title>Fetching queue metadata</title>
+		    <programlisting language="php"><![CDATA[
+$metadata = $queues->fetchQueueMetadata($queueId);
+foreach($metadata as $key => $value) {
+	echo "Metadata $key: $value\n";
+}	    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.send">
+        <title>Send a message</title>
+        <para>In order to place the message into the queue, use <methodname>sendMessage()</methodname> method. 
+        Message is passed as a string and no internal structure is assumed.
+        </para>
+    	<example id="zend.cloud.queueservice.send.example">
+      		<title>Sending a message</title>
+		    <programlisting language="php"><![CDATA[
+$queues->sendMessage($queueId, "Hello world!");		    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.receive">
+        <title>Receive a message</title>
+        <para>In order to receive one or more messages from the queue, use <methodname>receiveMessages()</methodname> method.
+        This method returns array of messages (if any were in the queue) which are service-dependent. 
+        </para>
+    	<example id="zend.cloud.queueservice.receive.example">
+      		<title>Receiving a message</title>
+		    <programlisting language="php"><![CDATA[
+// get one message
+$messages = $queues->receiveMessages($queueId);
+if($messages && $queues instanceof Zend_Cloud_QueueService_Adapter_Sqs) {
+	echo "Message: ".$messages[0]['body']; 
+}		    
+// get two messages		    
+$messages = $queues->receiveMessages($queueId, 2);
+		    
+]]></programlisting>
+		</example>
+		<para>When message is received, it is not visible anymore to other clients, but is not deleted 
+		from the queue. If it is not deleted during service-dependent visibility timeout, it will become
+		visible to other clients again.
+		</para>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.delete">
+        <title>Delete a message</title>
+        <para>In order to delete the message from the queue, use <methodname>deleteMessage()</methodname> method.
+        This method receives the message (as returned by <methodname>receiveMessages()</methodname>) as a parameter:
+        </para>
+    	<example id="zend.cloud.queueservice.delete.example">
+      		<title>Deleting a message</title>
+		    <programlisting language="php"><![CDATA[
+$messages = $queues->receiveMessages($queueId, $max);
+if($messages) {
+	foreach($messages as $message) {
+		process($message);
+		$queues->deleteMessage($queueId, $message);
+	}
+}
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.queueservice.adapter">
+        <title>Accessing concrete adapter</title>
+        <para>Sometimes it is necessary to retrieve the concrete adapter for the service that Queue API
+        is working with. This can be achieved by using <methodname>getAdapter()</methodname> method. Note that
+        accessing the adapter directly leads to a non-portable code, so it should be reserved for exceptional
+        circumstances only.
+        </para>
+    	<example id="zend.cloud.queueservice.adapter.example">
+      		<title>Using concrete adapter</title>
+		    <programlisting language="php"><![CDATA[
+// send the message directly 
+$sqs = $queues->getAdapter();
+$sqs->sendMessage("myQueue", "hello!");
+]]></programlisting>
+		</example>
+	</sect2>
+</sect1>

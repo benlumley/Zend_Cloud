@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reviewed: no -->
+<sect1 id="zend.cloud.storageservice">
+    <title>Introduction</title>
+
+    <para>
+    	The StorageService implements basic storage pattern, where the container stores a number
+    	of object which have no internal structure and are identified by string key.  
+    </para>
+
+	<para>
+	The interface <classname>Zend_Cloud_StorageService_StorageService</classname> defines
+	the methods which each concrete document service provider implements. So far, the following 
+	providers are supported: 
+	</para>
+	
+	<itemizedlist>
+        <listitem>
+            <para><classname>Zend_Cloud_StorageService_Adapter_S3</classname> - 
+            implements <ulink url="http://docs.amazonwebservices.com/AmazonS3/latest/dev/">Amazon 
+            S3</ulink> access. 
+			</para>
+		</listitem>
+        <listitem>
+            <para><classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname> - 
+            implements <ulink url="http://msdn.microsoft.com/en-us/library/dd135733.aspx">Windows Azure
+            Blob storage</ulink> access. 
+			</para>
+		</listitem>
+        <listitem>
+            <para><classname>Zend_Cloud_StorageService_Adapter_Nirvanix</classname> - 
+            implements <ulink url="http://developer.nirvanix.com/sitefiles/1000/API.html">Nirvanix IMFS</ulink>
+            access. 
+			</para>
+		</listitem>
+        <listitem>
+            <para><classname>Zend_Cloud_StorageService_Adapter_FileSystem</classname> - 
+            implements local filesystem storage.
+			</para>
+		</listitem>
+	</itemizedlist>
+	
+	<para>In order to create the service object, 
+	use the static method method <methodname>Zend_Cloud_StorageService_Factory::getAdapter()</methodname>, 
+	which accepts either array or <classname>Zend_Config</classname> object. 
+	The key named <property>storage_adapter</property> should specify the concrete adapter class, 
+	and the rest of parameters are adapter-specific configurations, usually access details: 
+	</para>
+	
+    <example id="zend.cloud.storageservice.factory.example">
+      <title>Using StorageService Factory</title>
+      <programlisting language="php"><![CDATA[
+$storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
+	Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY => 'Zend_Cloud_StorageService_Adapter_S3',
+	Zend_Cloud_StorageService_Adapter_S3::AWS_ACCESS_KEY => $amazonKey,
+	Zend_Cloud_StorageService_Adapter_S3::AWS_SECRET_KEY => $amazonSecret
+));
+]]></programlisting>
+	</example>
+	
+	<para>
+	Service-specific options for constructing the objects are: @TODO@
+	</para>
+	
+
+    <sect2 id="zend.cloud.storageservice.concepts">
+        <title>Basic concepts</title>
+        <para>Different cloud storage services use different terminology to refer to document storage concepts, 
+        so the SimpleCloud API defines a number of common concepts that are shared among providers.
+        </para>
+        <para>The storage consists identifies the documents by a string key, which may be URL path or any other
+        service-specific identifier. The items can be stored and retrieved using this key. Each item
+        can have <emphasis>metadata</emphasis> attached to it, which carries service-specific information 
+        about the item, such as size, type, permissions, etc. 
+        </para>
+	</sect2>
+	
+    <sect2 id="zend.cloud.storageservice.exceptions">
+        <title>Exceptions</title>
+        <para>
+        If some error happens inside the storage service, <classname>Zend_Cloud_StorageService_Exception</classname>
+        is thrown. If the exception was caused by underlying service driver, you can use <methodname>getClientException()</methodname>
+        method to retrieve the original exception. 
+        </para>
+        <para>Since different cloud providers implement different sets of services, it might happen that 
+        some concrete driver does not implement some method or functionality. In this case, the 
+        <classname>Zend_Cloud_OperationNotAvailableException</classname> exception is thrown.
+        </para>
+	</sect2>
+	
+    <sect2 id="zend.cloud.storageservice.store">
+        <title>Store an item</title>
+        <para><methodname>storeItem()</methodname> method is used to upload the data to the storage.
+        </para>
+    	<example id="zend.cloud.storageservice.store.example">
+      		<title>Storing an item</title>
+		    <programlisting language="php"><![CDATA[
+$data = file_get_contents("localpicture.jpg");
+$returnedData = $storage->storeItem("/my/picture/path/picture.jpg", $data);
+]]></programlisting>
+		</example>
+		<para>Optional third parameter describes service-specific options:</para>
+    	<example id="zend.cloud.storageservice.store-options.example">
+      		<title>Storing an item with options</title>
+		    <programlisting language="php"><![CDATA[
+$data = file_get_contents("localpicture.jpg");
+// Use S3 bucket: myBucket
+// Make this item publicly readable
+$returnedData = $storage->storeItem("/my/picture/path/picture.jpg", $data,
+	array(Zend_Cloud_StorageService_Adapter_S3::BUCKET_NAME => "myBucket",
+		  Zend_Cloud_StorageService_Adapter_S3::METADATA => array(
+		      Zend_Service_Amazon_S3::S3_ACL_HEADER => Zend_Service_Amazon_S3::S3_ACL_PUBLIC_READ
+		  )
+	)
+);
+]]></programlisting>
+		</example>
+		<para>For service adapters that support streaming, the data can also be a PHP stream (i.e. opened file).
+		</para>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.fetch">
+        <title>Fetch an item</title>
+        <para>The <methodname>fetchItem()</methodname> operation retrieves the item from the storage.
+        </para>
+    	<example id="zend.cloud.storageservice.fetch.example">
+      		<title>Fetching an item</title>
+		    <programlisting language="php"><![CDATA[
+$returnedData = $storage->fetchItem("/my/picture/path/picture.jpg");
+file_put_contents("localpicture.jpg", $returnedData);
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.delete">
+        <title>Delete an item</title>
+        <para>The <methodname>deleteItem()</methodname> operation removes the item from the storage.
+        </para>
+    	<example id="zend.cloud.storageservice.delete.example">
+      		<title>Deleting an item</title>
+		    <programlisting language="php"><![CDATA[
+$storage->deleteItem("/my/picture/path/picture.jpg");		   
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.copy">
+        <title>Copy an item</title>
+        <para>The <methodname>copyItem()</methodname> operation creates a copy of the item in the storage.
+        Note that not all services may support copying natively, in this case it is simulated by 
+        fetching the item and then storing it under the new name.
+        </para>
+    	<example id="zend.cloud.storageservice.copy.example">
+      		<title>Copying an item</title>
+		    <programlisting language="php"><![CDATA[
+$storage->copyItem("/my/picture/path/picture.jpg", "/other/pictures/picturecopy.jpg");				    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.move">
+        <title>Move an item</title>
+        <para>The <methodname>moveItem()</methodname> operation moves an item from one key to another. 
+        Note that not all services may support copying natively, in this case it is simulated by 
+        copying the item and then deleting the old item.
+        </para>
+    	<example id="zend.cloud.storageservice.move.example">
+      		<title>Moving an item</title>
+		    <programlisting language="php"><![CDATA[
+$storage->moveItem("/my/picture/path/picture.jpg", "/other/path/pictures/picture.jpg");				    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.rename">
+        <title>Rename an item</title>
+        <para>The <methodname>renameItem()</methodname> operation changes the item name. For some services,
+        it may be the same as moving an item. 
+        </para>
+    	<example id="zend.cloud.storageservice.rename.example">
+      		<title>Renaming an item</title>
+		    <programlisting language="php"><![CDATA[
+$storage->renameItem("/my/picture/path/picture.jpg", "picture2.jpg");				    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.list">
+        <title>List items</title>
+        <para>To list the items stored in the specific path, use <methodname>listItems()</methodname> method.
+        The method returns list of names for the objects. 
+        </para>
+    	<example id="zend.cloud.storageservice.list.example">
+      		<title>List items</title>
+		    <programlisting language="php"><![CDATA[
+$objects = $storage->listItems('');
+foreach($objects as $objname) {
+	echo "Found: $objname\n";
+}		    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.fetch-metadata">
+        <title>Fetching metadata</title>
+        <para>Some services allow a set of key-value pairs be stored along with the item as item's metadata.
+        Use <methodname>fetchMetadata()</methodname> to retrieve this data: 
+        </para>
+    	<example id="zend.cloud.storageservice.fetch-metadata.example">
+      		<title>Fetching metadata</title>
+		    <programlisting language="php"><![CDATA[
+$data = $storage->fetchMetadata("/my/picture/path/picture.jpg");
+foreach($data as $key => $value) {
+	echo "Metadata $key: $value\n";
+}		    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.store-metadata">
+        <title>Store metadata</title>
+        <para>Some services allow a set of key-value pairs be stored along with the item as item's metadata. 
+        Depending on the service, this data can be supplied either when storing the item (as for S3) or
+        separately. In the latter case, use <methodname>fetchMetadata()</methodname> to retrieve this data: 
+        </para>
+    	<example id="zend.cloud.storageservice.store-metadata.example">
+      		<title>Storing metadata</title>
+		    <programlisting language="php"><![CDATA[
+$data = $storage->storeMetadata("/my/picture/path/picture.jpg", array(
+	"type" => "JPEG",
+	"category" => "Portrait"
+));
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.delete-metadata">
+        <title>Delete metadata</title>
+        <para>The <methodname>deleteMetadata()</methodname> operation allows to remove all user-supplied
+        metadata from the object. Not all services support removing metadata.
+        </para>
+    	<example id="zend.cloud.storageservice.delete-metadata.example">
+      		<title>Deleting metadata</title>
+		    <programlisting language="php"><![CDATA[
+$storage->deleteMetadata("/my/picture/path/picture.jpg");		    
+]]></programlisting>
+		</example>
+	</sect2>
+
+    <sect2 id="zend.cloud.storageservice.adapter">
+        <title>Accessing concrete adapter</title>
+        <para>Sometimes it is necessary to retrieve the concrete adapter for the service that Storage API
+        is working with. This can be achieved by using <methodname>getAdapter()</methodname> method. Note that
+        accessing the adapter directly leads to a non-portable code, so it should be reserved for exceptional
+        circumstances only.
+        </para>
+    	<example id="zend.cloud.storageservice.adapter.example">
+      		<title>Using concrete adapter</title>
+		    <programlisting language="php"><![CDATA[
+// since SimpleCloud Storage API doesn't support "clean bucket" operation, use concrete adapter 
+$s3 = $storage->getAdapter();
+$s3->cleanBucket("myBucket");
+]]></programlisting>
+		</example>
+	</sect2>
+</sect1>
