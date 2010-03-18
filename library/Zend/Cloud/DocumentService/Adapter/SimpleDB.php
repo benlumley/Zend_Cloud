@@ -39,6 +39,8 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     const AWS_ACCESS_KEY = 'aws_accesskey';
     const AWS_SECRET_KEY = 'aws_secretkey';
     
+    const ITEM_NAME = 'ItemName';
+    
     /**
      * SQS service instance.
      * @var Zend_Service_Amazon_SimpleDB

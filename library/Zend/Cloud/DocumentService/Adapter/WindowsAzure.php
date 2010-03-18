@@ -57,13 +57,13 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
 
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
         if (! isset($options[self::HOST])) {
-            throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
+            throw new Zend_Cloud_DocumentService_Exception('No Windows Azure host name provided.');
         }
         if (! isset($options[self::ACCOUNT_NAME])) {
-            throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
+            throw new Zend_Cloud_DocumentService_Exception('No Windows Azure account name provided.');
         }
         if (! isset($options[self::ACCOUNT_KEY])) {
-            throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
+            throw new Zend_Cloud_DocumentService_Exception('No Windows Azure account key provided.');
         }
         // TODO: support $usePathStyleUri and $retryPolicy
         try {
@@ -80,7 +80,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
 	            $this->_storageClient->setHttpClientChannel($httpAdapter);
 	        }
         } catch(Zend_Service_WindowsAzure_Exception $e) {
-            throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e->getCode(), $e);
+            throw new Zend_Cloud_DocumentService_Exception('Error on document service creation: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

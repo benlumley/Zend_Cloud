@@ -43,8 +43,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
     /**
      * AWS constants
      */
-    const ACCESS_KEY = 'aws_accesskey';
-    const SECRET_KEY = 'aws_secretkey';
+    const AWS_ACCESS_KEY = 'aws_accesskey';
+    const AWS_SECRET_KEY = 'aws_secretkey';
 
     /**
      * S3 service instance.
@@ -58,8 +58,8 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
     {
 
         try {
-            $this->_s3 = new Zend_Service_Amazon_S3($options[self::ACCESS_KEY],
-                                                $options[self::SECRET_KEY]);
+            $this->_s3 = new Zend_Service_Amazon_S3($options[self::AWS_ACCESS_KEY],
+                                                $options[self::AWS_SECRET_KEY]);
         } catch (Zend_Service_Amazon_S3_Exception  $e) { 
 	        throw new Zend_Cloud_StorageService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
         }
