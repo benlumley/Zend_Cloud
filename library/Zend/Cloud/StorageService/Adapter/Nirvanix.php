@@ -105,7 +105,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
         } catch(Zend_Service_Nirvanix_Exception $e) {
 //            if(trim(strtoupper($e->getMessage())) != 'INVALID PATH') {
 //                // TODO Differentiate among errors in the Nirvanix adapter
-			throw new Zend_Cloud_StorageService_Exception('Error on fetch: '.$e->getMessage(), $e->getCode(), $e);
+			throw new Zend_Cloud_StorageService_Exception('Error on delete: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -151,7 +151,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
 	//    	$this->_imfNs->MoveFiles(array('srcFilePath' => $sourcePath,
 	//    								 	'destFolderPath' => $destinationPath));
 		} catch (Zend_Service_Nirvanix_Exception $e) {
-			throw new Zend_Cloud_StorageService_Exception('Error on copy: '.$e->getMessage(), $e->getCode(), $e);
+			throw new Zend_Cloud_StorageService_Exception('Error on move: '.$e->getMessage(), $e->getCode(), $e);
 		}
     }
 
