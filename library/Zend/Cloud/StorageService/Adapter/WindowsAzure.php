@@ -95,13 +95,13 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 			$this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
 		}
 		
+		if(isset($options[self::HTTP_ADAPTER])) {
+            $this->_storageClient->setHttpClientChannel($options[self::HTTP_ADAPTER]);
+		}
+		
 		// Set container
 		$this->_container = $options[self::CONTAINER];
 
-		if(isset($options[self::HTTP_ADAPTER])) {
-            $this->_storageClient->setHttpClientChannel($httpAdapter);
-		}
-		
 		// Make sure the container exists
 		if (!$this->_storageClient->containerExists($this->_container)) {
 			$this->_storageClient->createContainer($this->_container);

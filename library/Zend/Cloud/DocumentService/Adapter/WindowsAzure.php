@@ -68,7 +68,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         // TODO: support $usePathStyleUri and $retryPolicy
         try {
             $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Table(
-            $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+                    $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
 	        // Parse other options
 	        if (! empty($options[self::PROXY_HOST])) {
 	            $proxyHost = $options[self::PROXY_HOST];
@@ -77,7 +77,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
 	            $this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
 	        }
 	        if (isset($options[self::HTTP_ADAPTER])) {
-	            $this->_storageClient->setHttpClientChannel($httpAdapter);
+	            $this->_storageClient->setHttpClientChannel($options[self::HTTP_ADAPTER]);
 	        }
         } catch(Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_DocumentService_Exception('Error on document service creation: '.$e->getMessage(), $e->getCode(), $e);
@@ -184,7 +184,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     /**
      * Insert document
      *
-     * @param  Zend_Cloud_DocumentService_Document $document
+     * @param  array|Zend_Cloud_DocumentService_Document $document
      * @param  array                 	    $options
      * @return boolean
      */
