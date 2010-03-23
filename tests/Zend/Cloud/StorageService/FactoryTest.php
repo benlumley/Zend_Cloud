@@ -34,6 +34,7 @@ require_once 'Zend/Config/Ini.php';
  * @see Zend_Cloud_StorageService_Factory
  */
 require_once 'Zend/Cloud/StorageService/Factory.php';
+require_once 'Zend/Http/Client/Adapter/Test.php';
 
 /**
  * Test class for Zend_Cloud_StorageService_Factory
@@ -65,11 +66,12 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
 
     public function testGetAdapterWithConfig()
     {
-
+        $httptest = new Zend_Http_Client_Adapter_Test();
         // Nirvanix adapter
-        // TODO: offline test doesn't work now
-//        $nirvanixConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/nirvanix.ini'));
-//
+        // TODO: offline test doesn't work now, Nirvanix needs auth and doesn't support 
+        // plugging HTTP adapter
+//        $nirvanixConfig[Zend_Cloud_StorageService_Adapter_Nirvanix::HTTP_ADAPTER] = $httptest;
+//        
 //        $nirvanixAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
 //                                    $nirvanixConfig
 //                                );
@@ -86,14 +88,29 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Zend_Cloud_StorageService_Adapter_FileSystem', get_class($fileSystemAdapter));
 
         // Azure adapter
-        // TODO: offline test doesn't work now
-//        $azureConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/windowsazure.ini'));
-//
-//        $azureAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
-//                                    $azureConfig
-//                                );
-//
-//        $this->assertEquals('Zend_Cloud_StorageService_Adapter_Azure', get_class($azureAdapter));
+        $azureConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/windowsazure.ini'));
+        $azureConfig = $azureConfig->toArray();
+        $container = $azureConfig[Zend_Cloud_StorageService_Adapter_WindowsAzure::CONTAINER];
+        $azureConfig[Zend_Cloud_StorageService_Adapter_WindowsAzure::HTTP_ADAPTER] = $httptest;
+        $q = "?";
+        $body = <<<END
+<{$q}xml version="1.0" encoding="utf-8" $q>
+<EnumerationResults AccountName="http://myaccount.blob.core.windows.net">
+  <MaxResults>1</MaxResults>
+  <Containers>
+    <Container>
+      <Name>$container</Name>
+    </Container>
+  </Containers>
+</EnumerationResults>        
+END
+;
+        $resp = new Zend_Http_Response(200, array('x-ms-request-id' => 0), $body);
+        $httptest->setResponse($resp);
+        $azureAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
+                                    $azureConfig
+                                );
+        $this->assertEquals('Zend_Cloud_StorageService_Adapter_WindowsAzure', get_class($azureAdapter));
     }
 
     public function testGetAdapterWithArray() 
