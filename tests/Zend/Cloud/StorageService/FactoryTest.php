@@ -67,16 +67,25 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
     public function testGetAdapterWithConfig()
     {
         $httptest = new Zend_Http_Client_Adapter_Test();
+
         // Nirvanix adapter
-        // TODO: offline test doesn't work now, Nirvanix needs auth and doesn't support 
-        // plugging HTTP adapter
-//        $nirvanixConfig[Zend_Cloud_StorageService_Adapter_Nirvanix::HTTP_ADAPTER] = $httptest;
-//        
-//        $nirvanixAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
-//                                    $nirvanixConfig
-//                                );
-//
-//        $this->assertEquals('Zend_Cloud_StorageService_Adapter_Nirvanix', get_class($nirvanixAdapter));
+        $nirvanixConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/nirvanix.ini'));
+        $nirvanixConfig = $nirvanixConfig->toArray();
+        $nirvanixConfig[Zend_Cloud_StorageService_Adapter_Nirvanix::HTTP_ADAPTER] = $httptest;
+        $body = <<<END
+<?xml version="1.0" encoding="utf-8"?>
+<Response>
+   <ResponseCode>0</ResponseCode>
+   <SessionToken>54592180-7060-4D4B-BC74-2566F4B2F943</SessionToken>
+</Response>
+END
+;
+        $resp = new Zend_Http_Response(200, array('Date' => 0), $body);
+        $httptest->setResponse($resp);
+        $nirvanixAdapter = Zend_Cloud_StorageService_Factory::getAdapter(
+                                    $nirvanixConfig
+        );
+        $this->assertEquals('Zend_Cloud_StorageService_Adapter_Nirvanix', get_class($nirvanixAdapter));
 
         // S3 adapter
         $s3Config = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/s3.ini'));
@@ -94,7 +103,7 @@ class Zend_Cloud_StorageService_FactoryTest extends PHPUnit_Framework_TestCase
         $azureConfig[Zend_Cloud_StorageService_Adapter_WindowsAzure::HTTP_ADAPTER] = $httptest;
         $q = "?";
         $body = <<<END
-<{$q}xml version="1.0" encoding="utf-8" $q>
+<?xml version="1.0" encoding="utf-8"?>
 <EnumerationResults AccountName="http://myaccount.blob.core.windows.net">
   <MaxResults>1</MaxResults>
   <Containers>
