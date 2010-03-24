@@ -65,8 +65,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
         }
                                                 
         if(isset($options[self::HTTP_ADAPTER])) {
-            $httpAdapter = $options[self::HTTP_ADAPTER];
-            $this->_s3->getHttpClient()->setAdapter($httpAdapter);
+            $this->_s3->getHttpClient()->setAdapter($options[self::HTTP_ADAPTER]);
         } 
 
         if(isset($options[self::BUCKET_NAME])) {

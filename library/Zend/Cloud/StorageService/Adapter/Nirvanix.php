@@ -25,6 +25,7 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
     const USERNAME = 'auth_username';
     const PASSWORD = 'auth_password';
     const APP_KEY  = 'auth_accesskey';
+    const HTTP_ADAPTER = 'HTTP Adapter';
     const REMOTE_DIRECTORY = 'remote_directory';
 
     /**
@@ -42,11 +43,17 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
 		$auth = array('username' => $options[self::USERNAME],
 		              'password' => $options[self::PASSWORD],
 		              'appKey'   => $options[self::APP_KEY]);
+		$nirvanix_options = array();
+        if(isset($options[self::HTTP_ADAPTER])) {
+            $httpc = new Zend_Http_Client();
+            $httpc->setAdapter($options[self::HTTP_ADAPTER]);
+            $nirvanix_options['httpClient'] = $httpc;
+        } 
 		try {
-			$this->_nirvanix = new Zend_Service_Nirvanix($auth);
+			$this->_nirvanix = new Zend_Service_Nirvanix($auth, $nirvanix_options);
 			$this->_remoteDirectory = $options[self::REMOTE_DIRECTORY];
-			$this->_imfNs = $nirvanix->getService('IMFS');
-			$this->_metadataNs = $nirvanix->getService('Metadata');
+			$this->_imfNs = $this->_nirvanix->getService('IMFS');
+			$this->_metadataNs = $this->_nirvanix->getService('Metadata');
 		} catch (Zend_Service_Nirvanix_Exception  $e) { 
 	        throw new Zend_Cloud_StorageService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
         }

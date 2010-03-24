@@ -51,6 +51,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     const RETURN_LIST = 1;   // return native list
     const RETURN_NAMES = 2;  // return only names
     
+    const DEFAULT_HOST = "blob.core.windows.net";
     /**
 	 * Storage container to operate on
 	 * 
@@ -74,8 +75,11 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 	{		
 		// Build Zend_Service_WindowsAzure_Storage_Blob instance
 		if (!isset($options[self::HOST])) {
-			throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
+			$host = self::DEFAULT_HOST;
+		} else {
+		    $host = $options[self::HOST];
 		}
+		
 		if (!isset($options[self::ACCOUNT_NAME])) {
 			throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
 		}
@@ -83,7 +87,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 			throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
 		}
 			
-		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($options[self::HOST],
+		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($host,
 		     $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
 		
 		// Parse other options
@@ -314,7 +318,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     public function listItems($path, $options = null)
     {
         // Options
-    	$returnType = self::RETURN_LIST; // 1: return list of paths, 2: return raw output from underlying provider
+    	$returnType = self::RETURN_NAMES; // 1: return list of paths, 2: return raw output from underlying provider
     	
     	// Parse options
     	if (is_array($options)&& isset($options[self::RETURN_TYPE])) {
