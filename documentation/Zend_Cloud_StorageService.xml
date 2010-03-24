@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Reviewed: no -->
 <sect1 id="zend.cloud.storageservice">
-    <title>Introduction</title>
+    <title>Storage Service Introduction</title>
 
     <para>
     	The StorageService implements basic storage pattern, where the container stores a number
@@ -59,9 +59,253 @@ $storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
 	</example>
 	
 	<para>
-	Service-specific options for constructing the objects are: @TODO@
+	Service-specific options for constructing the objects are: 
 	</para>
 	
+	<table frame='all' id="zend.cloud.storageservice.options.s3">
+	<title>Zend_Cloud_StorageService_Adapter_S3 options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>AWS_ACCESS_KEY</entry>
+		<entry>aws_accesskey</entry>
+		<entry>Amazon AWS access key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>AWS_ACCESS_KEY</entry>
+		<entry>aws_secretkey</entry>
+		<entry>Amazon AWS secret key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>BUCKET_NAME</entry>
+		<entry>bucket_name</entry>
+		<entry>The name of the S3 bucket for this item.</entry>
+		<entry>Used in constructor, sets default bucket for the object, but also can be used in any of the item access operations.</entry>
+	</row>
+	<row>
+		<entry>BUCKET_AS_DOMAIN</entry>
+		<entry>bucket_as_domain?</entry>
+		<entry>Use bucket name in domain name and not as part of the path?</entry>
+		<entry>Used in constructor, sets default behavior for the object, but also can be used in any of the item access operations.</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>METADATA</entry>
+		<entry>metadata</entry>
+		<entry>Array of metadate to attach to the item.</entry>
+		<entry><methodname>storeItem()</methodname></entry>
+	</row>
+	<row>
+		<entry>FETCH_STREAM</entry>
+		<entry>fetch_stream</entry>
+		<entry>Fetch response as stream? (see Zend_Service_Amazon_S3 documentation for explanation on handling streamed responses)</entry>
+		<entry><methodname>fetchItem()</methodname></entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+
+	<table frame='all' id="zend.cloud.storageservice.options.azure">
+	<title>Zend_Cloud_StorageService_Adapter_WindowsAzure options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>ACCOUNT_NAME</entry>
+		<entry>storage_accountname</entry>
+		<entry>Windows Azure account name</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>ACCOUNT_KEY</entry>
+		<entry>storage_accountkey</entry>
+		<entry>Windows Azure account key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>CONTAINER</entry>
+		<entry>storage_container</entry>
+		<entry>Container to use for this storage object.</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>HOST</entry>
+		<entry>storage_host</entry>
+		<entry>Windows Azure access host, default is blob.core.windows.net</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_HOST</entry>
+		<entry>storage_proxy_host</entry>
+		<entry>Proxy hostname</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_PORT</entry>
+		<entry>storage_proxy_port</entry>
+		<entry>Proxy port, default is 8080.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_CREDENTIALS</entry>
+		<entry>storage_proxy_credentials</entry>
+		<entry>Proxy credentials</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>RETURN_TYPE</entry>
+		<entry>returntype</entry>
+		<entry>How to return the results. For <methodname>fetchItem()</methodname>, valid values are the following
+		<classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname> constants:
+		<variablelist>
+          <varlistentry>
+           <term><constant>RETURN_STRING</constant></term>
+           <listitem><para>return the data as string (default)</para></listitem> 
+          </varlistentry>
+          <varlistentry>
+           <term><constant>RETURN_PATH</constant></term>
+           <listitem><para>save data on disk in temp file, return path name</para></listitem> 
+          </varlistentry>
+          <varlistentry>
+           <term><constant>RETURN_STREAM</constant></term>
+           <listitem><para>return the data as stream</para></listitem> 
+          </varlistentry>
+		</variablelist>		
+		For <methodname>listItems()</methodname> valid values are: 
+		<variablelist>
+          <varlistentry>
+           <term><constant>RETURN_NAMES</constant></term>
+           <listitem><para>return the list of item names (default)</para></listitem> 
+          </varlistentry>
+          <varlistentry>
+           <term><constant>RETURN_LIST</constant></term>
+           <listitem><para>return the list of WindowsAzure objects</para></listitem> 
+          </varlistentry>
+		</variablelist>		
+		</entry>
+		<entry><methodname>fetchItem()</methodname>, <methodname>listItems()</methodname></entry>
+	</row>
+	<row>
+		<entry>RETURN_PATHNAME</entry>
+		<entry>returnpath</entry>
+		<entry>Pathname used to save data</entry>
+		<entry><methodname>fetchItem()</methodname></entry>
+	</row>
+	<row>
+		<entry>RETURN_OPENMODE</entry>
+		<entry>return_openmode</entry>
+		<entry><methodname>fopen()</methodname> mode used to open the file for saving data</entry>
+		<entry><methodname>fetchItem()</methodname></entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+
+	<table frame='all' id="zend.cloud.storageservice.options.nirvanix">
+	<title>Zend_Cloud_StorageService_Adapter_Nirvanix options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>USERNAME</entry>
+		<entry>auth_username</entry>
+		<entry>Nirvanix user name</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>PASSWORD</entry>
+		<entry>auth_password</entry>
+		<entry>Nirvanix password</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>APP_KEY</entry>
+		<entry>auth_accesskey</entry>
+		<entry>Nirvanix access key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>REMOTE_DIRECTORY</entry>
+		<entry>remote_directory</entry>
+		<entry>Nirvanix directory to use with this object.</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+
+	<table frame='all' id="zend.cloud.storageservice.options.filesystem">
+	<title>Zend_Cloud_StorageService_Adapter_Filesystem options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>LOCAL_DIRECTORY</entry>
+		<entry>aws_accesskey</entry>
+		<entry>Local directory where the files will be stored.</entry>
+		<entry>Constructor</entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+	
+	<note><para>It is recommended to always use class constant as an option key and avoid using the actual constant value,
+	as the latter is subject to change.</para>
+	</note>
 
     <sect2 id="zend.cloud.storageservice.concepts">
         <title>Basic concepts</title>

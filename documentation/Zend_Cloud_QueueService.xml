@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Reviewed: no -->
 <sect1 id="zend.cloud.queueservice">
-    <title>Introduction</title>
+    <title>Queue Service Introduction</title>
 
     <para>
     	The QeueService implements access to message queues - messaging pattern in which
@@ -53,9 +53,162 @@ $queues = Zend_Cloud_QueueService_Factory::getAdapter(array(
 	</example>
 	
 	<para>
-	Service-specific options for constructing the objects are: @TODO@
+	Service-specific options for constructing the objects are: 
 	</para>
 	
+	<table frame='all' id="zend.cloud.queueservice.options.sqs">
+	<title>Zend_Cloud_QueueService_Adapter_Sqs options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>AWS_ACCESS_KEY</entry>
+		<entry>aws_accesskey</entry>
+		<entry>Amazon AWS access key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>AWS_ACCESS_KEY</entry>
+		<entry>aws_secretkey</entry>
+		<entry>Amazon AWS secret key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>VISIBILITY_TIMEOUT</entry>
+		<entry>Visibility Timeout</entry>
+		<entry>Message visibility timeout</entry>
+		<entry><methodname>receiveMessages()</methodname></entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>	
+
+	<table frame='all' id="zend.cloud.queueservice.options.azure">
+	<title>Zend_Cloud_QueueService_Adapter_WindowsAzure options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>ACCOUNT_NAME</entry>
+		<entry>storage_accountname</entry>
+		<entry>Windows Azure account name</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>ACCOUNT_KEY</entry>
+		<entry>storage_accountkey</entry>
+		<entry>Windows Azure account key</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>HOST</entry>
+		<entry>storage_host</entry>
+		<entry>Windows Azure access host, default is queue.core.windows.net</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_HOST</entry>
+		<entry>storage_proxy_host</entry>
+		<entry>Proxy hostname</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_PORT</entry>
+		<entry>storage_proxy_port</entry>
+		<entry>Proxy port, default is 8080.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>PROXY_CREDENTIALS</entry>
+		<entry>storage_proxy_credentials</entry>
+		<entry>Proxy credentials</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>HTTP_ADAPTER</entry>
+		<entry>HTTP Adapter</entry>
+		<entry>HTTP adapter to use in all access operations.</entry>
+		<entry>Constructor</entry>
+	</row>
+	<row>
+		<entry>VISIBILITY_TIMEOUT</entry>
+		<entry>Visibility Timeout</entry>
+		<entry>Message visibility timeout</entry>
+		<entry><methodname>receiveMessages()</methodname></entry>
+	</row>
+	<row>
+		<entry>LIST_PREFIX</entry>
+		<entry>prefix</entry>
+		<entry>Filter the results to only queue names beginning with given prefix</entry>
+		<entry><methodname>listQueues()</methodname></entry>
+	</row>
+	<row>
+		<entry>LIST_MAX_RESULTS</entry>
+		<entry>max_results</entry>
+		<entry>Limit queue list to certain number of results</entry>
+		<entry><methodname>listQueues()</methodname></entry>
+	</row>
+	<row>
+		<entry>MESSAGE_TTL</entry>
+		<entry>ttl</entry>
+		<entry>Set message's time-to-live</entry>
+		<entry><methodname>sendMessage()</methodname></entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+
+	<table frame='all' id="zend.cloud.queueservice.options.zend-queue">
+	<title>Zend_Cloud_QueueService_Adapter_ZendQueue options</title>
+	<tgroup cols="4">
+	<thead>
+	<row>
+		<entry>Constant name</entry>
+		<entry>Constant value</entry>
+		<entry>Option meaning</entry>
+		<entry>Used in</entry>
+	</row>
+	</thead>
+	<tbody>
+	<row>
+		<entry>ADAPTER</entry>
+		<entry>adapter</entry>
+		<entry>Concrete Zend_Queue adapter to use. See Zend_Queue documentation for supported adapters and their options.</entry>
+		<entry>Constructor (mandatory)</entry>
+	</row>
+	<row>
+		<entry>TIMEOUT</entry>
+		<entry>adapter</entry>
+		<entry>Timeout for the operation</entry>
+		<entry><methodname>createQueue()</methodname>, <methodname>receiveMessages()</methodname></entry>
+	</row>
+	</tbody>
+	</tgroup>
+	</table>
+	
+	<note><para>It is recommended to always use class constant as an option key and avoid using the actual constant value,
+	as the latter is subject to change.</para>
+	</note>
 
     <sect2 id="zend.cloud.queueservice.concepts">
         <title>Basic concepts</title>
