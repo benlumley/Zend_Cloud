@@ -42,23 +42,26 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     // list options
     const LIST_PREFIX = 'prefix';
     const LIST_MAX_RESULTS = 'max_results';
-    const LIST_MARKER = "marker";
     // message options
     const MESSAGE_TTL = 'ttl';
     const VISIBILITY_TIMEOUT = 'Visibility Timeout';
+    
+    const DEFAULT_HOST = Zend_Service_WindowsAzure_Storage::URL_CLOUD_QUEUE;
     /**
      * Storage client
      * 
-     * @var Zend_Service_Azure_Storage_Queue
+     * @var Zend_Service_WindowsAzure_Storage_Queue
      */
     protected $_storageClient = null;
     
     public function __construct ($options = array())
     {
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
-        if (! isset($options[self::HOST])) {
-            throw new Zend_Cloud_Storage_Exception('No Windows Azure host name provided.');
-        }
+		if (!isset($options[self::HOST])) {
+			$host = self::DEFAULT_HOST;
+		} else {
+		    $host = $options[self::HOST];
+		}
         if (! isset($options[self::ACCOUNT_NAME])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
         }
@@ -68,7 +71,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
         try {
 	        // TODO: support $usePathStyleUri and $retryPolicy
 	        $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
-	            $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+	            $host, $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
 	        // Parse other options
 	        if (! empty($options[self::PROXY_HOST])) {
 	            $proxyHost = $options[self::PROXY_HOST];
@@ -130,14 +133,13 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      */
     public function listQueues ($options = null)
     {
-        $prefix = $maxResults = $marker = null;
+        $prefix = $maxResults = null;
         if (is_array($options)) {
             isset($options[self::LIST_PREFIX]) ? $prefix = $options[self::LIST_PREFIX] : null;
             isset($options[self::LIST_MAX_RESULTS]) ? $maxResults = $options[self::LIST_MAX_RESULTS] : null;
-            isset($options[self::LIST_MARKER]) ? $marker = $options[self::LIST_MARKER] : null;
         }
         try {
-            return $this->_storageClient->listQueues($prefix, $maxResults, $marker);
+            return $this->_storageClient->listQueues($prefix, $maxResults);
         } catch (Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e->getCode(), $e);
         }

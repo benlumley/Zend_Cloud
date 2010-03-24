@@ -28,7 +28,7 @@ require_once 'Zend/Cloud/QueueService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService_QueueService
+class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_QueueService
 {
     /*
      * Options array keys for the SQS adapter.
@@ -59,8 +59,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService_Que
         }
 
         if(isset($options[self::HTTP_ADAPTER])) {
-            $httpAdapter = $options[self::HTTP_ADAPTER];
-            $this->_sqs->getHttpClient()->setAdapter($httpAdapter);
+            $this->_sqs->getHttpClient()->setAdapter($options[self::HTTP_ADAPTER]);
         } 
     }
 
@@ -93,7 +92,7 @@ class Zend_Cloud_QueueService_Adapter_SQS implements Zend_Cloud_QueueService_Que
         try {
             return $this->_sqs->delete($queueId);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw Zend_Cloud_QueueService_Exception::adapterException('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
+            throw Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

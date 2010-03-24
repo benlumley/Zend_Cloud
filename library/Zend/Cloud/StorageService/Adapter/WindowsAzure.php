@@ -51,7 +51,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     const RETURN_LIST = 1;   // return native list
     const RETURN_NAMES = 2;  // return only names
     
-    const DEFAULT_HOST = "blob.core.windows.net";
+    const DEFAULT_HOST = Zend_Service_WindowsAzure_Storage::URL_CLOUD_BLOB;
     /**
 	 * Storage container to operate on
 	 * 

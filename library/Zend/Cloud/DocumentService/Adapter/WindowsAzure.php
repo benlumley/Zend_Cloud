@@ -45,6 +45,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     const ROW_KEY = 'RowKey';
     const VERIFY_ETAG = "verify_etag";
     
+    const DEFAULT_HOST = Zend_Service_WindowsAzure_Storage::URL_CLOUD_TABLE;
     /**
      * Azure  service instance.
      * 
@@ -56,9 +57,11 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     {
 
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
-        if (! isset($options[self::HOST])) {
-            throw new Zend_Cloud_DocumentService_Exception('No Windows Azure host name provided.');
-        }
+		if (!isset($options[self::HOST])) {
+			$host = self::DEFAULT_HOST;
+		} else {
+		    $host = $options[self::HOST];
+		}
         if (! isset($options[self::ACCOUNT_NAME])) {
             throw new Zend_Cloud_DocumentService_Exception('No Windows Azure account name provided.');
         }
@@ -68,7 +71,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
         // TODO: support $usePathStyleUri and $retryPolicy
         try {
             $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Table(
-                    $options[self::HOST], $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+                    $host, $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
 	        // Parse other options
 	        if (! empty($options[self::PROXY_HOST])) {
 	            $proxyHost = $options[self::PROXY_HOST];
