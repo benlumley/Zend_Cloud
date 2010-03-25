@@ -68,8 +68,8 @@ class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService
     {
         parent::setUp();
         // Create the bucket here
-        $s3 = new Zend_Service_Amazon_S3($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::ACCESS_KEY), 
-                $this->_config->get(Zend_Cloud_StorageService_Adapter_S3::SECRET_KEY));
+        $s3 = new Zend_Service_Amazon_S3($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::AWS_ACCESS_KEY), 
+                $this->_config->get(Zend_Cloud_StorageService_Adapter_S3::AWS_SECRET_KEY));
         $s3->createBucket($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::BUCKET_NAME));
     }
 
@@ -98,8 +98,8 @@ class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService
     public function tearDown() 
     {
         // Delete the bucket here
-        $s3 = new Zend_Service_Amazon_S3($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::ACCESS_KEY), 
-                $this->_config->get(Zend_Cloud_StorageService_Adapter_S3::SECRET_KEY));
+        $s3 = new Zend_Service_Amazon_S3($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::AWS_ACCESS_KEY), 
+                $this->_config->get(Zend_Cloud_StorageService_Adapter_S3::AWS_SECRET_KEY));
         $s3->removeBucket($this->_config->get(Zend_Cloud_StorageService_Adapter_S3::BUCKET_NAME));
         parent::tearDown();
     }
@@ -116,8 +116,8 @@ class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService
         
         $config = new Zend_Config(array(
             Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY => 'Zend_Cloud_StorageService_Adapter_S3',
-            Zend_Cloud_StorageService_Adapter_S3::ACCESS_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID'),
-            Zend_Cloud_StorageService_Adapter_S3::SECRET_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY'),
+            Zend_Cloud_StorageService_Adapter_S3::AWS_ACCESS_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ACCESSKEYID'),
+            Zend_Cloud_StorageService_Adapter_S3::AWS_SECRET_KEY => constant('TESTS_ZEND_SERVICE_AMAZON_ONLINE_SECRETKEY'),
             Zend_Cloud_StorageService_Adapter_S3::BUCKET_NAME => constant('TESTS_ZEND_CLOUD_STORAGE_S3_BUCKET'),
             ));
 

@@ -179,6 +179,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $this->assertEquals(1, count($receivedMessages));
             $this->assertEquals($message, 
                 $this->_getMessageText($receivedMessages[0]));
+		  $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
             throw $e;
@@ -253,11 +254,12 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $this->assertEquals($message1, $this->_getMessageText($receivedMessages1[0]));
             $receivedMessage1 = array_pop($receivedMessages1);
             $this->_commonQueue->deleteMessage($queueURL, $receivedMessage1);
-
+		  $this->_wait();
             // now there should be no messages left
             $receivedMessages2 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages2));
             $this->assertEquals(0, count($receivedMessages2));
+		  $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
             throw $e;

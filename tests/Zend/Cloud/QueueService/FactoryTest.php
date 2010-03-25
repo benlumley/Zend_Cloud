@@ -35,6 +35,8 @@ require_once 'Zend/Config/Ini.php';
  */
 require_once 'Zend/Cloud/QueueService/Factory.php';
 
+require_once 'Zend/Cloud/QueueService/Adapter/ZendQueue.php';
+
 /**
  * Test class for Zend_Cloud_QueueService_Factory
  *
@@ -63,26 +65,16 @@ class Zend_Cloud_QueueService_FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_string(Zend_Cloud_QueueService_Factory::QUEUE_ADAPTER_KEY));
     }
 
-    public function testGetAdapterWithConfig() {
-
-        // Nirvanix adapter
-        // TODO: offline test
-//        $nirvanixConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/nirvanix.ini'));
-//
-//        $nirvanixAdapter = Zend_Cloud_QueueService_Factory::getAdapter(
-//                                    $nirvanixConfig
-//                                );
-//
-//        $this->assertEquals('Zend_Cloud_QueueService_Adapter_Nirvanix', get_class($nirvanixAdapter));
-
+    public function testGetAdapterWithConfig() 
+    {
         // SQS adapter
         $sqsConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/sqs.ini'));
 
         $sqsAdapter = Zend_Cloud_QueueService_Factory::getAdapter($sqsConfig);
 
-        $this->assertEquals('Zend_Cloud_QueueService_Adapter_SQS', get_class($sqsAdapter));
+        $this->assertEquals('Zend_Cloud_QueueService_Adapter_Sqs', get_class($sqsAdapter));
 
-        // file system adapter
+        // zend queue adapter
         $zqConfig = new Zend_Config_Ini(realpath(dirname(__FILE__) . '/_files/config/zendqueue.ini'));
 
         $zq = Zend_Cloud_QueueService_Factory::getAdapter($zqConfig);
@@ -100,8 +92,8 @@ class Zend_Cloud_QueueService_FactoryTest extends PHPUnit_Framework_TestCase
 //        $this->assertEquals('Zend_Cloud_QueueService_Adapter_Azure', get_class($azureAdapter));
     }
 
-    public function testGetAdapterWithArray() {
-
+    public function testGetAdapterWithArray() 
+    {
         // No need to overdo it; we'll test the array config with just one adapter.
         $zqConfig = array(Zend_Cloud_QueueService_Factory::QUEUE_ADAPTER_KEY =>
         					     'Zend_Cloud_QueueService_Adapter_ZendQueue',

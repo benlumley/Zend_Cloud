@@ -83,6 +83,18 @@ abstract class Zend_Cloud_StorageService_TestCase extends PHPUnit_Framework_Test
         $this->_commonStorage = Zend_Cloud_StorageService_Factory::getAdapter($this->_config);
     }
     
+    public function testNoParams()
+    {
+        $config = array(Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY => $this->_config->get(Zend_Cloud_StorageService_Factory::STORAGE_ADAPTER_KEY));
+	try {
+		$s = Zend_Cloud_StorageService_Factory::getAdapter($config);
+	} catch(Zend_Cloud_StorageService_Exception $e) {
+		return;
+	}
+	$this->fail("Exception not thrown");
+        
+    }
+    
     /**
      * Test fetch item
      *
