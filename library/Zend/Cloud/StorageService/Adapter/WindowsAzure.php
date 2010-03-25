@@ -81,10 +81,10 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 		}
 		
 		if (!isset($options[self::ACCOUNT_NAME])) {
-			throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
+			throw new Zend_Cloud_StorageService_Exception('No Windows Azure account name provided.');
 		}
 		if (!isset($options[self::ACCOUNT_KEY])) {
-			throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
+			throw new Zend_Cloud_StorageService_Exception('No Windows Azure account key provided.');
 		}
 			
 		$this->_storageClient = new Zend_Service_WindowsAzure_Storage_Blob($host,

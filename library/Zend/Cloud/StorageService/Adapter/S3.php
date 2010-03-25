@@ -57,6 +57,10 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
     public function __construct($options = array()) 
     {
 
+	if(!isset($options[self::AWS_ACCESS_KEY]) || !isset($options[self::AWS_SECRET_KEY])) {
+		throw new Zend_Cloud_StorageService_Exception('AWS keys not specified!');
+	}
+
         try {
             $this->_s3 = new Zend_Service_Amazon_S3($options[self::AWS_ACCESS_KEY],
                                                 $options[self::AWS_SECRET_KEY]);
