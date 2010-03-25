@@ -119,7 +119,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
     ) {
         try {
 	        $fullPath = $this->_getFullPath($destinationPath, $options);
-	        return $this->_s3->putObject($fullPath, $data, $empty($options[self::METADATA])?null:$options[self::METADATA]);
+	        return $this->_s3->putObject($fullPath, $data, empty($options[self::METADATA])?null:$options[self::METADATA]);
         } catch (Zend_Service_Amazon_S3_Exception  $e) { 
 	        throw new Zend_Cloud_StorageService_Exception('Error on store: '.$e->getMessage(), $e->getCode(), $e);
         }
