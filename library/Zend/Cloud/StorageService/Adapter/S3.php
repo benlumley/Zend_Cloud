@@ -95,7 +95,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
         $fullPath = $this->_getFullPath($path, $options);
         try {
 	        if(!empty($options[self::FETCH_STREAM])) {
-	            return $this->_s3->getStreamObject($fullPath, $options[self::FETCH_STREAM]);
+	            return $this->_s3->getObjectStream($fullPath, $options[self::FETCH_STREAM]);
 	        } else {
 	            return $this->_s3->getObject($fullPath);
 	        }
