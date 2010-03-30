@@ -121,6 +121,7 @@
 		are merged. The rest of attributes are replaced.
 		</entry>
 		<entry><methodname>updateDocument()</methodname></entry>
+		<entry>No</entry>
 		<entry>true</entry>
 	</row>
 	<row>
@@ -128,6 +129,7 @@
 		<entry>If true, <methodname>query()</methodname> returns array of
 		document objects, otherwise array of arrays.</entry>
 		<entry><methodname>query()</methodname></entry>
+		<entry>No</entry>
 		<entry>true</entry>
 	</row>
 	</tbody>
