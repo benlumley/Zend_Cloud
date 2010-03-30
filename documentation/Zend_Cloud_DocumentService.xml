@@ -322,9 +322,13 @@ $documents->deleteCollection("mydata");
 ]]></programlisting>
 		</example>
         <para>Deleting a collection automatically deletes all documents
-        contained in that collection. Note that deleting a collection can take 
-        significant time on some services and during that time you will not be
-        able to re-create a collection with the same name.
+        contained in that collection.
+        </para>
+        <note>Deleting a collection can take significant time for some services
+        You cannot re-create a collection with the same name until the
+        collection is removed.
+        </note>
+        <para>
         Deleting a non-existant collection will have no effect.
         </para>
 	</sect2>
@@ -575,11 +579,13 @@ foreach($docs as $doc) {
     <sect2 id="zend.cloud.documentservice.adapter">
         <title>Accessing concrete adapters</title>
         <para>Sometimes it is necessary to retrieve the concrete adapter for the
-        service that Document API is working with. This can be achieved by using
-        the <methodname>getAdapter()</methodname> method. Note that
-        accessing the underlying adapter breaks portability among services, so
-        it should be reserved for exceptional circumstances only.
+        service that the Document API is working with. This can be achieved by
+        using the <methodname>getAdapter()</methodname> method.
         </para>
+        <note>
+        Accessing the underlying adapter breaks portability among services, so
+        it should be reserved for exceptional circumstances only.
+        </note>
     	<example id="zend.cloud.documentservice.adapter.example">
       		<title>Using concrete adapters</title>
 		    <programlisting language="php"><![CDATA[
