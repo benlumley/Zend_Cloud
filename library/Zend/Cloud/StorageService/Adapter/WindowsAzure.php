@@ -38,9 +38,9 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
     const PROXY_PORT = "storage_proxy_port";
     const PROXY_CREDENTIALS = "storage_proxy_credentials";
     const CONTAINER = "storage_container";
-    const HTTP_ADAPTER = 'HTTP Adapter';
-    const RETURN_TYPE = 'returntype';
-    const RETURN_PATHNAME = 'returnpath';
+    const HTTP_ADAPTER = 'http_adapter';
+    const RETURN_TYPE = 'return_type';
+    const RETURN_PATHNAME = 'return_path';
     const RETURN_OPENMODE = 'return_openmode';
     
     /* return types  for fetch */

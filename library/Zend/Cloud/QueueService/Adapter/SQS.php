@@ -33,8 +33,8 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
     /*
      * Options array keys for the SQS adapter.
      */
-    const HTTP_ADAPTER = 'HTTP Adapter';
-    const VISIBILITY_TIMEOUT = 'Visibility Timeout';
+    const HTTP_ADAPTER = 'http_adapter';
+    const VISIBILITY_TIMEOUT = 'visibility_timeout';
     const AWS_ACCESS_KEY = 'aws_accesskey';
     const AWS_SECRET_KEY = 'aws_secretkey';
 

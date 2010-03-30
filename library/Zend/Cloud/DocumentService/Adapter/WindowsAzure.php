@@ -36,7 +36,7 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     const ACCOUNT_NAME = 'storage_accountname';
     const ACCOUNT_KEY = 'storage_accountkey';
     const HOST = "storage_host";
-    const HTTP_ADAPTER = 'HTTP Adapter';
+    const HTTP_ADAPTER = 'http_adapter';
     const PROXY_HOST = "storage_proxy_host";
     const PROXY_PORT = "storage_proxy_port";
     const PROXY_CREDENTIALS = "storage_proxy_credentials";

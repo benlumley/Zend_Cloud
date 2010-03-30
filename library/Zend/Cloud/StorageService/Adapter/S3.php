@@ -36,7 +36,7 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
      */
     const BUCKET_NAME = 'bucket_name';
     const BUCKET_AS_DOMAIN = 'bucket_as_domain?';
-    const HTTP_ADAPTER = 'HTTP Adapter';
+    const HTTP_ADAPTER = 'http_adapter';
     const FETCH_STREAM = 'fetch_stream';
     const METADATA = 'metadata';
     
