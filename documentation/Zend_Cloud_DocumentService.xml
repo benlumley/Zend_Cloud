@@ -58,7 +58,7 @@
 	
 	<para>To instantiate a document service adapter, use the static method
 	<methodname>Zend_Cloud_DocumentService_Factory::getAdapter()</methodname>, 
-	which accepts a configuration array ora  <classname>Zend_Config</classname>
+	which accepts a configuration array or a  <classname>Zend_Config</classname>
 	object. The <property>document_adapter</property> key should specify the
 	concrete adapter class by classname. Adapter-specific keys may also be
 	passed in this configuration parameter: 
@@ -332,7 +332,7 @@ $documents->deleteCollection("mydata");
         Deleting a non-existant collection will have no effect.
         </para>
 	</sect2>
-    
+    ß
     <sect2 id="zend.cloud.documentservice.list-collections">
         <title>Listing available collections</title>
         <para>
