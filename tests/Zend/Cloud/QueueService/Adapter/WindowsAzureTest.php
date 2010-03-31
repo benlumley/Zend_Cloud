@@ -79,10 +79,6 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzureTest extends Zend_Cloud_QueueS
         $this->_wait();
     }    
     
-     public function testPeekMessage() {
-        $this->markTestSkipped('The Windows Azure client library does not currently support peeking messages');
-    }
-    
     protected function _getConfig() 
     {
         if (!defined('TESTS_ZEND_SERVICE_AZURE_ONLINE_ENABLED') ||
@@ -104,10 +100,4 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzureTest extends Zend_Cloud_QueueS
 
         return $config;
     }
-    
-    protected function _getMessageText($message) 
-    {
-        return $message->MessageText;
-    }
-    
 }

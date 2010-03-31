@@ -177,8 +177,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $receivedMessages = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages));
             $this->assertEquals(1, count($receivedMessages));
-            $this->assertEquals($message, 
-                $this->_getMessageText($receivedMessages[0]));
+            $this->assertEquals($message, $receivedMessages[0]->getBody());
 		  $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
@@ -205,6 +204,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $this->assertTrue(is_array($receivedMessages1));
             $this->assertEquals(1, count($receivedMessages1));
             $receivedMessage1 = array_pop($receivedMessages1);
+            $this->assertTrue($receivedMessage1 instanceof Zend_Cloud_QueueService_Message);
             // cleanup the queue
             $this->_commonQueue->deleteQueue($queueURL);
             $this->_wait();
@@ -227,8 +227,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $this->assertEquals(2, count($receivedMessages2));
             $receivedMessage1 = array_pop($receivedMessages2);
             $receivedMessage2 = array_pop($receivedMessages2);
-            $texts = array($this->_getMessageText($receivedMessage1), 
-                $this->_getMessageText($receivedMessage2));
+            $texts = array($receivedMessage1->getBody(), $receivedMessage2->getBody());
             $this->assertContains($message1, $texts);
             $this->assertContains($message2, $texts);
             $this->_commonQueue->deleteQueue($queueURL);
@@ -251,10 +250,10 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             // should receive one $message1
             $this->assertTrue(is_array($receivedMessages1));
             $this->assertEquals(1, count($receivedMessages1));
-            $this->assertEquals($message1, $this->_getMessageText($receivedMessages1[0]));
+            $this->assertEquals($message1, $receivedMessages1[0]->getBody());
             $receivedMessage1 = array_pop($receivedMessages1);
             $this->_commonQueue->deleteMessage($queueURL, $receivedMessage1);
-		  $this->_wait();
+            $this->_wait();
             // now there should be no messages left
             $receivedMessages2 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages2));
@@ -268,6 +267,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
 
     public function testPeekMessage()
     {
+        $this->markTestSkipped('Peeking messages currently not implemented');
         try {
             $queueURL = $this->_commonQueue->createQueue('test-peek-message');
             $this->assertNotNull($queueURL);
@@ -296,14 +296,6 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
      * @returns Zend_Config
      */
     abstract protected function _getConfig();
-    
-    /**
-     * Fetch message text from the concrete message
-     *  
-     * @param $message
-     * @return string
-     */
-    abstract protected function _getMessageText($message);
 }
 
 class Zend_Cloud_QueueService_Adapter_Skip extends PHPUnit_Framework_TestCase

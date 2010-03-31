@@ -84,10 +84,6 @@ class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueService_Te
         $this->markTestSkipped('SQS does not currently support storing metadata');
     }
 
-    public function testPeekMessage() {
-        $this->markTestSkipped('The SQS client library does not currently support peeking messages');
-    }
-    
     protected function _getConfig() 
     {
         if (!defined('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED') ||
@@ -104,11 +100,5 @@ class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueService_Te
             ));
 
         return $config;
-    }
-    
-
-    protected function _getMessageText($message) 
-    {
-        return $message['body'];
     }
 }
