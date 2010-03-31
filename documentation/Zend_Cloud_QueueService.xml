@@ -268,7 +268,7 @@
         </para>
         <para>
         Since different cloud providers implement different sets of
-        services, some drivers do not implement certain features. In this case,
+        services, some adapters do not implement certain features. In this case,
         the <classname>Zend_Cloud_OperationNotAvailableException</classname>
         exception is thrown.
         </para>
