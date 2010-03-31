@@ -4,47 +4,45 @@
     <title>Storage Service Introduction</title>
 
     <para>
-    	The StorageService implements basic storage pattern, where the container stores a number
-    	of object which have no internal structure and are identified by string key.  
+    	The storage service in the Simple Cloud API implements a basic
+    	interface for file storage on the cloud. The files have no internal
+    	structure as far as the service is concerned and are identified by
+    	string key that is analogous to a filepath on a filesystem.  
     </para>
 
 	<para>
-	The interface <classname>Zend_Cloud_StorageService_StorageService</classname> defines
-	the methods which each concrete document service provider implements. So far, the following 
-	providers are supported: 
+	The interface <classname>Zend_Cloud_StorageService_StorageService</classname>
+	define methods that each concrete document service adapter must implement.
+	The following adapters are shipped with the Simple Cloud API:  
 	</para>
 	
 	<itemizedlist>
         <listitem>
-            <para><classname>Zend_Cloud_StorageService_Adapter_S3</classname> - 
-            implements <ulink url="http://docs.amazonwebservices.com/AmazonS3/latest/dev/">Amazon 
-            S3</ulink> access. 
-			</para>
+            <ulink url="http://aws.amazon.com/s3/">
+            <classname>Zend_Cloud_StorageService_Adapter_S3</classname>
+            </ulink>
 		</listitem>
         <listitem>
-            <para><classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname> - 
-            implements <ulink url="http://msdn.microsoft.com/en-us/library/dd135733.aspx">Windows Azure
-            Blob storage</ulink> access. 
-			</para>
+            <ulink url="http://msdn.microsoft.com/en-us/library/dd179423.aspx">
+            <classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname>
+            </ulink>
 		</listitem>
         <listitem>
-            <para><classname>Zend_Cloud_StorageService_Adapter_Nirvanix</classname> - 
-            implements <ulink url="http://developer.nirvanix.com/sitefiles/1000/API.html">Nirvanix IMFS</ulink>
-            access. 
-			</para>
+            <ulink url="http://developer.nirvanix.com/sitefiles/1000/API.html">
+            <classname>Zend_Cloud_StorageService_Adapter_Nirvanix</classname>
+            </ulink>
 		</listitem>
         <listitem>
-            <para><classname>Zend_Cloud_StorageService_Adapter_FileSystem</classname> - 
-            implements local filesystem storage.
-			</para>
+            <classname>Zend_Cloud_StorageService_Adapter_FileSystem</classname>
 		</listitem>
 	</itemizedlist>
 	
-	<para>In order to create the service object, 
-	use the static method method <methodname>Zend_Cloud_StorageService_Factory::getAdapter()</methodname>, 
-	which accepts either array or <classname>Zend_Config</classname> object. 
-	The key named <property>storage_adapter</property> should specify the concrete adapter class, 
-	and the rest of parameters are adapter-specific configurations, usually access details: 
+	<para>To create the service object, call the static method 
+	<methodname>Zend_Cloud_StorageService_Factory::getAdapter()</methodname>, 
+	which accepts either array or a <classname>Zend_Config</classname> object. 
+	The key named <property>storage_adapter</property> should specify the
+	concrete adapter class. Adapter-specific keys may also be
+	passed in this configuration parameter: 
 	</para>
 	
     <example id="zend.cloud.storageservice.factory.example">
@@ -59,68 +57,86 @@ $storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
 	</example>
 	
 	<para>
-	Service-specific options for constructing the objects are: 
+	The supported adapter-specific options include:
 	</para>
 	
 	<table frame='all' id="zend.cloud.storageservice.options.s3">
 	<title>Zend_Cloud_StorageService_Adapter_S3 options</title>
 	<tgroup cols="4">
 	<thead>
-	<row>
-		<entry>Constant name</entry>
-		<entry>Constant value</entry>
-		<entry>Option meaning</entry>
+		<row>
+		<entry>Option key</entry>
+		<entry>Description</entry>
 		<entry>Used in</entry>
+		<entry>Required</entry>
+		<entry>Default</entry>
 	</row>
 	</thead>
 	<tbody>
 	<row>
-		<entry>AWS_ACCESS_KEY</entry>
 		<entry>aws_accesskey</entry>
 		<entry>Amazon AWS access key</entry>
-		<entry>Constructor (mandatory)</entry>
+		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>AWS_ACCESS_KEY</entry>
 		<entry>aws_secretkey</entry>
 		<entry>Amazon AWS secret key</entry>
-		<entry>Constructor (mandatory)</entry>
+		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>HTTP_ADAPTER</entry>
-		<entry>HTTP Adapter</entry>
+		<entry>bucket_name</entry>
+		<entry>The name of the S3 bucket for this item</entry>
+		<entry>
+		Used in constructor to set the default bucket for the instantiated
+		service. This option can also be specified in any of the item access
+		operations.
+		</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
+	</row>
+	
+	<row>
+		<entry>bucket_as_domain</entry>
+		<entry>
+		Indicates that the bucket name is part of the domain name
+		</entry>
+		<entry>
+		Used in constructor to set the default behavior for the instantiated
+		service. This option can also be specified in any of the item access
+		operations.
+		</entry>
+		<entry>No</entry>
+		<entry>false</entry>
+	</row>
+	<row>
+		<entry>metadata</entry>
+		<entry>Array of metadata to associate with the item</entry>
+		<entry><methodname>storeItem()</methodname></entry>
+		<entry>No</entry>
+		<entry>None</entry>
+	</row>
+	<row>
+		<entry>fetch_stream</entry>
+		<entry>Indicates whether the response is stream, and not a string
+		<note>
+		See the Zend_Service_Amazon_S3 documentation for more about
+		handling streamed responses)
+		</note>
+		</entry>
+		<entry><methodname>fetchItem()</methodname></entry>
+		<entry>No</entry>
+		<entry>false</entry>
+	</row>
+	<row>
+		<entry>http_adapter</entry>
 		<entry>HTTP adapter to use in all access operations</entry>
 		<entry>Constructor</entry>
-	</row>
-	<row>
-		<entry>BUCKET_NAME</entry>
-		<entry>bucket_name</entry>
-		<entry>The name of the S3 bucket for this item.</entry>
-		<entry>Used in constructor, sets default bucket for the object, but also can be used in any of the item access operations.</entry>
-	</row>
-	<row>
-		<entry>BUCKET_AS_DOMAIN</entry>
-		<entry>bucket_as_domain?</entry>
-		<entry>Use bucket name in domain name and not as part of the path?</entry>
-		<entry>Used in constructor, sets default behavior for the object, but also can be used in any of the item access operations.</entry>
-	</row>
-	<row>
-		<entry>HTTP_ADAPTER</entry>
-		<entry>HTTP Adapter</entry>
-		<entry>HTTP adapter to use in all access operations.</entry>
-		<entry>Constructor</entry>
-	</row>
-	<row>
-		<entry>METADATA</entry>
-		<entry>metadata</entry>
-		<entry>Array of metadate to attach to the item.</entry>
-		<entry><methodname>storeItem()</methodname></entry>
-	</row>
-	<row>
-		<entry>FETCH_STREAM</entry>
-		<entry>fetch_stream</entry>
-		<entry>Fetch response as stream? (see Zend_Service_Amazon_S3 documentation for explanation on handling streamed responses)</entry>
-		<entry><methodname>fetchItem()</methodname></entry>
+		<entry>No</entry>
+		<entry>Zend_Http_Client_Adapter_Socket</entry>
 	</row>
 	</tbody>
 	</tgroup>
@@ -131,70 +147,79 @@ $storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
 	<tgroup cols="4">
 	<thead>
 	<row>
-		<entry>Constant name</entry>
-		<entry>Constant value</entry>
-		<entry>Option meaning</entry>
+		<entry>Option key</entry>
+		<entry>Description</entry>
 		<entry>Used in</entry>
+		<entry>Required</entry>
+		<entry>Default</entry>
 	</row>
 	</thead>
 	<tbody>
 	<row>
-		<entry>ACCOUNT_NAME</entry>
 		<entry>storage_accountname</entry>
 		<entry>Windows Azure account name</entry>
-		<entry>Constructor (mandatory)</entry>
+		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>ACCOUNT_KEY</entry>
 		<entry>storage_accountkey</entry>
 		<entry>Windows Azure account key</entry>
-		<entry>Constructor (mandatory)</entry>
-	</row>
-	<row>
-		<entry>CONTAINER</entry>
-		<entry>storage_container</entry>
-		<entry>Container to use for this storage object.</entry>
-		<entry>Constructor (mandatory)</entry>
-	</row>
-	<row>
-		<entry>HOST</entry>
-		<entry>storage_host</entry>
-		<entry>Windows Azure access host, default is blob.core.windows.net</entry>
 		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>PROXY_HOST</entry>
+		<entry>storage_container</entry>
+		<entry>Container to use for this storage object</entry>
+		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>None</entry>
+	</row>
+	<row>
+		<entry>storage_host</entry>
+		<entry>Windows Azure access host</entry>
+		<entry>Constructor</entry>
+		<entry>Yes</entry>
+		<entry>blob.core.windows.net</entry>
+	</row>
+	<row>
 		<entry>storage_proxy_host</entry>
 		<entry>Proxy hostname</entry>
 		<entry>Constructor</entry>
+		<entry>No</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>PROXY_PORT</entry>
 		<entry>storage_proxy_port</entry>
-		<entry>Proxy port, default is 8080.</entry>
+		<entry>Proxy port</entry>
 		<entry>Constructor</entry>
+		<entry>No</entry>
+		<entry>8080</entry>
 	</row>
 	<row>
-		<entry>PROXY_CREDENTIALS</entry>
 		<entry>storage_proxy_credentials</entry>
 		<entry>Proxy credentials</entry>
 		<entry>Constructor</entry>
+		<entry>No</entry>
+		<entry>None</entry>
 	</row>
 	<row>
-		<entry>HTTP_ADAPTER</entry>
-		<entry>HTTP Adapter</entry>
-		<entry>HTTP adapter to use in all access operations.</entry>
+		<entry>http_adapter</entry>
+		<entry>HTTP adapter to use in all access operations</entry>
 		<entry>Constructor</entry>
+		<entry>No</entry>
+		<entry>Zend_Http_Client_Adapter_Socket</entry>
 	</row>
 	<row>
-		<entry>RETURN_TYPE</entry>
-		<entry>returntype</entry>
-		<entry>How to return the results. For <methodname>fetchItem()</methodname>, valid values are the following
-		<classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname> constants:
+		<term><constant>returntype</constant></term>
+		<entry>How to return the results
+		For <methodname>fetchItem()</methodname>, valid values are:
+		<classname>Zend_Cloud_StorageService_Adapter_WindowsAzure</classname>
 		<variablelist>
           <varlistentry>
-           <term><constant>RETURN_STRING</constant></term>
-           <listitem><para>return the data as string (default)</para></listitem> 
+          <term><constant>RETURN_STRING</constant></term>
+           <listitem><para>Return the data as strings</para></listitem> 
           </varlistentry>
           <varlistentry>
            <term><constant>RETURN_PATH</constant></term>
@@ -202,7 +227,7 @@ $storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
           </varlistentry>
           <varlistentry>
            <term><constant>RETURN_STREAM</constant></term>
-           <listitem><para>return the data as stream</para></listitem> 
+           <listitem><para>Default: Return the data as stream</para></listitem> 
           </varlistentry>
 		</variablelist>		
 		For <methodname>listItems()</methodname> valid values are: 
@@ -220,10 +245,11 @@ $storage = Zend_Cloud_StorageService_Factory::getAdapter(array(
 		<entry><methodname>fetchItem()</methodname>, <methodname>listItems()</methodname></entry>
 	</row>
 	<row>
-		<entry>RETURN_PATHNAME</entry>
-		<entry>returnpath</entry>
+		<entry>RETURN_PATHNAME</entry><term><constant>RETURN_PATHNAME</constant></term>
+		<entry>Returnpath. This is the URL that can be used to access
+		the item after it has been uploaded.</entry>
 		<entry>Pathname used to save data</entry>
-		<entry><methodname>fetchItem()</methodname></entry>
+		<entry><methodname>fetchItem()</methodname></entry>RETURN_PATHNAME
 	</row>
 	<row>
 		<entry>RETURN_OPENMODE</entry>
