@@ -33,8 +33,6 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
     /*
      * Options array keys for the SQS adapter.
      */
-    const HTTP_ADAPTER = 'http_adapter';
-    const VISIBILITY_TIMEOUT = 'visibility_timeout';
     const AWS_ACCESS_KEY = 'aws_accesskey';
     const AWS_SECRET_KEY = 'aws_secretkey';
 
@@ -178,29 +176,49 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
     public function receiveMessages($queueId, $max = 1, $options = null) 
     {
         try {
-            return $this->_sqs->receive($queueId, $max, $options[self::VISIBILITY_TIMEOUT]);
+            return $this->_makeMessages($this->_sqs->receive($queueId, $max, $options[self::VISIBILITY_TIMEOUT]));
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e->getCode(), $e);
         }
+    }
+    
+    /**
+     * Create Zend_Cloud_QueueService_Message array for
+     * Sqs messages.
+     *  
+     * @param array $messages
+     * @return array[Zend_Cloud_QueueService_Message]
+     */
+    protected function _makeMessages($messages)
+    {
+        $result = array();
+        foreach($messages as $message) {
+            $result[] = new Zend_Cloud_QueueService_Message($message['body'], $message);
+        }
+        return $result;
     }
 
     /**
      * Delete the specified message from the specified queue.
      *
-     * @param  string $messageId
      * @param  string $queueId
+     * @param  Zend_Cloud_QueueService_Message $message
      * @param  array  $options
      * @return void
      */
-    public function deleteMessage($queueId, $messageId, $options = null) 
+    public function deleteMessage($queueId, $message, $options = null) 
     {
         try {
+            if($message instanceof Zend_Cloud_QueueService_Message) {
+                $message = $message->getMessage();
+            }
+            $messageId = $message['handle'];
             return $this->_sqs->deleteMessage($queueId, $messageId);
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
-
+    
     /**
      * Peek at the specified message from the specified queue.
      * WARNING: This operation may block other receivers from recieving the
@@ -226,7 +244,7 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
      * Get SQS implementation
      * @return Zend_Service_Amazon_Sqs 
      */
-    public function getAdapter()
+    public function getClient()
     {
         return $this->_sqs;
     }

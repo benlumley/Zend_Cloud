@@ -35,7 +35,6 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     const ACCOUNT_NAME = 'storage_accountname';
     const ACCOUNT_KEY = 'storage_accountkey';
     const HOST = "storage_host";
-    const HTTP_ADAPTER = 'http_adapter';
     const PROXY_HOST = "storage_proxy_host";
     const PROXY_PORT = "storage_proxy_port";
     const PROXY_CREDENTIALS = "storage_proxy_credentials";
@@ -44,7 +43,6 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     const LIST_MAX_RESULTS = 'max_results';
     // message options
     const MESSAGE_TTL = 'ttl';
-    const VISIBILITY_TIMEOUT = 'visibility_timeout';
     
     const DEFAULT_HOST = Zend_Service_WindowsAzure_Storage::URL_CLOUD_QUEUE;
     /**
@@ -100,7 +98,8 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     public function createQueue ($name, $options = null)
     {
         try {
-            return $this->_storageClient->createQueue($name, $options);
+            $queue = $this->_storageClient->createQueue($name, $options);
+            return $queue->Name;
         } catch (Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on queue creation: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -139,7 +138,12 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
             isset($options[self::LIST_MAX_RESULTS]) ? $maxResults = $options[self::LIST_MAX_RESULTS] : null;
         }
         try {
-            return $this->_storageClient->listQueues($prefix, $maxResults);
+            $queues =  $this->_storageClient->listQueues($prefix, $maxResults);
+            $result = array();
+            foreach($queues as $queue) {
+                $result[] = $queue->Name;
+            }
+            return $result;
         } catch (Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -222,18 +226,38 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
             if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
-            return $this->_storageClient->getMessages($queueId, $max, 
-                $options[self::VISIBILITY_TIMEOUT], false);
+            if(isset($options[self::VISIBILITY_TIMEOUT])) {
+                $visibility = $options[self::VISIBILITY_TIMEOUT];
+            } else {
+                $visibility = self::DEFAULT_TIMEOUT;
+            }
+            return $this->_makeMessages($this->_storageClient->getMessages($queueId, $max, $visibility, false));
         } catch (Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
     
     /**
+     * Create Zend_Cloud_QueueService_Message array for
+     * Azure messages.
+     *  
+     * @param array $messages
+     * @return array[Zend_Cloud_QueueService_Message]
+     */
+    protected function _makeMessages($messages)
+    {
+        $result = array();
+        foreach($messages as $message) {
+            $result[] = new Zend_Cloud_QueueService_Message($message->MessageText, $message);
+        }
+        return $result;
+    }
+
+    /**
      * Delete the specified message from the specified queue.
      * 
      * @param  string $queueId
-     * @param  Zend_Service_WindowsAzure_Storage_QueueMessage $message Message ID or message 
+     * @param  Zend_Cloud_QueueService_Message $message Message ID or message 
      * @param  array  $options
      * @return void
      */
@@ -242,6 +266,9 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
         try {
             if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
+            }
+            if($message instanceof Zend_Cloud_QueueService_Message) {
+                $message = $message->getMessage();
             }
             if($message instanceof Zend_Service_WindowsAzure_Storage_QueueMessage) {
                 return $this->_storageClient->deleteMessage($queueId, $message);
@@ -252,31 +279,27 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
             throw new Zend_Cloud_QueueService_Exception('Error on deleting a message: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
-    
+
     /**
      * Peek at the specified message from the specified queue.
-     * WARNING: This operation may block other receivers from recieving the
-     * message until the message is released from the peeker for services
-     * that do not natively support message peeking. This may impact
-     * performance and/or introduce concurrency issues in your applications.
-     * Check your cloud vendor's documentation for more details.
      *
      * @param  string $messageId
      * @param  string $queueId
      * @param  array  $options
-     * @return string Message body
+     * @return string Messages
      */
-    public function peekMessage ($queueId, $messageId, $options = null)
+    public function peekMessage($queueId, $messageId, $options = null)
     {
         require_once 'Zend/Cloud/OperationNotAvailableException.php';
-        throw new Zend_Cloud_OperationNotAvailableException('WindowsAzure doesn\'t currently support message peeking');
+        throw new Zend_Cloud_OperationNotAvailableException('WindowsAzure doesn\'t currently support message peeking'
+        );
     }
     
-    /**
+   /**
      * Get Azure implementation
      * @return Zend_Service_Azure_Storage_Queue 
      */
-    public function getAdapter()
+    public function getClient()
     {
         return $this->_storageClient;
     }

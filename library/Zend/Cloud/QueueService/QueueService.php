@@ -17,6 +17,10 @@
  */
 
 /**
+ * @see Zend_Cloud_QueueService_Message
+ */
+require_once 'Zend/Cloud/QueueService/Message.php';
+/**
  * Common interface for queue services in the cloud. This interface supports
  * most queue services and provides some flexibility for vendor-specific
  * features and requirements via an optional $options array in each method
@@ -34,7 +38,13 @@
  */
 interface Zend_Cloud_QueueService_QueueService
 {
- 	/**
+    // Ctor HTTP adapter option
+    const HTTP_ADAPTER = 'http_adapter';
+    // Message visibility timeout option
+    const VISIBILITY_TIMEOUT = 'visibility_timeout';
+    // Default visibility timeout
+    const DEFAULT_TIMEOUT = 30;
+    /**
      * Create a queue. Returns the ID of the created queue (typically the URL).
      * It may take some time to create the queue. Check your vendor's
      * documentation for details.
@@ -103,8 +113,7 @@ interface Zend_Cloud_QueueService_QueueService
      * @param  string $queueId
      * @param  int    $max
      * @param  array  $options
-     * @return array  Array of messages
-     * TODO: should we define message type? Will it affect portability?
+     * @return array[Zend_Cloud_QueueService_QueueService_Message]  Array of messages
      */
     public function receiveMessages($queueId, $max = 1, $options = null);
     
@@ -112,7 +121,7 @@ interface Zend_Cloud_QueueService_QueueService
      * Delete the specified message from the specified queue.
      * 
      * @param  string $queueId
-     * @param  $message Message to delete 
+     * @param  Zend_Cloud_QueueService_Message $message Message to delete 
      * @param  array  $options
      * @return void
      * 
@@ -122,7 +131,7 @@ interface Zend_Cloud_QueueService_QueueService
     /**
      * Get the concrete adapter.
      */
-    public function getAdapter();
+    public function getClient();
         
     /**
      * TODO: Right now we don't know what API to choose for peekMessage

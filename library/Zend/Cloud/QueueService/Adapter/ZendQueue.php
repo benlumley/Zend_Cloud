@@ -32,7 +32,6 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * Options array keys for the Zend_Queue adapter.
      */
     const ADAPTER = 'adapter';
-    const TIMEOUT = 'timeout';
     
     /**
      * Storage client
@@ -193,13 +192,9 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
         try {
             $res = $this->_queues[$queueId]->receive($max, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
             if($res instanceof Iterator) {
-                $messages = array();
-                foreach($res as $message) {
-                    $messages[] = $message;
-                }
-                return $messages; 
+                return $this->_makeMessages($res);
             } else {
-                return $res;
+                return $this->_makeMessages(array($res));
             }
         } catch (Zend_Queue_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on recieving messages: '.$e->getMessage(), $e->getCode(), $e);
@@ -207,10 +202,26 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     }
     
     /**
+     * Create Zend_Cloud_QueueService_Message array for
+     * Azure messages.
+     *  
+     * @param array $messages
+     * @return array[Zend_Cloud_QueueService_Message]
+     */
+    protected function _makeMessages($messages)
+    {
+        $result = array();
+        foreach($messages as $message) {
+            $result[] = new Zend_Cloud_QueueService_Message($message->body, $message);
+        }
+        return $result;
+    }
+    
+    /**
      * Delete the specified message from the specified queue.
      * 
      * @param  string $queueId
-     * @param  Zend_Service_WindowsAzure_Storage_QueueMessage $message Message ID or message 
+     * @param  Zend_Cloud_QueueService_Message $message Message ID or message 
      * @param  array  $options
      * @return void
      */
@@ -220,6 +231,9 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
             throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
         }
         try {
+            if($message instanceof Zend_Cloud_QueueService_Message) {
+                $message = $message->getMessage();
+            }
             if(!($message instanceof Zend_Queue_Message)) {
                 throw new Zend_Cloud_QueueService_Exception('Cannot delete the message: Zend_Queue_Message object required');
             }
@@ -253,7 +267,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * Get Azure implementation
      * @return Zend_Queue 
      */
-    public function getAdapter()
+    public function getClient()
     {
         return $this->_queue;
     }
