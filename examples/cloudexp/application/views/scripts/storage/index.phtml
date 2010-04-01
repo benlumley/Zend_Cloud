@@ -1,0 +1,5 @@
+<?php 
+foreach($this->items as $item) {
+?>
+<a href="<?= $this->url(array("action" => "get", "controller" => "storage", "item" => $item)) ?>"><?= $item ?></a><br/>
+<?php } ?>
