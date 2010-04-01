@@ -25,7 +25,6 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
     const USERNAME = 'auth_username';
     const PASSWORD = 'auth_password';
     const APP_KEY  = 'auth_accesskey';
-    const HTTP_ADAPTER = 'http_adapter';
     const REMOTE_DIRECTORY = 'remote_directory';
 
     /**

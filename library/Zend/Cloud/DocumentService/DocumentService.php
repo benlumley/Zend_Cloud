@@ -17,6 +17,11 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/** 
+ * @see Zend_Cloud_DocumentService_Document
+ */
+require_once 'Zend/Cloud/DocumentService/Document.php';
+
 /**
  * Common interface for document storage services in the cloud. This interface
  * supports most document services and provides some flexibility for
@@ -36,6 +41,8 @@
  */
 interface Zend_Cloud_DocumentService_DocumentService
 {
+    // HTTP adapter to use for connections
+    const HTTP_ADAPTER = 'http_adapter';
     /**
      * Create collection.
      *

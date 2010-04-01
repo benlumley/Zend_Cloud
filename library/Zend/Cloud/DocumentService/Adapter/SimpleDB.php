@@ -33,11 +33,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     /*
      * Options array keys for the SimpleDB adapter.
      */
-    const HTTP_ADAPTER = 'http_adapter';
     const AWS_ACCESS_KEY = 'aws_accesskey';
     const AWS_SECRET_KEY = 'aws_secretkey';
     
-    const ITEM_NAME = 'item_name';
+    const ITEM_NAME = 'ItemName';
     
     const MERGE_OPTION = "merge";
     const RETURN_DOCUMENTS = "return_documents";
