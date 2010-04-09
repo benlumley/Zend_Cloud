@@ -220,24 +220,20 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
     }
     
     /**
-     * Peek at the specified message from the specified queue.
-     * WARNING: This operation may block other receivers from recieving the
-     * message until the message is released from the peeker for services
-     * that do not natively support message peeking. This may impact
-     * performance and/or introduce concurrency issues in your applications.
-     * Check your cloud vendor's documentation for more details.
+     * Peek at the messages from the specified queue without removing them.
      *
-     * @param  string $messageId
      * @param  string $queueId
+     * @param  int $num How many messages
      * @param  array  $options
-     * @return string Message body
+     * @return array[Zend_Cloud_QueueService_Message]
      */
-    public function peekMessage($queueId, $messageId, $options = null) 
+    public function peekMessages($queueId, $num = 1, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
-        throw new Zend_Cloud_OperationNotAvailableException(
-        	'Amazon SQS doesn\'t currently support message peeking'
-        );
+        try {
+            return $this->_makeMessages($this->_sqs->receive($queueId, $num, 0));
+        } catch(Zend_Service_Amazon_Exception $e) {
+            throw new Zend_Cloud_QueueService_Exception('Error on peeking messages: '.$e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**

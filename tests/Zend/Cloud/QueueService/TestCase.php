@@ -230,6 +230,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             $texts = array($receivedMessage1->getBody(), $receivedMessage2->getBody());
             $this->assertContains($message1, $texts);
             $this->assertContains($message2, $texts);
+            
             $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
@@ -257,28 +258,31 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
             // now there should be no messages left
             $receivedMessages2 = $this->_commonQueue->receiveMessages($queueURL);
             $this->assertTrue(is_array($receivedMessages2));
-            $this->assertEquals(0, count($receivedMessages2));
-		  $this->_commonQueue->deleteQueue($queueURL);
+		    $this->assertEquals(0, count($receivedMessages2));
+			
+		    $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
             throw $e;
         }
     }
 
-    public function testPeekMessage()
+    public function testPeekMessages()
     {
-        $this->markTestSkipped('Peeking messages currently not implemented');
         try {
-            $queueURL = $this->_commonQueue->createQueue('test-peek-message');
+            $queueURL = $this->_commonQueue->createQueue('test-peek-messages');
             $this->assertNotNull($queueURL);
             $this->_wait();
             $message1 = 'testPeekMessage - Message 1';
-            $messageID = $this->_commonQueue->sendMessage($queueURL, $message1);
+            $this->_commonQueue->sendMessage($queueURL, $message1);
             $this->_wait();
-            $peekedMessage = $this->_commonQueue->peekMessage($queueURL, $messageID);
-            $this->assertEquals($message1, $peekedMessage);
-            $this->_commonQueue->deleteMessage($queueURL, 
-                array_pop($peekedMessages));
+            $peekedMessages = $this->_commonQueue->peekMessages($queueURL, 1);
+            $this->assertEquals($message1, $peekedMessages[0]->getBody());
+            // and again
+            $peekedMessages = $this->_commonQueue->peekMessages($queueURL, 1);
+            $this->assertEquals($message1, $peekedMessages[0]->getBody());
+
+            $this->_commonQueue->deleteQueue($queueURL);
         } catch (Exception $e) {
             if(isset($queueURL)) $this->_commonQueue->deleteQueue($queueURL);
             throw $e;

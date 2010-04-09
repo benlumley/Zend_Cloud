@@ -68,6 +68,11 @@ class Zend_Cloud_QueueService_Adapter_ZendQueueTest extends Zend_Cloud_QueueServ
         return $this->main();
     }
 
+    public function testPeekMessages() 
+    {
+        $this->markTestSkipped('ZendQueue does not currently support peeking messages');
+    }
+    
     protected function _getConfig() 
     {        
         $config = new Zend_Config(array(
@@ -77,4 +82,6 @@ class Zend_Cloud_QueueService_Adapter_ZendQueueTest extends Zend_Cloud_QueueServ
 
         return $config;
     }
+    
+    
 }

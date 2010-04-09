@@ -134,18 +134,12 @@ interface Zend_Cloud_QueueService_QueueService
     public function getClient();
         
     /**
-     * TODO: Right now we don't know what API to choose for peekMessage
-     * Peek at the specified message from the specified queue.
-     * WARNING: This operation may block other receivers from recieving the
-     * message until the message is released from the peeker for services
-     * that do not natively support message peeking. This may impact
-     * performance and/or introduce concurrency issues in your applications.
-     * Check your cloud vendor's documentation for more details.
+     * Peek at the messages from the specified queue without removing them.
      *
      * @param  string $queueId
-     * @param  string $messageId
+     * @param  int $num How many messages
      * @param  array  $options
-     * @return string Message body
+     * @return array[Zend_Cloud_QueueService_Message]
      */
-    // public function peekMessage($queueId, $messageId, $options = null);
+    public function peekMessages($queueId, $num = 1, $options = null);
 }

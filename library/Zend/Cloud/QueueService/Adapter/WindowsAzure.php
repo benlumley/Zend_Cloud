@@ -218,7 +218,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  string $queueId
      * @param  int    $max
      * @param  array  $options
-     * @return array
+     * @return array[Zend_Cloud_QueueService_Message]
      */
     public function receiveMessages ($queueId, $max = 1, $options = null)
     {
@@ -281,19 +281,24 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     }
 
     /**
-     * Peek at the specified message from the specified queue.
+     * Peek at the messages from the specified queue without removing them.
      *
-     * @param  string $messageId
      * @param  string $queueId
+     * @param  int $num How many messages
      * @param  array  $options
-     * @return string Messages
+     * @return array[Zend_Cloud_QueueService_Message]
      */
-    public function peekMessage($queueId, $messageId, $options = null)
+    public function peekMessages($queueId, $num = 1, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
-        throw new Zend_Cloud_OperationNotAvailableException('WindowsAzure doesn\'t currently support message peeking'
-        );
-    }
+        try {
+            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+                $queueId = $queueId->Name;
+            }
+            return $this->_makeMessages($this->_storageClient->peekMessages($queueId, $num));
+        } catch (Zend_Service_WindowsAzure_Exception $e) {
+            throw new Zend_Cloud_QueueService_Exception('Error on peeking messages: '.$e->getMessage(), $e->getCode(), $e);
+        }
+   }
     
    /**
      * Get Azure implementation
