@@ -285,7 +285,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             list($name, $args) = $clause;
             switch($name) {
                 case Zend_Cloud_DocumentService_Query::QUERY_FROM:
-                    $from = $args;
+                    $from = "`$args`";
                     break;
                 case Zend_Cloud_DocumentService_Query::QUERY_WHERE:
                     $newwhere = $this->_parseWhere($args[0], $args[1]);
@@ -326,7 +326,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             $select = "*";
         }
         if(empty($from)) {
-            $from = $collectionName;
+            $from = "`$collectionName`";
         }
         $query = "select $select from $from";
         if(!empty($where)) {
