@@ -7,11 +7,6 @@ class QueueController extends Zend_Controller_Action
     
     /**
      * @var Zend_Cloud_QueueService_QueueService
-     * 
-     * 
-     * 
-     * 
-     * 
      */
     protected $_queue = null;
 
@@ -69,6 +64,8 @@ class QueueController extends Zend_Controller_Action
         $messages = $this->_queue->receiveMessages($name);
         foreach($messages as $msg) {
         	$texts[] = $msg->getBody();
+        	// remove messages from the queue
+        	$this->_queue->deleteMessage($name, $msg);
         }
         $this->view->messages = $texts;
     }

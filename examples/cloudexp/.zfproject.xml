@@ -23,6 +23,13 @@
           <actionMethod actionName="send"/>
           <actionMethod actionName="receive"/>
         </controllerFile>
+        <controllerFile controllerName="Document">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="show"/>
+          <actionMethod actionName="create"/>
+          <actionMethod actionName="addoc"/>
+          <actionMethod actionName="deletedoc"/>
+        </controllerFile>
       </controllersDirectory>
       <formsDirectory enabled="false"/>
       <layoutsDirectory enabled="false"/>
@@ -56,6 +63,21 @@
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Queue">
             <viewScriptFile forActionName="receive"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Document">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Document">
+            <viewScriptFile forActionName="show"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Document">
+            <viewScriptFile forActionName="create"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Document">
+            <viewScriptFile forActionName="addoc"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Document">
+            <viewScriptFile forActionName="deletedoc"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
         <viewHelpersDirectory/>
@@ -93,6 +115,7 @@
         <testApplicationControllerDirectory>
           <testApplicationControllerFile filesystemName="StorageControllerTest.php"/>
           <testApplicationControllerFile filesystemName="QueueControllerTest.php"/>
+          <testApplicationControllerFile filesystemName="DocumentControllerTest.php"/>
         </testApplicationControllerDirectory>
       </testApplicationDirectory>
       <testLibraryDirectory>

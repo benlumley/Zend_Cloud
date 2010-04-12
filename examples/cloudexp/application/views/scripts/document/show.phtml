@@ -1,0 +1,22 @@
+<?php if(count($this->data) == 0) {
+	echo "Collection is empty.<br/>";
+} else {
+foreach($this->data as $document) {
+?>
+Document ID: <?= $document->getID() ?><br/>
+Document data: <br/>
+<?php foreach($document->getFields() as $key => $value) { 
+	echo "<b>$key</b>: $value<br/>\n";
+}
+?>
+<form method="POST" action="<?= $this->url(array("action" => "deletedoc", "controller" => "document"), "", true) ?>" style="display: inline">
+<input type="hidden" name="name" value="<?= $this->collection ?>">
+<input type="hidden" name="id" value="<?= $document->getID() ?>">
+<input type="submit" value="Delete" style="display: inline">
+</form> <hr>
+<?php }} ?>
+
+<form method="POST" action="<?= $this->url(array("action" => "addoc", "controller" => "document"), "", true) ?>" style="display: inline">
+<input type="hidden" name="name" value="<?= $this->collection ?>">
+<input type="submit" value="Add Document" style="display: inline">
+</form>
