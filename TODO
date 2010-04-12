@@ -1,0 +1,9 @@
+Unify tests (configuration, factories, etc.)
+Make Azure Table keys strings?
+Handle pagination for Amazon Sdb
+
+Storage
+Queue
+- Indeterministic tests problem
+Document
+- MongoDB or other NoSQL for local document storage?
