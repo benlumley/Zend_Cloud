@@ -339,6 +339,35 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         return new Zend_Service_Amazon_SimpleDB_Page($attributes, $nextToken);
     }
     
+	/**
+	 * Quote SDB value
+	 * 
+	 * Wraps it in ''
+	 * 
+	 * @param string $value
+	 * @return string
+	 */
+    public function quote($value)
+    {
+    	// wrap in single quotes and convert each ' inside to ''
+    	return "'".str_replace("'", "''", $value)."'";
+    }
+    
+	/**
+	 * Quote SDB column or table name
+	 * 
+	 * Wraps it in ``
+	 * @param string $name
+	 * @return string
+	 */
+    public function quoteName($name)
+    {
+    	if(preg_match('/^[a-z_$][a-z0-9_$]*$/i', $name) == false) {
+    		throw new Zend_Service_Amazon_SimpleDB_Exception("Invalid name: can contain only alphanumeric characters, \$ and _");
+    	}
+    	return "`$name`";
+    }
+    
    /**
      * Sends a HTTP request to the SimpleDB service using Zend_Http_Client
      *
