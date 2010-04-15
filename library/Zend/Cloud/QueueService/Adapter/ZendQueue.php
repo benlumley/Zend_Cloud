@@ -255,7 +255,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     public function peekMessages($queueId, $num = 1, $options = null)
     {
         require_once 'Zend/Cloud/OperationNotAvailableException.php';
-        throw new Zend_Cloud_OperationNotAvailableException('WindowsAzure doesn\'t currently support message peeking');
+        throw new Zend_Cloud_OperationNotAvailableException('ZendQueue doesn\'t currently support message peeking');
     }
     
     /**
