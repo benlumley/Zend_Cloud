@@ -265,7 +265,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
         // TODO: temporary stub, to be replaced with concrete SimpleDb query implementation
         $i = 0;
         while(($q = strpos($where, '?')) !== false) {
-           $where = substr_replace($where, '\'' . str_replace('\'', '\'\'', $args[$i++]) . '\'', $q, 1);
+           $where = substr_replace($where, $this->_simpleDb->quote($args[$i++]), $q, 1);
         }
         return $where;        
     }
@@ -285,7 +285,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             list($name, $args) = $clause;
             switch($name) {
                 case Zend_Cloud_DocumentService_Query::QUERY_FROM:
-                    $from = "`$args`";
+                    $from = $this->_simpleDb->quoteName($args);
                     break;
                 case Zend_Cloud_DocumentService_Query::QUERY_WHERE:
                     $newwhere = $this->_parseWhere($args[0], $args[1]);
@@ -305,13 +305,13 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
                     }
                     break;    
                 case Zend_Cloud_DocumentService_Query::QUERY_LIMIT:
-                    $limit = $args[0];
+                    $limit = (int)$args[0];
                     break;
                 case Zend_Cloud_DocumentService_Query::QUERY_SELECT:
                     $select = $args[0];
                     break;
                case Zend_Cloud_DocumentService_Query::QUERY_ORDER:
-                    $order = $args[0];
+                    $order = $this->_simpleDb->quoteName($args[0]);
                     if(isset($args[1])) {
                         $order .= " ".$args[1];
                     }
@@ -326,7 +326,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
             $select = "*";
         }
         if(empty($from)) {
-            $from = "`$collectionName`";
+            $from = $this->_simpleDb->quoteName($collectionName);
         }
         $query = "select $select from $from";
         if(!empty($where)) {
@@ -390,10 +390,10 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDB implements Zend_Cloud_Document
     }
     
     /**
-     * Get the concrete service adapter
+     * Get the concrete service client
      * @return Zend_Service_Amazon_SimpleDB
      */
-    public function getAdapter()
+    public function getClient()
     {
         return $this->_simpleDb;
     }

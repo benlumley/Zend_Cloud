@@ -61,7 +61,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
 	/**
 	 * Storage client
 	 * 
-	 * @var Zend_Service_Azure_Storage_Blob
+	 * @var Zend_Service_WindowsAzure_Storage_Blob
 	 */
 	protected $_storageClient = null;
 
@@ -425,7 +425,7 @@ class Zend_Cloud_StorageService_Adapter_WindowsAzure implements Zend_Cloud_Stora
      * Get the concrete adapter.
      * @return Zend_Service_Azure_Storage_Blob
      */
-    public function getAdapter()
+    public function getClient()
     {
          return $this->_storageClient;       
     }

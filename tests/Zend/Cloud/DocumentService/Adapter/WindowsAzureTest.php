@@ -53,6 +53,8 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzureTest extends Zend_Cloud_Doc
      */
     protected $_waitPeriod = 10;
     
+    protected $_clientType = 'Zend_Service_WindowsAzure_Storage_Table';
+    
 	/**
      * Runs the test methods of this class.
      *

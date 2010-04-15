@@ -236,10 +236,10 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
     }
 
     /**
-     * Get the concrete adapter.
+     * Get the concrete client.
      * @return strings
      */
-    public function getAdapter()
+    public function getClient()
     {
          return $this->_directory;       
     }

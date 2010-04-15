@@ -52,6 +52,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueueTest extends Zend_Cloud_QueueServ
      * @var int
      */
     protected $_waitPeriod = 0;
+	protected $_clientType = 'Zend_Queue';
     
 	/**
      * Runs the test methods of this class.

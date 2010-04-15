@@ -56,6 +56,8 @@ abstract class Zend_Cloud_DocumentService_TestCase extends PHPUnit_Framework_Tes
     protected $_dummyCollectionNamePrefix = 'TestCollection';
 
     protected $_dummyDataPrefix = 'TestData';
+    
+    protected $_clientType = 'stdClass';
 
     const ID_FIELD = "__id";
     
@@ -79,6 +81,11 @@ abstract class Zend_Cloud_DocumentService_TestCase extends PHPUnit_Framework_Tes
     {
         $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService_DocumentService); 
     } 
+
+    public function testGetClient()
+    {
+    	$this->assertTrue(is_a($this->_commonDocument->getClient(), $this->_clientType)); 
+    }
     
     protected function _collectionName($name)
     {

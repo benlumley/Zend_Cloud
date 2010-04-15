@@ -44,6 +44,7 @@ require_once 'Zend/Cloud/StorageService/Adapter/S3.php';
  */
 class Zend_Cloud_StorageService_Adapter_S3Test extends Zend_Cloud_StorageService_TestCase
 {
+	protected $_clientType = 'Zend_Service_Amazon_S3';
 	/**
      * Runs the test methods of this class.
      *

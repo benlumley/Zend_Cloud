@@ -405,10 +405,10 @@ class Zend_Cloud_DocumentService_Adapter_WindowsAzure implements Zend_Cloud_Docu
     }
     
     /**
-     * Get the concrete service adapter
+     * Get the concrete service client
      * @return Zend_Service_WindowsAzure_Storage_Table
      */
-    public function getAdapter()
+    public function getClient()
     {
         return $this->_storageClient;
     }

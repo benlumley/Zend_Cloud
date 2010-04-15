@@ -144,7 +144,7 @@ interface Zend_Cloud_DocumentService_DocumentService
     public function select($fields = null);
     
     /**
-     * Get the concrete service adapter
+     * Get the concrete service client
      */
-    public function getAdapter();
+    public function getClient();
 }

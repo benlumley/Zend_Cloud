@@ -52,7 +52,8 @@ class Zend_Cloud_QueueService_Adapter_SQSTest extends Zend_Cloud_QueueService_Te
      * @var int
      */
     protected $_waitPeriod = 10;
-
+	protected $_clientType = 'Zend_Service_Amazon_Sqs';
+    
 	/**
      * Runs the test methods of this class.
      *

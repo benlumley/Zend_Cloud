@@ -132,7 +132,7 @@ interface Zend_Cloud_StorageService_StorageService
     public function deleteMetadata($path);
 
     /**
-     * Get the concrete adapter.
+     * Get the concrete client.
      */
-    public function getAdapter();
+    public function getClient();
 }

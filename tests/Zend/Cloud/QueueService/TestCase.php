@@ -54,7 +54,7 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
     protected $_commonQueue;
     protected $_dummyNamePrefix = '/TestItem';
     protected $_dummyDataPrefix = 'TestData';
-
+	protected $_clientType = 'stdClass';
     /**
      * Config object
      *
@@ -75,6 +75,11 @@ abstract class Zend_Cloud_QueueService_TestCase extends PHPUnit_Framework_TestCa
     {
         $this->_config = $this->_getConfig();
         $this->_commonQueue = Zend_Cloud_QueueService_Factory::getAdapter($this->_config);
+    }
+    
+    public function testGetClient()
+    {
+    	$this->assertTrue(is_a($this->_commonQueue->getClient(), $this->_clientType)); 
     }
     
     public function testCreateQueue()

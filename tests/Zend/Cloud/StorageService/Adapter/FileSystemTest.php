@@ -78,10 +78,15 @@ class Zend_Cloud_StorageService_Adapter_FileSystemTest extends Zend_Cloud_Storag
         } 
         mkdir($path, 0755);
     }
-
+    
+    public function testGetClient()
+    {
+    	$this->assertTrue(is_string($this->_commonStorage->getClient())); 
+    }
+    
     public function testNoParams()
     {
-	$this->markTestSkipped('No config params needed for FileSystem');
+		$this->markTestSkipped('No config params needed for FileSystem');
     }
 
     // TODO: Create a custom test for FileSystem that checks fetchMetadata() with file system MD.

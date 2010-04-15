@@ -293,10 +293,10 @@ class Zend_Cloud_StorageService_Adapter_S3 implements Zend_Cloud_StorageService_
     }
 
     /**
-     * Get the concrete adapter.
+     * Get the concrete client.
      * @return Zend_Service_Amazon_S3
      */
-    public function getAdapter()
+    public function getClient()
     {
          return $this->_s3;       
     }

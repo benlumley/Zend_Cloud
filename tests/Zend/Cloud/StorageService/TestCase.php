@@ -60,7 +60,8 @@ abstract class Zend_Cloud_StorageService_TestCase extends PHPUnit_Framework_Test
     protected $_dummyNamePrefix = 'TestItem';
 
     protected $_dummyDataPrefix = 'TestData';
-
+	protected $_clientType = 'stdClass';
+    
     /**
      * Config object
      *
@@ -81,6 +82,11 @@ abstract class Zend_Cloud_StorageService_TestCase extends PHPUnit_Framework_Test
     {
         $this->_config = $this->_getConfig();
         $this->_commonStorage = Zend_Cloud_StorageService_Factory::getAdapter($this->_config);
+    }
+    
+    public function testGetClient()
+    {
+    	$this->assertTrue(is_a($this->_commonStorage->getClient(), $this->_clientType)); 
     }
     
     public function testNoParams()

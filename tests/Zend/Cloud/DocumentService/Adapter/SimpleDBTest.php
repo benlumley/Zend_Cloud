@@ -52,7 +52,9 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDBTest extends Zend_Cloud_Documen
      * @var int
      */
     protected $_waitPeriod = 10;
-
+    
+    protected $_clientType = 'Zend_Service_Amazon_SimpleDB';
+    
 	/**
      * Runs the test methods of this class.
      *

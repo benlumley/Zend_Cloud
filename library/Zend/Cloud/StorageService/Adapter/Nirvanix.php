@@ -348,10 +348,10 @@ class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageSe
     }
 
     /**
-     * Get the concrete adapter.
+     * Get the concrete client.
      * @return Zend_Service_Nirvanix
      */
-    public function getAdapter()
+    public function getClient()
     {
          return $this->_nirvanix;       
     }

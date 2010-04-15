@@ -44,6 +44,7 @@ require_once 'Zend/Cloud/StorageService/Adapter/Nirvanix.php';
  */
 class Zend_Cloud_StorageService_Adapter_NirvanixTest extends Zend_Cloud_StorageService_TestCase
 {
+	protected $_clientType = 'Zend_Service_Nirvanix';
 	/**
      * Runs the test methods of this class.
      *

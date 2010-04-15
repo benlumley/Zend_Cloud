@@ -52,6 +52,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzureTest extends Zend_Cloud_QueueS
      * @var int
      */
     protected $_waitPeriod = 10;
+	protected $_clientType = 'Zend_Service_WindowsAzure_Storage_Queue';
     
 	/**
      * Runs the test methods of this class.
