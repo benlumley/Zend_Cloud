@@ -16,7 +16,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 require_once 'Zend/Queue.php';
-require_once 'Zend/Cloud/QueueService/QueueService.php';
+require_once 'Zend/Cloud/QueueService/Adapter.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
 /**
  * WindowsAzure adapter for simple queue service.
@@ -26,9 +26,9 @@ require_once 'Zend/Cloud/QueueService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueService_QueueService
+class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueService_Adapter
 {
-    /*
+    /**
      * Options array keys for the Zend_Queue adapter.
      */
     const ADAPTER = 'adapter';
@@ -40,12 +40,29 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      */
     protected $_queue = null;
     
+    /**
+     * @var array All queues
+     */
     protected $_queues = array();
     
+    /**
+     * Constructor
+     * 
+     * @param  array|Zend_Config $options 
+     * @return void
+     */
     public function __construct ($options = array())
     {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        }
+
+        if (!is_array($options)) {
+            throw new Zend_Cloud_QueueService_Exception('Invalid options provided');
+        }
+
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
-        if (! isset($options[self::ADAPTER])) {
+        if (!isset($options[self::ADAPTER])) {
             throw new Zend_Cloud_QueueService_Exception('No Zend_Queue adapter provided');
         } else {
             $adapter = $options[self::ADAPTER];
@@ -67,7 +84,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return string Queue ID (typically URL)
      */
-    public function createQueue ($name, $options = null)
+    public function createQueue($name, $options = null)
     {
         try {
             $this->_queues[$name] = $this->_queue->createQueue($name, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
@@ -84,13 +101,13 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return boolean true if successful, false otherwise
      */
-    public function deleteQueue ($queueId, $options = null)
+    public function deleteQueue($queueId, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             return false;
         }
         try {
-            if($this->_queues[$queueId]->deleteQueue()) {
+            if ($this->_queues[$queueId]->deleteQueue()) {
                 unset($this->_queues[$queueId]);
                 return true;
             }
@@ -105,7 +122,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array $options
      * @return array Queue IDs
      */
-    public function listQueues ($options = null)
+    public function listQueues($options = null)
     {
         try {
             return $this->_queue->getQueues();
@@ -121,9 +138,9 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return array
      */
-    public function fetchQueueMetadata ($queueId, $options = null)
+    public function fetchQueueMetadata($queueId, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             return false;
         }
         try {
@@ -143,9 +160,9 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return void
      */
-    public function storeQueueMetadata ($queueId, $metadata, $options = null)
+    public function storeQueueMetadata($queueId, $metadata, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
         }
         try {
@@ -163,9 +180,9 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return string Message ID
      */
-    public function sendMessage ($queueId, $message, $options = null)
+    public function sendMessage($queueId, $message, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
         }
         try {
@@ -184,14 +201,14 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return array
      */
-    public function receiveMessages ($queueId, $max = 1, $options = null)
+    public function receiveMessages($queueId, $max = 1, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
         }
         try {
             $res = $this->_queues[$queueId]->receive($max, isset($options[Zend_Queue::TIMEOUT])?$options[Zend_Queue::TIMEOUT]:null);
-            if($res instanceof Iterator) {
+            if ($res instanceof Iterator) {
                 return $this->_makeMessages($res);
             } else {
                 return $this->_makeMessages(array($res));
@@ -211,7 +228,7 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     protected function _makeMessages($messages)
     {
         $result = array();
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             $result[] = new Zend_Cloud_QueueService_Message($message->body, $message);
         }
         return $result;
@@ -225,16 +242,16 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
      * @param  array  $options
      * @return void
      */
-    public function deleteMessage ($queueId, $message, $options = null)
+    public function deleteMessage($queueId, $message, $options = null)
     {
-        if(!isset($this->_queues[$queueId])) {
+        if (!isset($this->_queues[$queueId])) {
             throw new Zend_Cloud_QueueService_Exception("No such queue: $queueId");
         }
         try {
-            if($message instanceof Zend_Cloud_QueueService_Message) {
+            if ($message instanceof Zend_Cloud_QueueService_Message) {
                 $message = $message->getMessage();
             }
-            if(!($message instanceof Zend_Queue_Message)) {
+            if (!($message instanceof Zend_Queue_Message)) {
                 throw new Zend_Cloud_QueueService_Exception('Cannot delete the message: Zend_Queue_Message object required');
             }
             
@@ -266,5 +283,4 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue implements Zend_Cloud_QueueServi
     {
         return $this->_queue;
     }
-    
 }

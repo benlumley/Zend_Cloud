@@ -16,7 +16,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 require_once 'Zend/Service/WindowsAzure/Storage/Queue.php';
-require_once 'Zend/Cloud/QueueService/QueueService.php';
+require_once 'Zend/Cloud/QueueService/Adapter.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
 
 /**
@@ -27,24 +27,27 @@ require_once 'Zend/Cloud/QueueService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueService_QueueService
+class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueService_Adapter
 {
-    /*
-     * Options array keys for the Windows Azure adapter.
+    /**
+     * Option array keys for the Windows Azure adapter.
      */
-    const ACCOUNT_NAME = 'storage_accountname';
-    const ACCOUNT_KEY = 'storage_accountkey';
-    const HOST = "storage_host";
-    const PROXY_HOST = "storage_proxy_host";
-    const PROXY_PORT = "storage_proxy_port";
+    const ACCOUNT_NAME      = 'storage_accountname';
+    const ACCOUNT_KEY       = 'storage_accountkey';
+    const HOST              = "storage_host";
+    const PROXY_HOST        = "storage_proxy_host";
+    const PROXY_PORT        = "storage_proxy_port";
     const PROXY_CREDENTIALS = "storage_proxy_credentials";
-    // list options
-    const LIST_PREFIX = 'prefix';
+
+    /** list options */
+    const LIST_PREFIX      = 'prefix';
     const LIST_MAX_RESULTS = 'max_results';
-    // message options
+
+    /** message options */
     const MESSAGE_TTL = 'ttl';
     
     const DEFAULT_HOST = Zend_Service_WindowsAzure_Storage::URL_CLOUD_QUEUE;
+
     /**
      * Storage client
      * 
@@ -52,14 +55,28 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      */
     protected $_storageClient = null;
     
-    public function __construct ($options = array())
+    /**
+     * Constructor
+     * 
+     * @param  array|Zend_Config $options 
+     * @return void
+     */
+    public function __construct($options = array())
     {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        }
+
+        if (!is_array($options)) {
+            throw new Zend_Cloud_QueueService_Exception('Invalid options provided');
+        }
+
         // Build Zend_Service_WindowsAzure_Storage_Blob instance
-		if (!isset($options[self::HOST])) {
-			$host = self::DEFAULT_HOST;
-		} else {
-		    $host = $options[self::HOST];
-		}
+        if (!isset($options[self::HOST])) {
+            $host = self::DEFAULT_HOST;
+        } else {
+            $host = $options[self::HOST];
+        }
         if (! isset($options[self::ACCOUNT_NAME])) {
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account name provided.');
         }
@@ -67,23 +84,23 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
             throw new Zend_Cloud_Storage_Exception('No Windows Azure account key provided.');
         }
         try {
-	        // TODO: support $usePathStyleUri and $retryPolicy
-	        $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
-	            $host, $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
-	        // Parse other options
-	        if (! empty($options[self::PROXY_HOST])) {
-	            $proxyHost = $options[self::PROXY_HOST];
-	            $proxyPort = isset($options[self::PROXY_PORT]) ? $options[self::PROXY_PORT] : 8080;
-	            $proxyCredentials = isset($options[self::PROXY_CREDENTIALS]) ? $options[self::PROXY_CREDENTIALS] : '';
-	            $this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
-	        }
-	        if (isset($options[self::HTTP_ADAPTER])) {
-	            $this->_storageClient->setHttpClientChannel($httpAdapter);
-	        }
-	    } catch(Zend_Service_WindowsAzure_Exception $e) {
+            // TODO: support $usePathStyleUri and $retryPolicy
+            $this->_storageClient = new Zend_Service_WindowsAzure_Storage_Queue(
+                $host, $options[self::ACCOUNT_NAME], $options[self::ACCOUNT_KEY]);
+            // Parse other options
+            if (! empty($options[self::PROXY_HOST])) {
+                $proxyHost = $options[self::PROXY_HOST];
+                $proxyPort = isset($options[self::PROXY_PORT]) ? $options[self::PROXY_PORT] : 8080;
+                $proxyCredentials = isset($options[self::PROXY_CREDENTIALS]) ? $options[self::PROXY_CREDENTIALS] : '';
+                $this->_storageClient->setProxy(true, $proxyHost, $proxyPort, $proxyCredentials);
+            }
+            if (isset($options[self::HTTP_ADAPTER])) {
+                $this->_storageClient->setHttpClientChannel($httpAdapter);
+            }
+        } catch(Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
         }
-	        
+            
     }
     
     /**
@@ -95,7 +112,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return string Queue ID (typically URL)
      */
-    public function createQueue ($name, $options = null)
+    public function createQueue($name, $options = null)
     {
         try {
             $queue = $this->_storageClient->createQueue($name, $options);
@@ -112,10 +129,10 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return boolean true if successful, false otherwise
      */
-    public function deleteQueue ($queueId, $options = null)
+    public function deleteQueue($queueId, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
             return $this->_storageClient->deleteQueue($queueId);
@@ -130,7 +147,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array $options
      * @return array Queue IDs
      */
-    public function listQueues ($options = null)
+    public function listQueues($options = null)
     {
         $prefix = $maxResults = null;
         if (is_array($options)) {
@@ -140,7 +157,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
         try {
             $queues =  $this->_storageClient->listQueues($prefix, $maxResults);
             $result = array();
-            foreach($queues as $queue) {
+            foreach ($queues as $queue) {
                 $result[] = $queue->Name;
             }
             return $result;
@@ -156,10 +173,10 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return array
      */
-    public function fetchQueueMetadata ($queueId, $options = null)
+    public function fetchQueueMetadata($queueId, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
             return $this->_storageClient->getQueueMetadata($queueId);
@@ -178,10 +195,10 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return void
      */
-    public function storeQueueMetadata ($queueId, $metadata, $options = null)
+    public function storeQueueMetadata($queueId, $metadata, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
             return $this->_storageClient->setQueueMetadata($queueId, $metadata);
@@ -198,14 +215,15 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return string Message ID
      */
-    public function sendMessage ($queueId, $message, $options = null)
+    public function sendMessage($queueId, $message, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
-            return $this->_storageClient->putMessage($queueId, $message, 
-                $options[self::MESSAGE_TTL]);
+            return $this->_storageClient->putMessage(
+                $queueId, $message, $options[self::MESSAGE_TTL]
+            );
         } catch (Zend_Service_WindowsAzure_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on sending message: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -220,13 +238,13 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return array[Zend_Cloud_QueueService_Message]
      */
-    public function receiveMessages ($queueId, $max = 1, $options = null)
+    public function receiveMessages($queueId, $max = 1, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
-            if(isset($options[self::VISIBILITY_TIMEOUT])) {
+            if (isset($options[self::VISIBILITY_TIMEOUT])) {
                 $visibility = $options[self::VISIBILITY_TIMEOUT];
             } else {
                 $visibility = self::DEFAULT_TIMEOUT;
@@ -247,7 +265,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     protected function _makeMessages($messages)
     {
         $result = array();
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             $result[] = new Zend_Cloud_QueueService_Message($message->MessageText, $message);
         }
         return $result;
@@ -261,16 +279,16 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
      * @param  array  $options
      * @return void
      */
-    public function deleteMessage ($queueId, $message, $options = null)
+    public function deleteMessage($queueId, $message, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
-            if($message instanceof Zend_Cloud_QueueService_Message) {
+            if ($message instanceof Zend_Cloud_QueueService_Message) {
                 $message = $message->getMessage();
             }
-            if($message instanceof Zend_Service_WindowsAzure_Storage_QueueMessage) {
+            if ($message instanceof Zend_Service_WindowsAzure_Storage_QueueMessage) {
                 return $this->_storageClient->deleteMessage($queueId, $message);
             } else {
                 throw new Zend_Cloud_QueueService_Exception('Cannot delete the message: message object required');
@@ -291,7 +309,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     public function peekMessages($queueId, $num = 1, $options = null)
     {
         try {
-            if($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
+            if ($queueId instanceof Zend_Service_WindowsAzure_Storage_QueueInstance) {
                 $queueId = $queueId->Name;
             }
             return $this->_makeMessages($this->_storageClient->peekMessages($queueId, $num));
@@ -300,7 +318,7 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
         }
    }
     
-   /**
+    /**
      * Get Azure implementation
      * @return Zend_Service_Azure_Storage_Queue 
      */
@@ -308,5 +326,4 @@ class Zend_Cloud_QueueService_Adapter_WindowsAzure implements Zend_Cloud_QueueSe
     {
         return $this->_storageClient;
     }
-    
 }

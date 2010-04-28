@@ -16,7 +16,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService/StorageService.php';
+require_once 'Zend/Cloud/StorageService/Adapter.php';
 require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
@@ -27,22 +27,37 @@ require_once 'Zend/Cloud/StorageService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_StorageService_StorageService
+class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_StorageService_Adapter
 {
 
-    /*
+    /**
      * Options array keys for the file system adapter.
      */
     const LOCAL_DIRECTORY = 'local_directory';
+
     /**
      * The directory for the data
      * @var string
      */
     protected $_directory = null;
 
+    /**
+     * Constructor
+     * 
+     * @param  array|Zend_Config $options 
+     * @return void
+     */
     public function __construct($options = array()) 
     {
-        if(isset($options[self::LOCAL_DIRECTORY])) {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        }
+
+        if (!is_array($options)) {
+            throw new Zend_Cloud_StorageService_Exception('Invalid options provided');
+        }
+
+        if (isset($options[self::LOCAL_DIRECTORY])) {
             $this->_directory = $options[self::LOCAL_DIRECTORY];
         } else {
             $this->_directory = realpath(sys_get_temp_dir());
@@ -56,13 +71,17 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      *
      * @param  string $path
      * @param  array $options
-     * @return string
+     * @return false|string
      */
     public function fetchItem($path, $options = array()) 
     {
         $filepath = $this->_getFullPath($path);
-        $path = realpath($filepath);
-        if(!$path) return false;
+        $path     = realpath($filepath);
+
+        if (!$path) {
+            return false;
+        }
+
         return file_get_contents($path);
     }
 
@@ -74,14 +93,13 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      *
      * @TODO Support streams
      *
-     * @param string $destinationPath
-     * @param mixed $data
+     * @param  string $destinationPath
+     * @param  mixed $data
      * @param  array $options
      * @return void
      */
-    public function storeItem($destinationPath,
-                              $data,
-                              $options = array()) {
+    public function storeItem($destinationPath, $data, $options = array()) 
+    {
         $path = $this->_getFullPath($destinationPath);
         file_put_contents($path, $data);
         chmod($path, 0777);
@@ -96,12 +114,12 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function deleteItem($path, $options = array()) 
     {
-        if(!isset($path)) {
+        if (!isset($path)) {
             return;
         }
 
         $filepath = $this->_getFullPath($path);
-        if(file_exists($filepath)) {
+        if (file_exists($filepath)) {
             unlink($filepath);
         }
     }
@@ -153,9 +171,10 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function renameItem($path, $name, $options = null) 
     {
-        rename($this->_getFullPath($path), dirname($this->_getFullPath($path)) .
-                                                   DIRECTORY_SEPARATOR .
-                                                   $name);
+        rename(
+            $this->_getFullPath($path), 
+            dirname($this->_getFullPath($path)) . DIRECTORY_SEPARATOR . $name
+        );
     }
 
     /**
@@ -189,7 +208,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
     {
         $fullPath = $this->_getFullPath($path);
         $metadata = null;
-        if(file_exists($fullPath)) {
+        if (file_exists($fullPath)) {
             $metadata = stat(realpath($fullPath));
         }
 

@@ -21,9 +21,9 @@
  */
 require_once 'TestHelper.php';
 /**
- * @see Zend_Cloud_QueueService_QueueService
+ * @see Zend_Cloud_QueueService_Adapter
  */
-require_once 'Zend/Cloud/QueueService/QueueService.php';
+require_once 'Zend/Cloud/QueueService/Adapter.php';
 /**
  * @see Zend_Config_Ini
  */

@@ -24,9 +24,9 @@
 require_once 'TestHelper.php';
 
 /**
- * @see Zend_Cloud_StorageService_StorageService
+ * @see Zend_Cloud_StorageService_Adapter
  */
-require_once 'Zend/Cloud/StorageService/StorageService.php';
+require_once 'Zend/Cloud/StorageService/Adapter.php';
 
 /**
  * @see Zend_Config

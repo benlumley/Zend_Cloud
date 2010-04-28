@@ -24,9 +24,9 @@
 require_once 'TestHelper.php';
 
 /**
- * @see Zend_Cloud_DocumentService
+ * @see Zend_Cloud_DocumentService_Adapter
  */
-require_once 'Zend/Cloud/DocumentService/DocumentService.php';
+require_once 'Zend/Cloud/DocumentService/Adapter.php';
 
 /**
  * @see Zend_Cloud_DocumenteService_Document
@@ -79,7 +79,7 @@ abstract class Zend_Cloud_DocumentService_TestCase extends PHPUnit_Framework_Tes
 
     public function testDocumentService()
     {
-        $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService_DocumentService); 
+        $this->assertTrue($this->_commonDocument instanceof Zend_Cloud_DocumentService_Adapter); 
     } 
 
     public function testGetClient()

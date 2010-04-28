@@ -36,81 +36,81 @@ class Zend_Cloud_DocumentService_Document implements ArrayAccess
      *
      * @var mixed
      */
-	protected $_id;
+    protected $_id;
 
-	/**
-	 * Name/value array of field names to values.
-	 *
-	 * @var array
-	 */
-	protected $_fields;
+    /**
+     * Name/value array of field names to values.
+     *
+     * @var array
+     */
+    protected $_fields;
 
-	/**
-	 * Construct an instance of Zend_Cloud_DocumentService_Document.
-	 *
-	 * @param string $collection
-	 * @param array  $fields
-	 */
-	public function __construct($id, $fields)
-	{
-	    $this->_id = $id;
+    /**
+     * Construct an instance of Zend_Cloud_DocumentService_Document.
+     *
+     * @param string $collection
+     * @param array  $fields
+     */
+    public function __construct($id, $fields)
+    {
+        $this->_id = $id;
         $this->_fields = $fields;
-	}
+    }
 
-	/**
-	 * Get ID name.
-	 *
-	 * @return string
-	 */
-	public function getID() 
-	{
-	    return $this->_id;
-	}
+    /**
+     * Get ID name.
+     *
+     * @return string
+     */
+    public function getID() 
+    {
+        return $this->_id;
+    }
 
-	/**
-	 * Get fields as array.
-	 *
-	 * @return array
-	 */
-	public function getFields() 
-	{
-	    return $this->_fields;
-	}
+    /**
+     * Get fields as array.
+     *
+     * @return array
+     */
+    public function getFields() 
+    {
+        return $this->_fields;
+    }
 
-	/**
-	 * Get field by name.
-	 *
-	 * @param  string $name
-	 * @return string
-	 */
+    /**
+     * Get field by name.
+     *
+     * @param  string $name
+     * @return string
+     */
     public function getField($name)
     {
-	    return $this->_fields[$name];
-	}
-	
-	/**
-	 * Set field by name.
-	 *
-	 * @param  string $name
-	 * @param  mixed $value
-	 * @return string
-	 */
+        return $this->_fields[$name];
+    }
+    
+    /**
+     * Set field by name.
+     *
+     * @param  string $name
+     * @param  mixed $value
+     * @return string
+     */
     public function setField($name, $value) 
     {
-	    $this->_fields[$name] = $value;
-	    return $this;
-	}
-	
-	public function __get($name)
-	{
-	    return $this->_fields[$name];
-	}
+        $this->_fields[$name] = $value;
+        return $this;
+    }
+    
+    public function __get($name)
+    {
+        return $this->_fields[$name];
+    }
 
-	public function __set($name, $value)
-	{
-	    $this->_fields[$name] = $value;
-	}
-	
+    public function __set($name, $value)
+    {
+        $this->_fields[$name] = $value;
+    }
+    
     public function offsetExists($name)
     {
         return isset($this->_fields[$name]);
@@ -132,7 +132,7 @@ class Zend_Cloud_DocumentService_Document implements ArrayAccess
     }
     
     public function __call($name, $args)
-	{
+    {
         if(substr($name, 0, 3) == 'get') {
             $option = substr($name, 3);
             // get value
@@ -144,6 +144,6 @@ class Zend_Cloud_DocumentService_Document implements ArrayAccess
         } else {
             require_once 'Zend/Cloud/OperationNotAvailableException.php';
             throw new Zend_Cloud_OperationNotAvailableException("Unknown operation $name");
-        }	    
-	}
+        }        
+    }
 }

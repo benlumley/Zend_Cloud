@@ -17,7 +17,7 @@
  */
 
 require_once 'Zend/Service/Amazon/Sqs.php';
-require_once 'Zend/Cloud/QueueService/QueueService.php';
+require_once 'Zend/Cloud/QueueService/Adapter.php';
 require_once 'Zend/Cloud/QueueService/Exception.php';
 
 /**
@@ -28,7 +28,7 @@ require_once 'Zend/Cloud/QueueService/Exception.php';
  * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_QueueService
+class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Adapter
 {
     /*
      * Options array keys for the SQS adapter.
@@ -47,11 +47,26 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
      */
     protected $_sqs;
 
+    /**
+     * Constructor
+     * 
+     * @param  array|Zend_Config $options 
+     * @return void
+     */
     public function __construct($options = array()) 
     {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        }
+
+        if (!is_array($options)) {
+            throw new Zend_Cloud_QueueService_Exception('Invalid options provided');
+        }
+
         try {
-            $this->_sqs = new Zend_Service_Amazon_Sqs($options[self::AWS_ACCESS_KEY],
-                                                  $options[self::AWS_SECRET_KEY]);
+            $this->_sqs = new Zend_Service_Amazon_Sqs(
+                $options[self::AWS_ACCESS_KEY], $options[self::AWS_SECRET_KEY]
+            );
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on create: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -61,7 +76,7 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
         } 
     }
 
- 	/**
+     /**
      * Create a queue. Returns the ID of the created queue (typically the URL).
      * It may take some time to create the queue. Check your vendor's
      * documentation for details.
@@ -86,7 +101,8 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
      * @param  array  $options
      * @return boolean true if successful, false otherwise
      */
-    public function deleteQueue($queueId, $options = null) {
+    public function deleteQueue($queueId, $options = null) 
+{
         try {
             return $this->_sqs->delete($queueId);
         } catch(Zend_Service_Amazon_Exception $e) {
@@ -100,9 +116,9 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
      * @param  array $options
      * @return array Queue IDs
      */
-    public function listQueues($options = null) {
+    public function listQueues($options = null) 
+    {
         try {
-
             return $this->_sqs->getQueues();
         } catch(Zend_Service_Amazon_Exception $e) {
             throw new Zend_Cloud_QueueService_Exception('Error on listing queues: '.$e->getMessage(), $e->getCode(), $e);
@@ -116,7 +132,8 @@ class Zend_Cloud_QueueService_Adapter_Sqs implements Zend_Cloud_QueueService_Que
      * @param  array  $options
      * @return array
      */
-    public function fetchQueueMetadata($queueId, $options = null) {
+    public function fetchQueueMetadata($queueId, $options = null) 
+    {
         try {
             // TODO: ZF-9050 Fix the SQS client library in trunk to return all attribute values
             $attributes = $this->_sqs->getAttribute($queueId, 'All');
