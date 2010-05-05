@@ -34,7 +34,7 @@ require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Query_Condition
+class Zend_Cloud_DocumentService_Query_Filter
     implements Zend_Cloud_DocumentService_Query_Clause
 {
     protected $_condition;
