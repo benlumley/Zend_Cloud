@@ -1,20 +1,20 @@
 Simple Cloud API
 ----------------
 
-The Simple Cloud API is a common interface to all major cloud application services.
-This project is still under development and will be subject to change until its
-production release. Consider yourselves warned.
+The Simple Cloud API is a common interface to cloud application services.
+This project is still under development and may be subject to change until 
+its production release. 
 
 VERSION
 -------
-Simple Cloud API 0.2 (Zend Framework Rev. 18653)
+Simple Cloud API Preview Release 1 (Zend Framework Rev. 22112)
 
 INSTALLATION
 ------------
 
-The Simple Cloud API requires no special installation steps. Simply download the API,
-extract it to the folder you would like to keep it in, and add the library directory
-to your PHP include_path.
+The Simple Cloud API requires no special installation steps. Simply download the
+API, extract it to the folder you would like to keep it in, and add the library
+directory to your PHP include_path.
 
 GETTING STARTED
 ---------------

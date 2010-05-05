@@ -1,6 +1,5 @@
 [production]
-Autoloadernamespaces[] = "Zend_"
-Autoloadernamespaces[] = "CloudExplorer_"
+autoloadernamespaces[] = "CloudExplorer_"
 
 phpSettings.display_startup_errors = 0
 phpSettings.display_errors = 0

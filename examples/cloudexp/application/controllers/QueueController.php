@@ -6,7 +6,7 @@ class QueueController extends Zend_Controller_Action
     public $dependencies = array('config');
     
     /**
-     * @var Zend_Cloud_QueueService_QueueService
+     * @var Zend_Cloud_QueueService_Adapter
      */
     protected $_queue = null;
 
@@ -23,11 +23,10 @@ class QueueController extends Zend_Controller_Action
     public function createAction()
     {
         $request = $this->getRequest();
-        if(!$request->isPost()) {
+        if (!$request->isPost()) {
             return;
         }
-        $name = $this->_getParam('name', false);
-        if(!$name) {
+        if (!$name = $this->_getParam('name', false)) {
             return;
         }
         $this->_queue->createQueue($name);
@@ -37,16 +36,15 @@ class QueueController extends Zend_Controller_Action
     public function sendAction()
     {
         $this->view->qs = $this->_queue->listQueues();
-    	$request = $this->getRequest();
-        $name = $this->view->name = $this->_getParam('name', false);
-     	if(!$name) {
+    	$request        = $this->getRequest();
+        $name           = $this->view->name = $this->_getParam('name', false);
+     	if (!$name) {
             return;
         }
-        if(!$request->isPost()) {
+        if (!$request->isPost()) {
             return;
         }
-        $message = $this->_getParam('message', false);
-     	if(!$message) {
+        if (!$message = $this->_getParam('message', false)) {
             return;
         }
         $ret = $this->_queue->sendMessage($name, $message);
@@ -56,25 +54,17 @@ class QueueController extends Zend_Controller_Action
     public function receiveAction()
     {    
         $this->view->qs = $this->_queue->listQueues();
-    	$request = $this->getRequest();
-        $name = $this->view->name = $this->_getParam('name', false);
-     	if(!$name) {
+    	$request        = $this->getRequest();
+        $name           = $this->view->name = $this->_getParam('name', false);
+     	if (!$name) {
             return;
         }
         $messages = $this->_queue->receiveMessages($name);
-        foreach($messages as $msg) {
+        foreach ($messages as $msg) {
         	$texts[] = $msg->getBody();
         	// remove messages from the queue
         	$this->_queue->deleteMessage($name, $msg);
         }
         $this->view->messages = $texts;
     }
-
 }
-
-
-
-
-
-
-

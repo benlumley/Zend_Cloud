@@ -6,9 +6,7 @@ class StorageController extends Zend_Controller_Action
     public $dependencies = array('config');
     
     /**
-     * @var Zend_Cloud_StorageService_StorageService
-     * 
-     * 
+     * @var Zend_Cloud_StorageService_Adapter
      */
     protected $_storage = null;
 
@@ -24,27 +22,30 @@ class StorageController extends Zend_Controller_Action
 
     public function getAction()
     {
-        $name = $this->_getParam('item', false);
-        if(!$name) {
+        if (!$name = $this->_getParam('item', false)) {
             return $this->_helper->redirector('index');
         }
+
         $item = $this->_storage->fetchItem($name, array(
         	Zend_Cloud_StorageService_Adapter_S3::FETCH_STREAM => true,
         	Zend_Cloud_StorageService_Adapter_WindowsAzure::RETURN_TYPE => Zend_Cloud_StorageService_Adapter_WindowsAzure::RETURN_STREAM
-        	));
-        if(!$item) {
+        ));
+
+        if (!$item) {
             $this->getResponse()->setHttpResponseCode(404);
             return;
         }
+
         $meta = $this->_storage->fetchMetadata($name);
-        if(isset($meta["type"])) {
+        if (isset($meta["type"])) {
             $this->getResponse()->setHeader('Content-Type', $meta["type"]);
         }
+
         // don't render the view, send the item instead
         $this->_helper->viewRenderer->setNoRender(true);
-        if($item instanceof Zend_Http_Response_Stream) {
+        if ($item instanceof Zend_Http_Response_Stream) {
             fpassthru($item->getStream());
-        } elseif(is_resource($item)) {
+        } elseif (is_resource($item)) {
             fpassthru($item);
         } else {
             $this->getResponse()->setBody($item);
@@ -54,7 +55,7 @@ class StorageController extends Zend_Controller_Action
     public function uploadAction()
     {
     	$request = $this->getRequest();
-    	if(!$request->isPost()) {
+    	if (!$request->isPost()) {
     		return;
     	}
     	$name = $this->_getParam('name', false);
@@ -66,28 +67,25 @@ class StorageController extends Zend_Controller_Action
 		}
 		$upload->receive();
     	$file = $upload->getFileName();
-		$fp = fopen($file, "r");
-		if(!$fp) {
+		$fp   = fopen($file, "r");
+		if (!$fp) {
 			return;
 		}
 		$mime = $upload->getMimeType();
-		if(!$name) {
+		if (!$name) {
 			// get short name
 			$name = $upload->getFileName(null, false);
 		}
-		$this->_storage->storeItem($name, $fp, 
-			array(Zend_Cloud_StorageService_Adapter_S3::METADATA => array("type" => $mime)));
+
+        $this->_storage->storeItem($name, $fp, array(
+            Zend_Cloud_StorageService_Adapter_S3::METADATA => array("type" => $mime)
+        ));
 		try {
 			$this->_storage->storeMetadata($name, array("type" => $mime));
 		} catch(Zend_Cloud_OperationNotAvailableException $e) {
 			// ignore it
 		}
+
 		return $this->_helper->redirector('index');
 	}
-
 }
-
-
-
-
-
