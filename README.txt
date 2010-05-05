@@ -7,7 +7,7 @@ its production release.
 
 VERSION
 -------
-Simple Cloud API Preview Release 1 (Zend Framework Rev. 22112)
+Simple Cloud API Preview Release 1 (Zend Framework Rev. 22113)
 
 INSTALLATION
 ------------
