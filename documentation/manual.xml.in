@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+    "@DOCBOOK_DTD@"
+[
+    <!ENTITY % xinclude SYSTEM "xinclude.mod">
+    %xinclude;
+]>
+<book id="manual" lang="&lang;">
+    <bookinfo>
+        <title>Programmer's Reference Guide</title>
+        <subtitle>SimpleCloud API</subtitle>
+        <edition>Programmer's Reference Guide to the SimpleCloud API</edition>
+        <pubdate><?dbtimestamp?></pubdate>
+        <copyright>
+            <year>2010-<?dbtimestamp format="Y"?></year>
+            <holder>
+                Zend Technologies Inc.
+                (<ulink url="http://www.zend.com" />)
+            </holder>
+        </copyright>
+        <!--
+        A Title page graphic can be included like this
+            <mediaobject>
+              <imageobject>
+                <imagedata fileref="../web/images/foo.jpg" />
+              </imageobject>
+            </mediaobject>
+        -->
+    </bookinfo>
+
+    <chapter id="learning.quickstart">
+        <title>SimpleCloud API</title>
+        <xi:include href="module_specs/Zend_Cloud_DocumentService.xml" />
+        <xi:include href="module_specs/Zend_Cloud_QueueService.xml" />
+        <xi:include href="module_specs/Zend_Cloud_StorageService.xml" />
+    </chapter>
+
+    <xi:include href="ref/copyrights.xml" />
+
+    <index id="the.index" />
+</book>
