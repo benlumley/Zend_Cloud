@@ -13,9 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * @see Zend_Cloud_DocumentService_Query_ClauseInterface
+ */
+require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
 
 /**
  * Class representing max number of rows to return in row queries. Services that
@@ -27,11 +32,11 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_Limit
-    implements Zend_Cloud_DocumentService_Query_ClauseInterface
+    implements Zend_Cloud_DocumentService_Query_Clause
 {
     protected $_maxRows;
 
@@ -40,7 +45,8 @@ class Zend_Cloud_DocumentService_Query_Limit
      *
      * @param $condition
      */
-    public function __construct($maxRows) {
+    public function __construct($maxRows) 
+    {
         $this->_maxRows = $maxRows;
     }
 
@@ -49,7 +55,8 @@ class Zend_Cloud_DocumentService_Query_Limit
      *
      * @return int
      */
-    public function getMaxRows() {
+    public function getMaxRows() 
+    {
         return $this->_maxRows;
     }
 }

@@ -13,9 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * @see Zend_Cloud_DocumentService_Query_ClauseInterface
+ */
+require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
 
 /**
  * Class representing tables to query in row queries. Currently only one table
@@ -25,11 +30,11 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_From
-    implements Zend_Cloud_DocumentService_Query_ClauseInterface
+    implements Zend_Cloud_DocumentService_Query_Clause
 {
     protected $_condition;
 

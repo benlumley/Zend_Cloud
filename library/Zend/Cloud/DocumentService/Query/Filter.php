@@ -13,9 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * @see Zend_Cloud_DocumentService_Query_ClauseInterface
+ */
+require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
 
 /**
  * Class representing filters in row queries. The query object model is
@@ -26,11 +31,11 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_Condition
-    implements Zend_Cloud_DocumentService_Query_ClauseInterface
+    implements Zend_Cloud_DocumentService_Query_Clause
 {
     protected $_condition;
 
@@ -40,7 +45,8 @@ class Zend_Cloud_DocumentService_Query_Condition
      *
      * @param $condition
      */
-    public function __construct($condition) {
+    public function __construct($condition) 
+    {
         $this->_condition = $condition;
     }
 }

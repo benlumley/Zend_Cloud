@@ -13,7 +13,7 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -25,34 +25,37 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Cloud_DocumentService_Query_Interface
+interface Zend_Cloud_DocumentService_Query_Adapter
 {
     /**
      * SELECT clause (fields to be selected)
      * 
      * @param string $select
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function select($select);
+
     /**
      * FROM clause (table name)
      * 
      * @param string $from
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function from($from);
+
     /**
      * WHERE clause (conditions to be used)
      * 
      * @param string $where
      * @param mixed $value Value or array of values to be inserted instead of ?
      * @param string $op Operation to use to join where clauses (AND/OR)
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function where($where, $value = null, $op = 'and');
+
     /**
      * WHERE clause for item ID
      * 
@@ -60,22 +63,24 @@ interface Zend_Cloud_DocumentService_Query_Interface
      * have special syntax for primary keys
      * 
      * @param mixed $value Row ID for the document
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function whereId($value);
+
     /**
      * LIMIT clause (how many rows ot return)
      * 
      * @param int $limit
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function limit($limit);
+
     /**
      * ORDER BY clause (sorting)
      * 
      * @param string $sort Column to sort by
      * @param string $direction Direction - asc/desc
-     * @return Zend_Cloud_DocumentService_Query_Interface
+     * @return Zend_Cloud_DocumentService_Query_Adapter
      */
     public function order($sort, $direction = 'asc');
 }

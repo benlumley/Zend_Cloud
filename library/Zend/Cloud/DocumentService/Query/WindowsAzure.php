@@ -13,14 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /*
- * @see Zend_Cloud_DocumentService_Query_Interface
+ * @see Zend_Cloud_DocumentService_Query_Adapter
  */
-require_once 'Zend/Cloud/DocumentService/Query/Interface.php';
+require_once 'Zend/Cloud/DocumentService/Query/Adapter.php';
 
 /**
  * Class implementing working with Azure queries in a structured way
@@ -30,10 +30,11 @@ require_once 'Zend/Cloud/DocumentService/Query/Interface.php';
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cloud_DocumentService_Query_WindowsAzure implements Zend_Cloud_DocumentService_Query_Interface
+class Zend_Cloud_DocumentService_Query_WindowsAzure 
+    implements Zend_Cloud_DocumentService_Query_Adapter
 {
     /**
      * Azure concrete query
@@ -42,6 +43,12 @@ class Zend_Cloud_DocumentService_Query_WindowsAzure implements Zend_Cloud_Docume
      */
     protected $_azureSelect;
     
+    /**
+     * Constructor
+     * 
+     * @param  null|mixed $select Ignored
+     * @return void
+     */
     public function __construct($select = null) 
     {
         $this->_azureSelect = new Zend_Service_WindowsAzure_Storage_TableEntityQuery();
@@ -82,7 +89,7 @@ class Zend_Cloud_DocumentService_Query_WindowsAzure implements Zend_Cloud_Docume
      */
     public function where($where, $value = null, $op = 'and')
     {
-        if(!empty($value) && !is_array($value)) {
+        if (!empty($value) && !is_array($value)) {
             // fix buglet in Azure - numeric values are quoted unless passed as an array
             $value = array($value);
         }
@@ -101,7 +108,7 @@ class Zend_Cloud_DocumentService_Query_WindowsAzure implements Zend_Cloud_Docume
      */
     public function whereID($value)
     {
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             require_once 'Zend/Cloud/DocumentService/Exception.php';
             throw new Zend_Cloud_DocumentService_Exception('Invalid document key');
         }
@@ -133,10 +140,7 @@ class Zend_Cloud_DocumentService_Query_WindowsAzure implements Zend_Cloud_Docume
     public function order($sort, $direction = 'asc')
     {
         require_once 'Zend/Cloud/OperationNotAvailableException.php';
-            throw new Zend_Cloud_OperationNotAvailableException('No support for sorting for Azure yet');
-//         Azure doesn't support it now          
-//        $this->_azureSelect->orderBy($sort, $direction);
-//        return $this;
+        throw new Zend_Cloud_OperationNotAvailableException('No support for sorting for Azure yet');
     }
     
     /**

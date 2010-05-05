@@ -13,7 +13,7 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,27 +28,27 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_Condition
 {
     // Comparison operators
-    const EQUALS = '=';
-    const NOT_EQUALS = '!=';
-    const GREATER_THAN = '>';
-    const GREATER_THAN_OR_EQUALS = '>=';
-    const LESS_THAN = '<';
-    const LESS_THAN_OR_EQUALS = '<=';
-    const BETWEEN = 'between';
-    const IS_NULL = 'null?';
-    const IS_NOT_NULL = '!null?';
+    const EQUALS                 = ';
+    const NOT_EQUALS             = ';
+    const GREATER_THAN           = '>';
+    const GREATER_THAN_OR_EQUALS = ';
+    const LESS_THAN              = '<';
+    const LESS_THAN_OR_EQUALS    = ';
+    const BETWEEN                = 'between';
+    const IS_NULL                = 'null?';
+    const IS_NOT_NULL            = '!null?';
 
     // Logical operators
     const LOGICAL_AND = 'and';
-    const LOGICAL_OR= 'or';
+    const LOGICAL_OR  = 'or';
     const LOGICAL_NOT = 'not';
-
+                   
     protected $_operator;
     protected $_operands;
 
@@ -61,7 +61,8 @@ class Zend_Cloud_DocumentService_Query_Condition
      * @param $operator
      * @param $operands
      */
-    public function __construct($operator, $operands) {
+    public function __construct($operator, $operands) 
+    {
         $this->_operator = $operator;
         $this->_operands = $operands;
     }
@@ -72,7 +73,8 @@ class Zend_Cloud_DocumentService_Query_Condition
      *
      * @return string
      */
-    public function getOperator () {
+    public function getOperator () 
+    {
         return $this->_operator;
     }
 
@@ -82,7 +84,8 @@ class Zend_Cloud_DocumentService_Query_Condition
      *
      * @return array
      */
-    public function getOperands() {
+    public function getOperands() 
+    {
         return $this->_operands;
     }
 }

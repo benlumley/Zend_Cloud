@@ -12,7 +12,8 @@
  *
  * @category   Zend
  * @package    Zend_Cloud
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage StorageService
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -20,7 +21,17 @@ require_once 'Zend/Cloud/StorageService/Adapter.php';
 require_once 'Zend/Cloud/StorageService/Exception.php';
 require_once 'Zend/Service/Nirvanix.php';
 
-class Zend_Cloud_StorageService_Adapter_Nirvanix implements Zend_Cloud_StorageService_Adapter
+/**
+ * Adapter for Nirvanix cloud storage
+ *
+ * @category   Zend
+ * @package    Zend_Cloud
+ * @subpackage StorageService
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class Zend_Cloud_StorageService_Adapter_Nirvanix 
+    implements Zend_Cloud_StorageService_Adapter
 {
     const USERNAME         = 'auth_username';
     const PASSWORD         = 'auth_password';

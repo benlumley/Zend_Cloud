@@ -14,8 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Cloud
- * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Exception.php 17539 2009-08-10 22:51:26Z mikaelkael $
  */
@@ -30,8 +29,7 @@ require_once 'Zend/Cloud/Exception.php';
  *
  * @category   Zend
  * @package    Zend_Cloud
- * @subpackage Cloud
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_Page
@@ -39,20 +37,46 @@ class Zend_Cloud_Page
     protected $_data;
     protected $_token;
 
-    public function __construct($data, $token = null) {
-        $this->_data = $data;
+    /**
+     * Constructor
+     * 
+     * @param  string $data 
+     * @param  string $token 
+     * @return void
+     */
+    public function __construct($data, $token = null) 
+    {
+        $this->_data  = $data;
         $this->_token = $token;
     }
 
-    public function getData() {
+    /**
+     * Get page data
+     * 
+     * @return string
+     */
+    public function getData() 
+    {
         return $this->_data;
     }
 
-    public function getToken() {
+    /**
+     * Get page token
+     * 
+     * @return null|string
+     */
+    public function getToken() 
+    {
         return $this->_token;
     }
 
-    public function isLast() {
-        return !isset($this->_token);
+    /**
+     * Does this represent the last page?
+     * 
+     * @return bool
+     */
+    public function isLast() 
+    {
+        return (null === $this->_token);
     }
 }

@@ -13,9 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * @see Zend_Cloud_DocumentService_Query_ClauseInterface
+ */
+require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
 
 /**
  * Class representing fields to sort by in row queries. Services that
@@ -29,11 +34,11 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_Sort
-    implements Zend_Cloud_DocumentService_Query_ClauseInterface
+    implements Zend_Cloud_DocumentService_Query_Clause
 {
     protected $_field;
 
@@ -42,7 +47,8 @@ class Zend_Cloud_DocumentService_Query_Sort
      *
      * @param $condition
      */
-    public function __construct($field) {
+    public function __construct($field) 
+    {
         $this->_field = $field;
     }
 
@@ -51,7 +57,8 @@ class Zend_Cloud_DocumentService_Query_Sort
      *
      * @return int
      */
-    public function getField() {
+    public function getField() 
+    {
         return $this->_field;
     }
 }

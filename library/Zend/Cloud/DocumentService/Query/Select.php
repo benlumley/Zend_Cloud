@@ -13,9 +13,14 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * @see Zend_Cloud_DocumentService_Query_ClauseInterface
+ */
+require_once 'Zend/Cloud/DocumentService/Query/Clause.php';
 
 /**
  * Class representing projection of fields or a select operation. Currently
@@ -26,11 +31,11 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage DocumentService
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_DocumentService_Query_Select
-    implements Zend_Cloud_DocumentService_Query_ClauseInterface
+    implements Zend_Cloud_DocumentService_Query_Clause
 {
     // Allowed operations
     const COUNT = 'count';
@@ -47,19 +52,22 @@ class Zend_Cloud_DocumentService_Query_Select
      * @param $fields
      * @param $operation
      */
-    public function __construct($fields = null, $operation = null) {
+    public function __construct($fields = null, $operation = null) 
+    {
         $this->_fields = $fields;
 
         // TODO Verify that the operation is a valid operation from the list
         // of constants in this class.
         $this->_operation = $operation;
     }
+
     /**
      * Returns an array of the fields to project.
      *
      * @return array
      */
-    public function getFields() {
+    public function getFields() 
+    {
         return $this->_fields;
     }
 
@@ -68,7 +76,8 @@ class Zend_Cloud_DocumentService_Query_Select
      *
      * @return string
      */
-    public function getOperation() {
+    public function getOperation() 
+    {
         return $this->_operation;
     }
 }
