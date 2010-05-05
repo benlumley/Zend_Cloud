@@ -34,12 +34,12 @@
 class Zend_Cloud_DocumentService_Query_Condition
 {
     // Comparison operators
-    const EQUALS                 = ';
-    const NOT_EQUALS             = ';
+    const EQUALS                 = '=';
+    const NOT_EQUALS             = '!=';
     const GREATER_THAN           = '>';
-    const GREATER_THAN_OR_EQUALS = ';
+    const GREATER_THAN_OR_EQUALS = '>=';
     const LESS_THAN              = '<';
-    const LESS_THAN_OR_EQUALS    = ';
+    const LESS_THAN_OR_EQUALS    = '<=';
     const BETWEEN                = 'between';
     const IS_NULL                = 'null?';
     const IS_NOT_NULL            = '!null?';
