@@ -5,7 +5,7 @@
     <!ENTITY % xinclude SYSTEM "xinclude.mod">
     %xinclude;
 ]>
-<book id="manual" lang="&lang;">
+<book id="manual" lang="en">
     <bookinfo>
         <title>Programmer's Reference Guide</title>
         <subtitle>SimpleCloud API</subtitle>

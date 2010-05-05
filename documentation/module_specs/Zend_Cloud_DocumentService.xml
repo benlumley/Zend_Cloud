@@ -248,6 +248,7 @@ $documents = Zend_Cloud_DocumentService_Factory::getAdapter(array(
                 versions of the API.
             </para>
         </note>
+    </sect2>
 
     <sect2 id="zend.cloud.documentservice.concepts">
         <title>Basic concepts</title>
