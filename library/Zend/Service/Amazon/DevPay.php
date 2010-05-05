@@ -1,4 +1,22 @@
 <?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
 /**
  * @see Zend_Service_Amazon_Abstract
@@ -25,6 +43,12 @@ require_once 'Zend/Service/Amazon/DevPay/Attribute.php';
  */
 require_once 'Zend/Service/Amazon/DevPay/Exception.php';
 
+/**
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
  {
     /* Notes */
@@ -91,7 +115,7 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
         $this->setEndpoint("http://" . $this->_endpoint);
     }
 
-	/**
+    /**
      * Set DevPay endpoint to use
      *
      * @param string|Zend_Uri_Http $endpoint
@@ -99,15 +123,15 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      */
     public function setEndpoint($endpoint)
     {
-    	if(!($endpoint instanceof Zend_Uri_Http)) {
-    		$endpoint = Zend_Uri::factory($endpoint);
-    	}
-    	if(!$endpoint->valid()) {
-    		require_once 'Zend/Service/Amazon/DevPay/Exception.php';
-    		throw new Zend_Service_Amazon_DevPay_Exception("Invalid endpoint supplied");
-    	}
-    	$this->_endpoint = $endpoint;
-    	return $this;
+        if(!($endpoint instanceof Zend_Uri_Http)) {
+            $endpoint = Zend_Uri::factory($endpoint);
+        }
+        if(!$endpoint->valid()) {
+            require_once 'Zend/Service/Amazon/DevPay/Exception.php';
+            throw new Zend_Service_Amazon_DevPay_Exception("Invalid endpoint supplied");
+        }
+        $this->_endpoint = $endpoint;
+        return $this;
     }
 
     /**
@@ -115,8 +139,9 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      *
      * @return Zend_Uri_Http
      */
-    public function getEndpoint() {
-    	return $this->_endpoint;
+    public function getEndpoint() 
+    {
+        return $this->_endpoint;
     }
 
 
@@ -126,9 +151,11 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      * @param $tokenExpiration
      * @return array Array containing 'AWSAccessKeyId', 'SecretAccessKey', and 'UserToken'
      */
-	public function activateDesktopProduct($activationKey,
-	                                       $productToken,
-	                                       $tokenExpiration) {}
+    public function activateDesktopProduct(
+        $activationKey, $productToken, $tokenExpiration
+    ) {
+    }
+
     /**
      * @param $activationKey
      * @param $awsAccessKeyId
@@ -136,17 +163,20 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      * @param $productToken
      * @return array Array containing 'PersistentIdentifier' and 'UserToken'
      */
-    public function activateHostedProduct($activationKey,
-                                          $awsAccessKeyId,
-                                          $tokenExpiration,
-                                          $productToken) {}
+    public function activateHostedProduct(
+        $activationKey, $awsAccessKeyId, $tokenExpiration, $productToken
+    ) {
+    }
+
     /**
      * @param $awsAccessKeyId
      * @param $userToken
      * @return array Array containing one or more product codes.
      */
-    public function getActiveSubscriptionsByPid($awsAccessKeyId,
-                                                $persistentIdentifier) {}
+    public function getActiveSubscriptionsByPid(
+        $awsAccessKeyId, $persistentIdentifier
+    ) {
+    }
 
     /**
      * @param $additionalTokens
@@ -154,18 +184,21 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      * @param $userToken
      * @return string The refreshed user token
      */
-    public function refreshUserToken($additionalTokens,
-                                     $awsAccessKeyId,
-                                     $userToken) {}
+    public function refreshUserToken(
+        $additionalTokens, $awsAccessKeyId, $userToken
+    ) {
+    }
+
     /**
      * @param $additionalTokens
      * @param $awsAccessKeyId
      * @param $userToken
      * @return string The refreshed user token
      */
-    public function verifyProductSubscriptionByPid($awsAccessKeyId,
-                                                   $persistentIdentifier,
-                                                   $productCode) {}
+    public function verifyProductSubscriptionByPid(
+        $awsAccessKeyId, $persistentIdentifier, $productCode
+    ) {
+    }
 
     /**
      * @param $awsAccessKeyId
@@ -173,9 +206,10 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
      * @param $userToken
      * @return boolean True if the user is subscribed to the product, false otherwise
      */
-    public function verifyProductSubscriptionByTokens($awsAccessKeyId,
-                                                      $productToken,
-                                                      $userToken) {}
+    public function verifyProductSubscriptionByTokens(
+        $awsAccessKeyId, $productToken, $userToken
+    ) {
+    }
 
    /**
      * Sends a HTTP request to the DevPay service using Zend_Http_Client
@@ -189,7 +223,7 @@ class Zend_Service_Amazon_DevPay extends Zend_Service_Amazon_Abstract
         $url = 'https://' . $this->_getRegion() . $this->_endpoint . '/';
 
         // UTF-8 encode all parameters
-        foreach($params as $name => $value) {
+        foreach ($params as $name => $value) {
             unset($params[$name]);
             $params[utf8_encode($name)] = $value;
 

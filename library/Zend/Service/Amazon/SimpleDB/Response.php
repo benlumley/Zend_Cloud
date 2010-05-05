@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDB
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Response.php 17539 2009-08-10 22:51:26Z mikaelkael $
  */
@@ -29,10 +29,11 @@ require_once 'Zend/Http/Response.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDB
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_SimpleDB_Response {
+class Zend_Service_Amazon_SimpleDB_Response 
+{
     /**
      * XML namespace used for SimpleDB responses.
      */
@@ -78,7 +79,8 @@ class Zend_Service_Amazon_SimpleDB_Response {
     /**
      * Creates a new high-level SimpleDB response object
      *
-     * @param Zend_Http_Response $httpResponse the HTTP response.
+     * @param  Zend_Http_Response $httpResponse the HTTP response.
+     * @return void
      */
     public function __construct(Zend_Http_Response $httpResponse)
     {
@@ -123,11 +125,17 @@ class Zend_Service_Amazon_SimpleDB_Response {
         return simplexml_load_string($body);
     }
     
-    public function getHttpResponse() {
+    /**
+     * Get HTTP response object
+     * 
+     * @return Zend_Http_Response
+     */
+    public function getHttpResponse() 
+    {
         return $this->_httpResponse;
     }
     
-	/**
+    /**
      * Gets the document object for this response
      *
      * @return DOMDocument the DOM Document for this response.
@@ -180,5 +188,4 @@ class Zend_Service_Amazon_SimpleDB_Response {
     {
         $this->_xmlNamespace = $namespace;
     }
-
 }

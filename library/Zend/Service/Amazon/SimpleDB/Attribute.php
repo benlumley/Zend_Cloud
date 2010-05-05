@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDB
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Response.php 17539 2009-08-10 22:51:26Z mikaelkael $
  */
@@ -24,7 +24,7 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDB
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_SimpleDB_Attribute
@@ -33,11 +33,20 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     protected $_name;
     protected $_values;
 
+    /**
+     * Constructor
+     * 
+     * @param  string $itemName 
+     * @param  string $name 
+     * @param  array $values 
+     * @return void
+     */
     function __construct($itemName, $name, $values) 
     {
         $this->_itemName = $itemName;
-        $this->_name = $name;
-        if(!is_array($values)) {
+        $this->_name     = $name;
+
+        if (!is_array($values)) {
             $this->_values = array($values);
         } else {
             $this->_values = $values;
@@ -45,7 +54,9 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     }
 
 	/**
-     * @return the $_itemName
+     * Return the item name to which the attribute belongs
+     *
+     * @return string
      */
     public function getItemName ()
     {
@@ -53,7 +64,9 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     }
 
 	/**
-     * @return $_values
+     * Retrieve attribute values
+     *
+     * @return array
      */
     public function getValues()
     {
@@ -61,16 +74,24 @@ class Zend_Service_Amazon_SimpleDB_Attribute
     }
 
 	/**
-     * @return the $_name
+     * Retrieve the attribute name
+     *
+     * @return string
      */
     public function getName ()
     {
         return $this->_name;
     }
     
+    /**
+     * Add value
+     * 
+     * @param  mixed $value 
+     * @return void
+     */
     public function addValue($value)
     {
-        if(is_array($value)) {
+        if (is_array($value)) {
              $this->_values += $value;   
         } else {
             $this->_values[] = $value;

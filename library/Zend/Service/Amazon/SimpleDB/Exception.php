@@ -14,10 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Service_Amazon
- * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 17539 2009-08-10 22:51:26Z mikaelkael $
  */
 
 /**
@@ -30,22 +29,38 @@ require_once 'Zend/Service/Amazon/Exception.php';
  *
  * @category   Zend
  * @package    Zend_Service_Amazon
- * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_SimpleDB_Exception extends Zend_Service_Amazon_Exception
 {
-    private $awsErrorCode = '';
+    /**
+     * @var string
+     */
+    private $_awsErrorCode = '';
 
+    /**
+     * Constructor
+     * 
+     * @param string $message 
+     * @param int $code 
+     * @param string $awsErrorCode 
+     * @return void
+     */
     public function __construct($message, $code = 0, $awsErrorCode = '')
     {
         parent::__construct($message, $code);
-        $this->awsErrorCode = $awsErrorCode;
+        $this->_awsErrorCode = $awsErrorCode;
     }
 
+    /**
+     * Get AWS error code
+     * 
+     * @return string
+     */
     public function getErrorCode()
     {
-        return $this->awsErrorCode;
+        return $this->_awsErrorCode;
     }
 }

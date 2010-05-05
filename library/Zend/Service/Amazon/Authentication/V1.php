@@ -1,5 +1,27 @@
 <?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage Authentication
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
+/**
+ * @see Zend_Service_Amazon_Authentication
+ */
 require_once 'Zend/Service/Amazon/Authentication.php';
 
 /**
@@ -7,6 +29,13 @@ require_once 'Zend/Service/Amazon/Authentication.php';
  */
 require_once 'Zend/Crypt/Hmac.php';
 
+/**
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage Authentication
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 class Zend_Service_Amazon_Authentication_V1 extends Zend_Service_Amazon_Authentication
 {
     /**
@@ -18,7 +47,6 @@ class Zend_Service_Amazon_Authentication_V1 extends Zend_Service_Amazon_Authenti
      * Signature Encoding Method
      */
     protected $_signatureMethod = 'HmacSHA256';
-    
     
     /**
      * Generate the required attributes for the signature
@@ -71,12 +99,10 @@ class Zend_Service_Amazon_Authentication_V1 extends Zend_Service_Amazon_Authenti
             $data .= $key . $value;
         }
 
-        require_once 'Zend/Crypt/Hmac.php';
         $hmac = Zend_Crypt_Hmac::compute($this->_secretKey, 'SHA1', $data, Zend_Crypt_Hmac::BINARY);
 
         $paramaters['Signature'] = base64_encode($hmac);
         
         return $data;
     }
-
 }

@@ -14,10 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Service_Amazon
- * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 17539 2009-08-10 22:51:26Z mikaelkael $
  */
 
 /**
@@ -30,8 +29,8 @@ require_once 'Zend/Service/Amazon/Exception.php';
  *
  * @category   Zend
  * @package    Zend_Service_Amazon
- * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_SimpleDB_Page
@@ -39,24 +38,57 @@ class Zend_Service_Amazon_SimpleDB_Page
     protected $_data;
     protected $_token;
 
-    public function __construct($data, $token = null) {
-        $this->_data = $data;
+    /**
+     * Constructor
+     * 
+     * @param  string $data 
+     * @param  string|null $token 
+     * @return void
+     */
+    public function __construct($data, $token = null) 
+    {
+        $this->_data  = $data;
         $this->_token = $token;
     }
 
-    public function getData() {
+    /**
+     * Retrieve page data
+     * 
+     * @return string
+     */
+    public function getData() 
+    {
         return $this->_data;
     }
 
-    public function getToken() {
+    /**
+     * Retrieve token
+     * 
+     * @return string|null
+     */
+    public function getToken() 
+    {
         return $this->_token;
     }
 
-    public function isLast() {
-        return !isset($this->_token);
+    /**
+     * Determine whether this is the last page of data
+     * 
+     * @return void
+     */
+    public function isLast() 
+    {
+        return (null === $this->_token);
     }
 
-    public function __toString() {
-        return "Page with token: " . $this->_token . "\n and data: " . $this->_data;
+    /**
+     * Cast to string
+     * 
+     * @return string
+     */
+    public function __toString() 
+    {
+        return "Page with token: " . $this->_token 
+             . "\n and data: " . $this->_data;
     }
 }

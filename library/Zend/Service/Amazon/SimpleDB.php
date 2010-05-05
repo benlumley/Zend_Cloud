@@ -1,4 +1,23 @@
 <?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
 /**
  * @see Zend_Service_Amazon_Abstract
@@ -30,6 +49,13 @@ require_once 'Zend/Service/Amazon/SimpleDB/Exception.php';
  */
 require_once 'Zend/Crypt/Hmac.php';
 
+/**
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage SimpleDB
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
  {
     /* Notes */
@@ -103,8 +129,9 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     	return $this->_endpoint;
     }
 
-    public function getAttributes($domainName, $itemName, $attributeName = null) 
-    {
+    public function getAttributes(
+        $domainName, $itemName, $attributeName = null
+    ) {
         $params = array();
 	    $params['Action'] = 'GetAttributes';
 	    $params['DomainName'] = $domainName;
@@ -143,21 +170,28 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         return $attributes;
     }
 
-    public function putAttributes($domainName,
-                                  $itemName,
-                                  $attributes,
-                                  $replace = array()
-   ) {
-        $params = array();
-	    $params['Action'] = 'PutAttributes';
+    /**
+     * Push attributes
+     *
+     * @param  string $domainName
+     * @param  string $itemName
+     * @param  array|Traverable $attributes
+     * @param  array $replace
+     * @return void
+     */
+    public function putAttributes(
+        $domainName, $itemName, $attributes, $replace = array()
+    ) {
+        $params               = array();
+	    $params['Action']     = 'PutAttributes';
 	    $params['DomainName'] = $domainName;
-	    $params['ItemName'] = $itemName;
+	    $params['ItemName']   = $itemName;
 
 	    $index = 0;
-	    foreach($attributes as $attribute) {
+	    foreach ($attributes as $attribute) {
 	        $attributeName = $attribute->getName();
-            foreach($attribute->getValues() as $value) {
-	            $params['Attribute.' . $index . '.Name'] = $attributeName;
+            foreach ($attribute->getValues() as $value) {
+	            $params['Attribute.' . $index . '.Name']  = $attributeName;
                 $params['Attribute.' . $index . '.Value'] = $value;
 	            // Check if it should be replaced
                 if(array_key_exists($attributeName, $replace) && $replace[$attributeName]) {
@@ -171,18 +205,26 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $response = $this->_sendRequest($params);
     }
 
+    /**
+     * Add many attributes at once
+     * 
+     * @param  array $items 
+     * @param  string $domainName 
+     * @param  array $replace 
+     * @return void
+     */
     public function batchPutAttributes($items, $domainName, $replace = array()) 
     {
 
-        $params = array();
-        $params['Action'] = 'BatchPutAttributes';
+        $params               = array();
+        $params['Action']     = 'BatchPutAttributes';
         $params['DomainName'] = $domainName;
 
         $itemIndex = 0;
-        foreach($items as $name => $attributes) {
+        foreach ($items as $name => $attributes) {
             $params['Item.' . $itemIndex . '.ItemName'] = $name;
             $attributeIndex = 0;
-            foreach($attributes as $attribute) {
+            foreach ($attributes as $attribute) {
                 $params['Item.' . $itemIndex . '.Attribute.' . $attributeIndex . '.Name'] = $attribute->getName();
                 if(isset($replace[$itemIndex]) &&
                     isset($replace[$itemIndex][$attributeIndex]) &&
@@ -200,16 +242,24 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $response = $this->_sendRequest($params);
     }
 
-    public function deleteAttributes($domainName, $itemName, $attributes = array()) 
+    /**
+     * Delete attributes
+     * 
+     * @param  string $domainName 
+     * @param  string $itemName 
+     * @param  array $attributes 
+     * @return void
+     */
+    public function deleteAttributes($domainName, $itemName, array $attributes = array()) 
     {
-        $params = array();
-	    $params['Action'] = 'DeleteAttributes';
+        $params               = array();
+	    $params['Action']     = 'DeleteAttributes';
 	    $params['DomainName'] = $domainName;
-	    $params['ItemName'] = $itemName;
+	    $params['ItemName']   = $itemName;
 
 	    $attributeIndex = 0;
-	    foreach($attributes as $attribute) {
-	        foreach($attribute->getValues() as $value) {
+	    foreach ($attributes as $attribute) {
+	        foreach ($attribute->getValues() as $value) {
 	            $params['Attribute.' . $attributeIndex . '.Name'] = $attribute->getName();
 	            $params['Attribute.' . $attributeIndex . '.Value'] = $value;
                 $attributeIndex++;
@@ -229,10 +279,11 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
     public function listDomains($maxNumberOfDomains = 100, $nextToken = null) 
     {
-        $params = array();
-	    $params['Action'] = 'ListDomains';
+        $params                       = array();
+	    $params['Action']             = 'ListDomains';
 	    $params['MaxNumberOfDomains'] = $maxNumberOfDomains;
-	    if(isset($nextToken)) {
+
+	    if (null !== $nextToken) {
 	        $params['NextToken'] = $nextToken;
 	    }
         $response = $this->_sendRequest($params);
@@ -240,13 +291,13 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         $domainNodes = $response->getSimpleXMLDocument()->ListDomainsResult->DomainName;
 
         $data = array();
-        foreach($domainNodes as $domain) {
+        foreach ($domainNodes as $domain) {
             $data[] = (string)$domain;
         }
 
         $nextTokenNode = $response->getSimpleXMLDocument()->ListDomainsResult->NextToken;
-        $nextToken = (string)$nextTokenNode;
-        $nextToken = $nextToken==''?null:$nextToken;
+        $nextToken     = (string)$nextTokenNode;
+        $nextToken     = ''?null:$nextToken;
 
         return new Zend_Service_Amazon_SimpleDB_Page($data, $nextToken);
     }
@@ -257,17 +308,17 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
     public function domainMetadata($domainName) 
     {
-        $params = array();
-	    $params['Action'] = 'DomainMetadata';
+        $params               = array();
+	    $params['Action']     = 'DomainMetadata';
 	    $params['DomainName'] = $domainName;
-        $response = $this->_sendRequest($params);
+        $response             = $this->_sendRequest($params);
 
         $document = $response->getSimpleXMLDocument();
 
         $metadataNodes = $document->DomainMetadataResult->children();
-        $metadata = array();
-        foreach($metadataNodes as $metadataNode) {
-            $name = $metadataNode->getName();
+        $metadata      = array();
+        foreach ($metadataNodes as $metadataNode) {
+            $name            = $metadataNode->getName();
             $metadata[$name] = (string)$metadataNode;
         }
 
@@ -281,10 +332,11 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
 	public function createDomain($domainName) 
 	{
-        $params = array();
-	    $params['Action'] = 'CreateDomain';
+        $params               = array();
+	    $params['Action']     = 'CreateDomain';
 	    $params['DomainName'] = $domainName;
-        $response = $this->_sendRequest($params);
+        $response             = $this->_sendRequest($params);
+        return $response->getHttpsCertificate()->isSuccessful();
     }
 
     /**
@@ -294,10 +346,11 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
 	public function deleteDomain($domainName) 
 	{
-	    $params = array();
-	    $params['Action'] = 'DeleteDomain';
+	    $params               = array();
+	    $params['Action']     = 'DeleteDomain';
 	    $params['DomainName'] = $domainName;
-        $response = $this->_sendRequest($params);
+        $response             = $this->_sendRequest($params);
+        return $response->getHttpsCertificate()->isSuccessful();
     }
 
     /**
@@ -308,26 +361,26 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
 	public function select($selectExpression, $nextToken = null) 
 	{
-        $params = array();
-	    $params['Action'] = 'Select';
+        $params                     = array();
+	    $params['Action']           = 'Select';
 	    $params['SelectExpression'] = $selectExpression;
-	    if(isset($nextToken)) {
+
+	    if (null !== $nextToken) {
 	        $params['NextToken'] = $nextToken;
 	    }
 
         $response = $this->_sendRequest($params);
-
-        $xml  = $response->getSimpleXMLDocument();
+        $xml      = $response->getSimpleXMLDocument();
 
         $attributes = array();
-        foreach($xml->SelectResult->Item as $item) {
+        foreach ($xml->SelectResult->Item as $item) {
             $itemName = (string)$item->Name;
 
-            foreach($item->Attribute as $attribute) {
+            foreach ($item->Attribute as $attribute) {
                 $attributeName = (string)$attribute->Name;
 
                 $values = array();
-                foreach($attribute->Value as $value) {
+                foreach ($attribute->Value as $value) {
                     $values[] = (string)$value;
                 }
                 $attributes[$itemName][$attributeName] = new Zend_Service_Amazon_SimpleDB_Attribute($itemName, $attributeName, $values);
@@ -350,7 +403,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     public function quote($value)
     {
     	// wrap in single quotes and convert each ' inside to ''
-    	return "'".str_replace("'", "''", $value)."'";
+    	return "'" . str_replace("'", "''", $value) . "'";
     }
     
 	/**
@@ -362,7 +415,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
 	 */
     public function quoteName($name)
     {
-    	if(preg_match('/^[a-z_$][a-z0-9_$]*$/i', $name) == false) {
+    	if (preg_match('/^[a-z_$][a-z0-9_$]*$/i', $name) == false) {
     		throw new Zend_Service_Amazon_SimpleDB_Exception("Invalid name: can contain only alphanumeric characters, \$ and _");
     	}
     	return "`$name`";
@@ -378,14 +431,12 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
     protected function _sendRequest(array $params = array())
     {
         // UTF-8 encode all parameters and replace '+' characters
-        foreach($params as $name => $value) {
+        foreach ($params as $name => $value) {
             unset($params[$name]);
-//            $value = str_replace(' ', '%20', utf8_encode($value));
             $params[utf8_encode($name)] = $value;
         }
 
         $params = $this->_addRequiredParameters($params);
-
 
         try {
             /* @var $request Zend_Http_Client */
@@ -399,9 +450,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
 
             $request->setUri($this->getEndpoint());
             $request->setMethod(Zend_Http_Client::POST);
-            //$request->setEncType(Zend_Http_Client::ENC_URLENCODED);
-            //$request->setParameterPost($params);
-            foreach($params as $key => $value) {
+            foreach ($params as $key => $value) {
                 $params_out[] = rawurlencode($key)."=".rawurlencode($value);
             }
             $request->setRawData(join('&', $params_out), Zend_Http_Client::ENC_URLENCODED);
@@ -468,7 +517,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
      */
     protected function _signParameters(array $paramaters)
     {
-        $data = "POST\n";
+        $data  = "POST\n";
         $data .= $this->getEndpoint()->getHost() . "\n";
         $data .= "/\n";
 
@@ -476,7 +525,7 @@ class Zend_Service_Amazon_SimpleDB extends Zend_Service_Amazon_Abstract
         unset($paramaters['Signature']);
 
         $arrData = array();
-        foreach($paramaters as $key => $value) {
+        foreach ($paramaters as $key => $value) {
             $value = urlencode($value);
             $value = str_replace("%7E", "~", $value);
             $value = str_replace("+", "%20", $value);

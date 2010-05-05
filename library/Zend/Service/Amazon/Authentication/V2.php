@@ -1,5 +1,27 @@
 <?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage Authentication
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
+/**
+ * @see Zend_Service_Amazon_Authentication
+ */
 require_once 'Zend/Service/Amazon/Authentication.php';
 
 /**
@@ -7,6 +29,13 @@ require_once 'Zend/Service/Amazon/Authentication.php';
  */
 require_once 'Zend/Crypt/Hmac.php';
 
+/**
+ * @category   Zend
+ * @package    Zend_Service_Amazon
+ * @subpackage Authentication
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 class Zend_Service_Amazon_Authentication_V2 extends Zend_Service_Amazon_Authentication
 {
     /**
@@ -63,38 +92,6 @@ class Zend_Service_Amazon_Authentication_V2 extends Zend_Service_Amazon_Authenti
         return $this->_httpMethod;
     }
 
-
-	/**
-     * Adds required authentication and version parameters to an array of
-     * parameters
-     *
-     * The required parameters are:
-     * - AWSAccessKey
-     * - SignatureVersion
-     * - Timestamp
-     * - Version and
-     * - Signature
-     *
-     * If a required parameter is already set in the <tt>$parameters</tt> array,
-     * it is overwritten.
-     *
-     * @param  string $queue_url  Queue URL
-     * @param  array  $parameters the array to which to add the required
-     *                            parameters.
-     * @return array
-     */
-    /*protected function addRequiredParameters($queue_url, array $parameters)
-    {
-        $parameters['AWSAccessKeyId']   = $this->_getAccessKey();
-        $parameters['SignatureVersion'] = $this->_signatureVersion;
-        $parameters['Timestamp']        = gmdate('Y-m-d\TH:i:s\Z', time()+10);
-        $parameters['Version']          = $this->_sqsApiVersion;
-        $parameters['SignatureMethod']  = $this->_signatureMethod;
-        $parameters['Signature']        = $this->_signParameters($queue_url, $parameters);
-
-        return $parameters;
-    }*/
-
     /**
      * Computes the RFC 2104-compliant HMAC signature for request parameters
      *
@@ -138,5 +135,4 @@ class Zend_Service_Amazon_Authentication_V2 extends Zend_Service_Amazon_Authenti
 
         return $data;
     }
-
 }
