@@ -7,8 +7,8 @@ I found simple cloud/Zend_Cloud (http://www.simplecloud.org/), which is nearly t
 
 Then I found Compass's Rackspace Cloudfiles PHP API - http://www.compasswebpublisher.com/php/rackspace-cloudfiles-php-api
 
-Compass have created an API for cloudfiles closely mimicking the S3 API from Zend Framework - ideal, a copy paste from the
-Zend_Cloud S3 adapter and a bit of search and replace later and we have a Cloudfiles adapter for Zend_Cloud too!
+Compass have created an API for cloudfiles closely mimicking the S3 API from Zend Framework - ideal, a copy paste from
+the Zend_Cloud S3 adapter and a bit of search and replace later and we have a Cloudfiles adapter for Zend_Cloud too!
 
 (preliminary testing says it works, but I will be doing more!)
 
