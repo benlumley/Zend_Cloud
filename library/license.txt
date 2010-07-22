@@ -1,0 +1,13 @@
+PHP API class for Rackspace Cloudfiles
+Created by Ixpleo for Compass Web Publisher
+http://www.compasswebpublisher.com
+http://www.ixpleo.com
+
+Links back are always appreciated.
+http://www.compasswebpublisher.com/php/rackspace-cloudfiles-php-api
+
+Licensed under the BSD http://creativecommons.org/licenses/BSD/
+
+API requires the Zend Framework to work
+http://framework.zend.com for download instructions
+Check the Zend Framework license (http://framework.zend.com/license/new-bsd) for their license restrictions.
