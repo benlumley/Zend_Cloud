@@ -1,3 +1,19 @@
+======= THIS REPO =======
+
+I wanted an API to program against that would let me write code to store files once and
+via configuration changes, allow me to choose to store them on local disk/cloudfiles/s3 etc.
+
+I found simple cloud/Zend_Cloud (http://www.simplecloud.org/), which is nearly there, but no Cloudfiles support yet.
+
+Then I found Compass's Rackspace Cloudfiles PHP API - http://www.compasswebpublisher.com/php/rackspace-cloudfiles-php-api
+
+Compass have created an API for cloudfiles closely mimicking the S3 API from Zend Framework - ideal, a copy paste from the
+Zend_Cloud S3 adapter and a bit of search and replace later and we have a Cloudfiles adapter for Zend_Cloud too!
+
+(preliminary testing says it works, but I will be doing more!)
+
+====== ORIGINAL ZEND_CLOUD/SIMPLE CLOUD README =======
+
 Simple Cloud API
 ----------------
 
